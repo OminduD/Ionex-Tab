@@ -1,0 +1,21 @@
+{
+    "manifest_version": 3,
+    "name": "Ionex Tab - Enhanced New Tab",
+    "version": "1.0.0",
+    "description": "A feature-rich, customizable new tab page with widgets, AI assistance, and beautiful themes.",
+    "chrome_url_overrides": {
+        "newtab": "index.html"
+    },
+    "permissions": [
+        "storage"
+    ],
+    "host_permissions": [
+        "https://api.openweathermap.org/*",
+        "https://generativelanguage.googleapis.com/*"
+    ],
+    "icons": {
+        "16": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌟</text></svg>",
+        "48": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌟</text></svg>",
+        "128": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌟</text></svg>"
+    }
+}

@@ -1,0 +1,135 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* Scrollbar styling */
+
+.scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+
+/* Theme variables */
+
+.theme-aurora {
+    --primary-color: #a78bfa;
+    --secondary-color: #818cf8;
+    --accent-color: #c084fc;
+}
+
+.theme-sunset {
+    --primary-color: #fb923c;
+    --secondary-color: #f59e0b;
+    --accent-color: #fbbf24;
+}
+
+.theme-ocean {
+    --primary-color: #06b6d4;
+    --secondary-color: #0891b2;
+    --accent-color: #22d3ee;
+}
+
+.theme-forest {
+    --primary-color: #34d399;
+    --secondary-color: #10b981;
+    --accent-color: #6ee7b7;
+}
+
+.icon-color {
+    color: var(--primary-color, #a78bfa) !important;
+}
+
+.accent-color {
+    color: var(--accent-color, #c084fc) !important;
+}
+
+.bg-theme-primary {
+    background-color: var(--primary-color, #a78bfa);
+}
+
+.border-theme-primary {
+    border-color: var(--primary-color, #a78bfa);
+}
+
+
+/* Glassmorphism for widgets */
+
+.widget-glass {
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.widget-glass:hover {
+    background: rgba(0, 0, 0, 0.35);
+}
+
+
+/* Gradient backgrounds */
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+}
+
+.from-primary {
+    --tw-gradient-from: var(--primary-color);
+    --tw-gradient-to: var(--primary-color);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.via-secondary {
+    --tw-gradient-to: var(--secondary-color);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--secondary-color), var(--tw-gradient-to);
+}
+
+.to-accent {
+    --tw-gradient-to: var(--accent-color);
+}
+
+.shadow-accent\/20 {
+    box-shadow: 0 20px 25px -5px var(--accent-color), 0 8px 10px -6px var(--accent-color);
+    opacity: 0.2;
+}
+
+
+/* Widget animations */
+
+.widget-enter {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

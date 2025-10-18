@@ -1,0 +1,178 @@
+// src/App.tsx
+// The main application component - Redesigned with unique cool layout
+
+import React, { useState } from 'react';
+import { Settings, WidgetId } from './types';
+import { useLocalStorage } from './hooks/useLocalStorage';
+import { SettingsIcon } from './components/icons';
+import { SettingsPanel } from './components/SettingsPanel';
+import { SearchBar } from './components/SearchBar';
+import { QuickLinks } from './components/QuickLinks';
+import { AIToolsButton } from './components/AIToolsButton';
+import { motion } from 'framer-motion';
+
+// Dynamically import widgets
+const Clock = React.lazy(() => import('./components/widgets/Clock'));
+const AnalogClock = React.lazy(() => import('./components/widgets/AnalogClock'));
+const Weather = React.lazy(() => import('./components/widgets/Weather'));
+const Calendar = React.lazy(() => import('./components/widgets/Calendar'));
+const TodoList = React.lazy(() => import('./components/widgets/TodoList'));
+const AIWidget = React.lazy(() => import('./components/widgets/AIWidget'));
+const AppShortcuts = React.lazy(() => import('./components/widgets/AppShortcuts'));
+const MusicPlayer = React.lazy(() => import('./components/widgets/MusicPlayer'));
+const NewsFeed = React.lazy(() => import('./components/widgets/NewsFeed'));
+const FocusMode = React.lazy(() => import('./components/widgets/FocusMode'));
+const DraggableWidget = React.lazy(() => import('./components/DraggableWidget'));
+
+const App: React.FC = () => {
+  const [settings, setSettings] = useLocalStorage<Settings>('homeTabSettings-v5', {
+    wallpaperUrl: 'https://images.unsplash.com/photo-1507525428034-b723a9ce6890?q=80&w=2070&auto=format&fit=crop',
+    theme: 'aurora',
+    clockType: 'digital',
+    searchEngine: 'google',
+    widgets: { clock: true, weather: true, calendar: true, todoList: true, aiAssistant: false, appShortcuts: false, musicPlayer: false, newsFeed: true, analogClock: false },
+    widgetSizes: { clock: 'small', analogClock: 'small', weather: 'medium', calendar: 'small', todoList: 'medium', aiAssistant: 'medium', appShortcuts: 'medium', musicPlayer: 'medium', newsFeed: 'medium' },
+    widgetPositions: {
+      clock: { x: 50, y: 100 },
+      weather: { x: 400, y: 80 },
+      calendar: { x: 900, y: 100 },
+      todoList: { x: 100, y: 350 },
+      newsFeed: { x: 700, y: 350 },
+      analogClock: { x: 200, y: 100 },
+      aiAssistant: { x: 400, y: 350 },
+      appShortcuts: { x: 500, y: 500 },
+      musicPlayer: { x: 800, y: 500 },
+    },
+    shortcuts: [
+        { id: '1', name: 'Gmail', url: 'https://mail.google.com', icon: 'gmail' },
+        { id: '2', name: 'YouTube', url: 'https://youtube.com', icon: 'youtube' },
+        { id: '3', name: 'GitHub', url: 'https://github.com', icon: 'github' },
+        { id: '4', name: 'Discord', url: 'https://discord.com', icon: 'discord' },
+        { id: '5', name: 'Spotify', url: 'https://spotify.com', icon: 'spotify' },
+        { id: '6', name: 'Reddit', url: 'https://reddit.com', icon: 'reddit' },
+        { id: '7', name: 'Twitter', url: 'https://twitter.com', icon: 'twitter' },
+        { id: '8', name: 'Figma', url: 'https://figma.com', icon: 'figma' },
+    ],
+    apiKeys: { weather: '', gemini: '' },
+  });
+
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isFocusMode, setIsFocusMode] = useState(false);
+
+  const updateWidgetPosition = (id: WidgetId, x: number, y: number) => {
+    setSettings(prev => ({
+      ...prev,
+      widgetPositions: {
+        ...prev.widgetPositions,
+        [id]: { x, y }
+      }
+    }));
+  };
+
+  const widgetMap: Record<WidgetId, React.ReactNode> = {
+    clock: settings.clockType === 'digital' || settings.clockType === 'both' ? <Clock /> : null,
+    analogClock: settings.clockType === 'analog' || settings.clockType === 'both' ? <AnalogClock showDigital={settings.clockType === 'both'} /> : null,
+    weather: <Weather apiKey={settings.apiKeys.weather} />,
+    calendar: <Calendar />,
+    todoList: <TodoList />,
+    aiAssistant: <AIWidget apiKey={settings.apiKeys.gemini} />,
+    appShortcuts: <AppShortcuts shortcuts={settings.shortcuts} />,
+    musicPlayer: <MusicPlayer />,
+    newsFeed: <NewsFeed />,
+  };
+
+  return (
+    <div className={`theme-${settings.theme} font-sans`}>
+        <div 
+            className="h-screen w-screen text-white bg-cover bg-center bg-fixed overflow-hidden relative"
+            style={{ backgroundImage: `url(${settings.wallpaperFile || settings.wallpaperUrl})` }}
+        >
+            {/* Top-Left: Logo/Brand */}
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="fixed top-6 left-6 z-50"
+            >
+              <div className="flex items-center gap-3 px-4 py-3 bg-black/30 backdrop-blur-md rounded-2xl border border-white/10">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">I</span>
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-white">Ionex</div>
+                  <div className="text-xs text-white/70">New Tab</div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Top-Right: Settings */}
+            <motion.button 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              onClick={() => setIsSettingsOpen(true)} 
+              className="fixed top-6 right-6 z-50 p-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 hover:bg-black/40 transition-all hover:scale-110" 
+              aria-label="Settings"
+            >
+              <SettingsIcon className="w-6 h-6 icon-color" />
+            </motion.button>
+
+            {/* Bottom-Left: AI Tools Button */}
+            <AIToolsButton />
+
+            {/* Center: Search Bar (Fixed Position) */}
+            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 w-full max-w-4xl px-6">
+              <SearchBar 
+                selectedEngine={settings.searchEngine}
+                onEngineChange={(engine) => setSettings({ ...settings, searchEngine: engine })}
+              />
+              
+              {/* Quick Links Bar (Fixed Below Search) */}
+              <QuickLinks 
+                shortcuts={settings.shortcuts}
+                theme={settings.theme}
+              />
+            </div>
+
+            {/* Draggable Widgets Area */}
+            <div className="absolute inset-0 overflow-hidden">
+               <React.Suspense fallback={<div className="text-center">Loading...</div>}>
+                   {Object.entries(settings.widgets).map(([id, enabled]) => {
+                       const widgetId = id as WidgetId;
+                       if (!enabled || !widgetMap[widgetId]) return null;
+                       
+                       const position = settings.widgetPositions[widgetId] || { x: 100, y: 100 };
+                       
+                       return (
+                           <DraggableWidget
+                               key={widgetId}
+                               id={widgetId}
+                               position={position}
+                               onPositionChange={(x, y) => updateWidgetPosition(widgetId, x, y)}
+                               size={settings.widgetSizes[widgetId] || 'small'}
+                           >
+                               {widgetMap[widgetId]}
+                           </DraggableWidget>
+                       );
+                   })}
+               </React.Suspense>
+            </div>
+
+            {/* Focus Mode Overlay */}
+            <React.Suspense fallback={<div>Loading...</div>}>
+                <FocusMode isActive={isFocusMode} onClose={() => setIsFocusMode(false)} />
+            </React.Suspense>
+
+            {/* Settings Panel */}
+            <SettingsPanel 
+                settings={settings}
+                setSettings={setSettings}
+                isVisible={isSettingsOpen}
+                onClose={() => setIsSettingsOpen(false)}
+            />
+        </div>
+    </div>
+  );
+};
+
+export default App;
+
+export {};
