@@ -149,7 +149,7 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ apiKey, groqKey }) => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-purple-500/10 via-blue-500/10 to-cyan-500/10 rounded-lg overflow-hidden">
+    <div className="h-full flex flex-col bg-white/5 backdrop-blur-md rounded-lg overflow-hidden border border-white/10">
       {/* Header */}
       <div className="flex items-center justify-between p-4 bg-white/10 backdrop-blur-md border-b border-white/10">
         <div className="flex items-center gap-2">
@@ -160,9 +160,9 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ apiKey, groqKey }) => {
             }}
             transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
           >
-            <Sparkles className="w-6 h-6 text-purple-400" />
+            <Sparkles className="w-6 h-6 icon-color" />
           </motion.div>
-          <h3 className="text-lg font-bold bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
+          <h3 className="text-lg font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             AI Assistant
           </h3>
         </div>
@@ -173,7 +173,7 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ apiKey, groqKey }) => {
               onClick={() => setProvider('gemini')}
               className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
                 provider === 'gemini'
-                  ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white'
+                  ? 'bg-gradient-to-r from-primary to-secondary text-white'
                   : 'text-white/60 hover:text-white/80'
               }`}
               title="Switch to Gemini AI"
@@ -184,7 +184,7 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ apiKey, groqKey }) => {
               onClick={() => setProvider('groq')}
               className={`px-3 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1 ${
                 provider === 'groq'
-                  ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
+                  ? 'bg-gradient-to-r from-secondary to-accent text-white'
                   : 'text-white/60 hover:text-white/80'
               }`}
               title="Switch to Groq AI"
@@ -221,9 +221,9 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ apiKey, groqKey }) => {
                     opacity: [0.5, 1, 0.5],
                   }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full blur-xl"
+                  className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-full blur-xl"
                 />
-                <Sparkles className="w-16 h-16 text-purple-400 relative z-10" />
+                <Sparkles className="w-16 h-16 icon-color relative z-10" />
               </div>
               <div className="text-center">
                 <p className="text-lg font-semibold text-white/80">How can I help you today?</p>
@@ -258,7 +258,7 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ apiKey, groqKey }) => {
                 <div
                   className={`max-w-[80%] rounded-2xl p-4 ${
                     message.role === 'user'
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white'
+                      ? 'bg-gradient-to-r from-primary to-accent text-white'
                       : 'bg-white/10 backdrop-blur-md text-white/90'
                   }`}
                 >
@@ -298,7 +298,7 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ apiKey, groqKey }) => {
                     key={i}
                     animate={{ y: [0, -10, 0] }}
                     transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.2 }}
-                    className="w-2 h-2 bg-purple-400 rounded-full"
+                    className="w-2 h-2 bg-theme-primary rounded-full"
                   />
                 ))}
               </div>
@@ -325,13 +325,13 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ apiKey, groqKey }) => {
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && !loading && handleSubmit()}
               placeholder="Type your message..."
-              className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm outline-none focus:bg-white/15 focus:border-purple-400/50 transition-all placeholder:text-white/40"
+              className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm text-white outline-none focus:bg-white/15 focus:border-theme-primary transition-all placeholder:text-white/40"
               disabled={loading}
             />
             <button
               onClick={handleSubmit}
               disabled={loading || !input.trim()}
-              className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl px-6 py-3 transition-all transform hover:scale-105 active:scale-95"
+              className="bg-gradient-to-r from-primary to-accent hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl px-6 py-3 transition-all transform hover:scale-105 active:scale-95"
               title="Send message"
             >
               <Send className="w-5 h-5 text-white" />

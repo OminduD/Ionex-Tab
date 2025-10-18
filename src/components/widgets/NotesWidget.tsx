@@ -81,19 +81,19 @@ const NotesWidget: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-amber-50/10 to-yellow-50/10 rounded-lg overflow-hidden">
+    <div className="h-full flex flex-col bg-white/5 backdrop-blur-md rounded-lg overflow-hidden border border-white/10">
       {/* Header */}
       <div className="flex items-center justify-between p-4 bg-white/10 backdrop-blur-md border-b border-white/10">
         <div className="flex items-center gap-2">
-          <StickyNote className="w-5 h-5 text-yellow-400" />
+          <StickyNote className="w-5 h-5 icon-color" />
           <h3 className="text-lg font-bold text-white">Quick Notes</h3>
         </div>
         <button
           onClick={() => setIsAddingNote(true)}
-          className="p-2 bg-yellow-400/20 hover:bg-yellow-400/30 rounded-lg transition-colors group"
+          className="p-2 bg-theme-primary rounded-lg transition-colors group hover:opacity-80"
           title="Add note"
         >
-          <Plus className="w-5 h-5 text-yellow-400 group-hover:rotate-90 transition-transform duration-300" />
+          <Plus className="w-5 h-5 text-white group-hover:rotate-90 transition-transform duration-300" />
         </button>
       </div>
 

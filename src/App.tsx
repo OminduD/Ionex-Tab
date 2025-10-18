@@ -38,7 +38,7 @@ const App: React.FC = () => {
     clockType: 'digital',
     searchEngine: 'google',
     userName: '',
-    widgets: { clock: true, weather: true, calendar: true, todoList: true, aiAssistant: false, notes: false, appShortcuts: false, musicPlayer: false, newsFeed: true, analogClock: false },
+    widgets: { clock: true, weather: true, calendar: true, todoList: true, aiAssistant: true, notes: true, appShortcuts: false, musicPlayer: false, newsFeed: true, analogClock: false },
     widgetSizes: { clock: 'small', analogClock: 'small', weather: 'medium', calendar: 'small', todoList: 'medium', aiAssistant: 'large', notes: 'medium', appShortcuts: 'medium', musicPlayer: 'medium', newsFeed: 'medium' },
     widgetPositions: {
       clock: { x: 50, y: 100 },
