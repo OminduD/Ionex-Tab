@@ -35,10 +35,29 @@ export interface Settings {
   apiKeys: {
     weather: string;
     gemini: string;
+    groq?: string;
   };
+  connectedMusicPlatforms?: string[];
+  customColors?: {
+    primary: string;
+    secondary: string;
+    accent: string;
+    bgGradientStart: string;
+    bgGradientEnd: string;
+  };
+  autoThemeFromWallpaper?: boolean;
 }
 
-export type WidgetId = 'clock' | 'analogClock' | 'weather' | 'calendar' | 'todoList' | 'aiAssistant' | 'appShortcuts' | 'musicPlayer' | 'newsFeed';
+export type WidgetId = 'clock' | 'analogClock' | 'weather' | 'calendar' | 'todoList' | 'aiAssistant' | 'notes' | 'appShortcuts' | 'musicPlayer' | 'newsFeed';
+
+export interface Note {
+  id: string;
+  title: string;
+  content: string;
+  color: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 // Empty export to ensure this is treated as a module
 export {};

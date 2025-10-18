@@ -12,11 +12,27 @@ interface Props {
   onClose: () => void;
 }
 
-const themes: Record<string, { name: string; class: string }> = {
-    aurora: { name: 'Aurora', class: 'bg-gradient-to-br from-indigo-500 to-purple-600' },
-    sunset: { name: 'Sunset', class: 'bg-gradient-to-br from-orange-500 to-red-600' },
-    forest: { name: 'Forest', class: 'bg-gradient-to-br from-green-500 to-teal-600' },
-    ocean: { name: 'Ocean', class: 'bg-gradient-to-br from-blue-400 to-cyan-500' },
+const themes: Record<string, { name: string; class: string; wallpaper: string }> = {
+    aurora: { 
+        name: 'Aurora', 
+        class: 'bg-gradient-to-br from-indigo-500 to-purple-600',
+        wallpaper: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2070&auto=format&fit=crop'
+    },
+    sunset: { 
+        name: 'Sunset', 
+        class: 'bg-gradient-to-br from-orange-500 to-red-600',
+        wallpaper: 'https://images.unsplash.com/photo-1495567720989-cebdbdd97913?q=80&w=2070&auto=format&fit=crop'
+    },
+    forest: { 
+        name: 'Forest', 
+        class: 'bg-gradient-to-br from-green-500 to-teal-600',
+        wallpaper: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop'
+    },
+    ocean: { 
+        name: 'Ocean', 
+        class: 'bg-gradient-to-br from-blue-400 to-cyan-500',
+        wallpaper: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?q=80&w=2026&auto=format&fit=crop'
+    },
 };
 
 export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisible, onClose }) => {
@@ -114,6 +130,25 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                 <section className="mb-6">
                     <h3 className="text-lg font-semibold mb-3">Wallpaper</h3>
                     
+                    {/* Auto Theme Toggle */}
+                    <div className="mb-3 p-3 bg-white/5 rounded-lg">
+                        <label className="flex items-center gap-3 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={localSettings.autoThemeFromWallpaper || false}
+                                onChange={(e) => setLocalSettings({ 
+                                    ...localSettings, 
+                                    autoThemeFromWallpaper: e.target.checked 
+                                })}
+                                className="w-5 h-5 rounded"
+                            />
+                            <div>
+                                <div className="font-medium">Auto-detect theme colors from wallpaper</div>
+                                <div className="text-xs text-white/60">Automatically extract and apply colors from your wallpaper</div>
+                            </div>
+                        </label>
+                    </div>
+                    
                     {/* Upload from device */}
                     <div className="mb-3">
                         <label className="block text-sm mb-2 opacity-70">Upload from Device</label>
@@ -167,14 +202,22 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                         {Object.entries(themes).map(([key, theme]) => (
                             <button
                                 key={key}
-                                onClick={() => setLocalSettings({ ...localSettings, theme: key })}
-                                className={`p-3 rounded-lg ${theme.class} ${localSettings.theme === key ? 'ring-2 ring-white' : ''} transition-all`}
+                                onClick={() => setLocalSettings({ 
+                                    ...localSettings, 
+                                    theme: key, 
+                                    customColors: undefined,
+                                    wallpaperUrl: theme.wallpaper,
+                                    wallpaperFile: undefined
+                                })}
+                                className={`p-3 rounded-lg ${theme.class} ${localSettings.theme === key && !localSettings.customColors ? 'ring-2 ring-white' : ''} transition-all`}
                             >
                                 {theme.name}
                             </button>
                         ))}
                     </div>
                 </section>
+
+
 
                 {/* Widgets Section */}
                 <section className="mb-6">
@@ -288,10 +331,10 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                             />
                         </div>
                         <div>
-                            <label className="block text-sm mb-1 opacity-70">Google Gemini API Key</label>
+                            <label className="block text-sm mb-1 opacity-70">Gemini AI API Key</label>
                             <input
                                 type="password"
-                                value={localSettings.apiKeys.gemini}
+                                value={localSettings.apiKeys.gemini || ''}
                                 onChange={(e) => setLocalSettings({
                                     ...localSettings,
                                     apiKeys: { ...localSettings.apiKeys, gemini: e.target.value }
@@ -299,6 +342,32 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                 placeholder="Enter Gemini API key"
                                 className="w-full bg-white/10 rounded-lg px-4 py-2 outline-none focus:bg-white/20"
                             />
+                            <p className="text-xs text-white/50 mt-1">Get your free API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">Google AI Studio</a></p>
+                        </div>
+                        <div>
+                            <label className="block text-sm mb-1 opacity-70">Groq AI API Key</label>
+                            <input
+                                type="password"
+                                value={localSettings.apiKeys.groq || ''}
+                                onChange={(e) => setLocalSettings({
+                                    ...localSettings,
+                                    apiKeys: { ...localSettings.apiKeys, groq: e.target.value }
+                                })}
+                                placeholder="Enter Groq AI API key"
+                                className="w-full bg-white/10 rounded-lg px-4 py-2 outline-none focus:bg-white/20"
+                            />
+                            <p className="text-xs text-white/50 mt-1">Get your free API key from <a href="https://console.groq.com" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">console.groq.com</a></p>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Music Player Section */}
+                <section className="mb-6">
+                    <h3 className="text-lg font-semibold mb-3">Music Player</h3>
+                    <div className="space-y-3">
+                        <p className="text-sm text-white/70">Connect your music streaming accounts for Focus Mode</p>
+                        <div className="bg-white/5 rounded-lg p-4">
+                            <p className="text-sm text-white/60">Music player connections will be available in the next update. For now, enjoy the embedded YouTube ambient sounds in Focus Mode!</p>
                         </div>
                     </div>
                 </section>

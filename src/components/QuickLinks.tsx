@@ -64,11 +64,18 @@ export const QuickLinks: React.FC<Props> = ({ shortcuts }) => {
             whileHover={{ scale: 1.1, y: -5 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => handleClick(shortcut.url)}
-            className="group relative w-14 h-14 rounded-2xl bg-black/30 backdrop-blur-md border border-white/10 hover:border-white/30 flex items-center justify-center transition-all shadow-lg hover:shadow-xl"
+            className="shortcut-button group relative w-14 h-14 rounded-2xl border border-white/10 hover:border-white/30 flex items-center justify-center transition-all shadow-lg hover:shadow-xl"
+            style={{
+              background: 'radial-gradient(circle at center, var(--accent-light-tint, rgba(255, 255, 255, 0.2)) 0%, var(--accent-light-tint, rgba(255, 255, 255, 0.2)) 66%, transparent 66%)',
+              backdropFilter: 'blur(12px)'
+            }}
             title={shortcut.name}
           >
             {IconComponent ? (
-              <IconComponent className="w-6 h-6 icon-color transition-colors" />
+              <IconComponent 
+                className="w-6 h-6 transition-colors" 
+                style={{ color: 'var(--text-color-dark, #1e293b)' }}
+              />
             ) : faviconUrl ? (
               <img 
                 src={faviconUrl} 
@@ -83,7 +90,10 @@ export const QuickLinks: React.FC<Props> = ({ shortcuts }) => {
             ) : null}
             
             {/* Fallback letter */}
-            <span className={`text-xl font-bold icon-color ${IconComponent || faviconUrl ? 'hidden' : ''}`}>
+            <span 
+              className={`text-xl font-bold ${IconComponent || faviconUrl ? 'hidden' : ''}`}
+              style={{ color: 'var(--text-color-dark, #1e293b)' }}
+            >
               {shortcut.name.charAt(0)}
             </span>
             

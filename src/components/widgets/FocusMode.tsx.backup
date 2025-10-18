@@ -1,0 +1,445 @@
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Play, Pause, RotateCcw, X, Music, Volume2, VolumeX } from 'lucide-react';
+
+interface FocusModeProps {
+  isActive: boolean;
+  onClose: () => void;
+}
+
+// Deep space nebula background
+const DEEP_SPACE_IMAGE = 'data:image/jpeg;base64,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';
+
+// Ambient music with YouTube video IDs for embedding
+const ambientTracks = [
+  { name: 'Lofi Beats', videoId: 'jfKfPfyJRdk', color: '#a78bfa' },
+  { name: 'Rain Sounds', videoId: 'q76bMs-NwRk', color: '#60a5fa' },
+  { name: 'Ocean Waves', videoId: 'WHPEKLQID4U', color: '#34d399' },
+  { name: 'Forest Ambience', videoId: 'xNN7iTA57jM', color: '#4ade80' },
+];
+
+const FocusMode: React.FC<FocusModeProps> = ({ isActive, onClose }) => {
+  const [minutes, setMinutes] = useState(25);
+  const [seconds, setSeconds] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [totalSeconds, setTotalSeconds] = useState(25 * 60);
+  const [selectedTrack, setSelectedTrack] = useState(0);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval>;
+    
+    if (isRunning && totalSeconds > 0) {
+      interval = setInterval(() => {
+        setTotalSeconds((prev) => {
+          if (prev <= 1) {
+            setIsRunning(false);
+            // Notification
+            if ('Notification' in window && Notification.permission === 'granted') {
+              new Notification('Focus Session Complete!', {
+                body: 'Great job! Time for a break.',
+                icon: '/icon48.png'
+              });
+            }
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [isRunning, totalSeconds]);
+
+  useEffect(() => {
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
+    setMinutes(mins);
+    setSeconds(secs);
+  }, [totalSeconds]);
+
+  const startTimer = () => setIsRunning(true);
+  const pauseTimer = () => setIsRunning(false);
+  const resetTimer = () => {
+    setIsRunning(false);
+    setTotalSeconds(25 * 60);
+  };
+
+  const setPresetTime = (mins: number) => {
+    setTotalSeconds(mins * 60);
+    setIsRunning(false);
+  };
+
+  const toggleMusic = () => {
+    setIsMusicPlaying(!isMusicPlaying);
+  };
+
+  if (!isActive) return null;
+
+  const progress = ((25 * 60 - totalSeconds) / (25 * 60)) * 100;
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
+      style={{
+        backgroundImage: `url(${DEEP_SPACE_IMAGE})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+      {/* Deep space overlay with subtle animation */}
+      <motion.div
+        className="absolute inset-0 bg-black/20"
+        animate={{
+          opacity: [0.2, 0.3, 0.2]
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: 'easeInOut'
+        }}
+      />
+      
+      {/* Twinkling stars overlay */}
+      {[...Array(50)].map((_, i) => (
+        <motion.div
+          key={`star-${i}`}
+          className="absolute rounded-full bg-white"
+          style={{
+            width: `${Math.random() * 3 + 1}px`,
+            height: `${Math.random() * 3 + 1}px`,
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            boxShadow: '0 0 8px rgba(255,255,255,0.8)'
+          }}
+          animate={{
+            opacity: [0.2, 1, 0.2],
+            scale: [0.8, 1.2, 0.8],
+          }}
+          transition={{
+            duration: Math.random() * 3 + 2,
+            repeat: Infinity,
+            ease: 'easeInOut',
+            delay: Math.random() * 2
+          }}
+        />
+      ))}
+      
+      {/* Shooting stars effect */}
+      {[1, 2, 3, 4].map((i) => (
+        <motion.div
+          key={`shooting-${i}`}
+          className="absolute h-0.5 bg-gradient-to-r from-transparent via-white to-transparent"
+          style={{
+            width: '150px',
+            top: `${15 * i}%`,
+            left: '-150px',
+            filter: 'blur(1px)'
+          }}
+          animate={{
+            x: ['0vw', '120vw'],
+            y: ['0vh', '30vh'],
+            opacity: [0, 1, 0.5, 0]
+          }}
+          transition={{
+            duration: 2.5,
+            repeat: Infinity,
+            delay: i * 5,
+            ease: "easeOut",
+            repeatDelay: 8
+          }}
+        />
+      ))}
+
+      {/* Breathing circle animation */}
+      <motion.div
+        className="absolute inset-0 flex items-center justify-center"
+        initial={{ scale: 0.8, opacity: 0.3 }}
+        animate={{
+          scale: [0.8, 1.2, 0.8],
+          opacity: [0.3, 0.6, 0.3],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      >
+        <div className="w-96 h-96 rounded-full bg-gradient-to-r from-blue-400/20 to-purple-400/20 blur-3xl" />
+      </motion.div>
+
+      {/* Main content */}
+      <div className="relative z-10 text-center text-white max-w-2xl px-6">
+        {/* Close button */}
+        <motion.button
+          whileHover={{ scale: 1.1, rotate: 90 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={onClose}
+          className="absolute top-4 right-4 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors backdrop-blur-md"
+        >
+          <X className="w-6 h-6" />
+        </motion.button>
+
+        <motion.h2 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-transparent"
+        >
+          Focus Mode
+        </motion.h2>
+        
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.7 }}
+          className="text-white/70 mb-8"
+        >
+          Breathe in. Focus. Achieve.
+        </motion.p>
+
+        {/* Timer display with circular progress */}
+        <div className="relative w-80 h-80 mx-auto mb-8">
+          {/* Progress circle */}
+          <svg className="absolute inset-0 transform -rotate-90" viewBox="0 0 100 100">
+            <circle
+              cx="50"
+              cy="50"
+              r="45"
+              fill="none"
+              stroke="rgba(255,255,255,0.1)"
+              strokeWidth="3"
+            />
+            <motion.circle
+              cx="50"
+              cy="50"
+              r="45"
+              fill="none"
+              stroke="url(#gradient)"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeDasharray="283"
+              initial={{ strokeDashoffset: 283 }}
+              animate={{ strokeDashoffset: 283 - (283 * progress) / 100 }}
+              transition={{ duration: 0.5 }}
+            />
+            <defs>
+              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#60a5fa" />
+                <stop offset="100%" stopColor="#a78bfa" />
+              </linearGradient>
+            </defs>
+          </svg>
+
+          {/* Timer text */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <motion.div 
+              className="text-9xl font-mono font-bold"
+              animate={{ scale: isRunning ? [1, 1.02, 1] : 1 }}
+              transition={{ duration: 1, repeat: isRunning ? Infinity : 0 }}
+            >
+              {String(minutes).padStart(2, '0')}
+              <span className="text-white/50">:</span>
+              {String(seconds).padStart(2, '0')}
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Controls */}
+        <div className="flex gap-4 justify-center mb-8">
+          <AnimatePresence mode="wait">
+            {!isRunning ? (
+              <motion.button
+                key="start"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={startTimer}
+                className="px-8 py-4 bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 rounded-full font-semibold transition-all shadow-lg flex items-center gap-2"
+              >
+                <Play className="w-5 h-5" />
+                Start
+              </motion.button>
+            ) : (
+              <motion.button
+                key="pause"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={pauseTimer}
+                className="px-8 py-4 bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 rounded-full font-semibold transition-all shadow-lg flex items-center gap-2"
+              >
+                <Pause className="w-5 h-5" />
+                Pause
+              </motion.button>
+            )}
+          </AnimatePresence>
+          
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={resetTimer}
+            className="px-8 py-4 bg-white/10 hover:bg-white/20 rounded-full font-semibold transition-all backdrop-blur-md flex items-center gap-2"
+          >
+            <RotateCcw className="w-5 h-5" />
+            Reset
+          </motion.button>
+        </div>
+
+        {/* Preset times */}
+        <div className="flex gap-3 justify-center mb-8 flex-wrap">
+          {[5, 15, 25, 45, 60].map((mins) => (
+            <motion.button
+              key={mins}
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setPresetTime(mins)}
+              className="px-5 py-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all backdrop-blur-md"
+            >
+              {mins} min
+            </motion.button>
+          ))}
+        </div>
+
+        {/* Music controls with embedded player */}
+        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 w-full max-w-2xl">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Music className="w-5 h-5" />
+              <span className="font-medium">Ambient Sound</span>
+            </div>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={toggleMusic}
+              className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+            >
+              {isMusicPlaying ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+            </motion.button>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            {ambientTracks.map((track, index) => (
+              <motion.button
+                key={index}
+                type="button"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`px-3 py-2 rounded-lg text-sm transition-all ${
+                  selectedTrack === index
+                    ? 'text-white shadow-lg'
+                    : 'bg-white/5 hover:bg-white/10'
+                }`}
+                style={selectedTrack === index ? {
+                  background: `linear-gradient(135deg, ${track.color}, ${track.color}dd)`,
+                  boxShadow: `0 0 20px ${track.color}40`
+                } : {}}
+                onClick={() => {
+                  setSelectedTrack(index);
+                  setIsMusicPlaying(true);
+                }}
+              >
+                {track.name}
+              </motion.button>
+            ))}
+          </div>
+
+          {/* Hidden YouTube Player - Audio Only */}
+          <AnimatePresence mode="wait">
+            {isMusicPlaying && (
+              <motion.div
+                key={selectedTrack}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="relative"
+              >
+                {/* Hidden iframe for audio playback */}
+                <iframe
+                  width="0"
+                  height="0"
+                  src={`https://www.youtube.com/embed/${ambientTracks[selectedTrack].videoId}?autoplay=1&mute=0&loop=1&playlist=${ambientTracks[selectedTrack].videoId}`}
+                  title={ambientTracks[selectedTrack].name}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  className="absolute -z-10 opacity-0"
+                  style={{ position: 'absolute', top: '-9999px', left: '-9999px' }}
+                />
+                {/* Visual indicator */}
+                <div className="flex items-center justify-center gap-3 p-4 bg-white/5 rounded-lg">
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 1, repeat: Infinity }}
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: ambientTracks[selectedTrack].color }}
+                  />
+                  <span className="text-sm font-medium">Now Playing: {ambientTracks[selectedTrack].name}</span>
+                  <motion.div
+                    animate={{ opacity: [0.3, 1, 0.3] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    <Volume2 className="w-4 h-4" />
+                  </motion.div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Wave animation overlay */}
+        <motion.div
+          className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none overflow-hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.3 }}
+        >
+          <motion.div
+            className="absolute inset-0"
+            animate={{
+              translateY: [0, -20, 0],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="w-full h-full">
+              <path
+                d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
+                fill="currentColor"
+                className="text-white/10"
+              />
+            </svg>
+          </motion.div>
+          <motion.div
+            className="absolute inset-0"
+            animate={{
+              translateY: [0, 20, 0],
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 0.5
+            }}
+          >
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="w-full h-full">
+              <path
+                d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"
+                fill="currentColor"
+                className="text-white/5"
+              />
+            </svg>
+          </motion.div>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+};
+
+export default FocusMode;

@@ -1,7 +1,7 @@
 // src/App.tsx
 // The main application component - Redesigned with unique cool layout
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Settings, WidgetId } from './types';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { SettingsIcon } from './components/icons';
@@ -12,6 +12,7 @@ import { AIToolsButton } from './components/AIToolsButton';
 import { Greeting } from './components/Greeting';
 import { motion } from 'framer-motion';
 import { Zap } from 'lucide-react';
+import { extractColorsFromImage, applyCustomColors } from './utils/colorExtractorImproved';
 
 // Dynamically import widgets
 const Clock = React.lazy(() => import('./components/widgets/Clock'));
@@ -19,7 +20,8 @@ const AnalogClock = React.lazy(() => import('./components/widgets/AnalogClock'))
 const Weather = React.lazy(() => import('./components/widgets/Weather'));
 const Calendar = React.lazy(() => import('./components/widgets/Calendar'));
 const TodoList = React.lazy(() => import('./components/widgets/TodoList'));
-const AIWidget = React.lazy(() => import('./components/widgets/AIWidget'));
+const AIWidget = React.lazy(() => import('./components/widgets/AIWidgetImproved'));
+const NotesWidget = React.lazy(() => import('./components/widgets/NotesWidget'));
 const AppShortcuts = React.lazy(() => import('./components/widgets/AppShortcuts'));
 const MusicPlayer = React.lazy(() => import('./components/widgets/MusicPlayer'));
 const NewsFeed = React.lazy(() => import('./components/widgets/NewsFeed'));
@@ -30,14 +32,14 @@ const DraggableWidget = React.lazy(() => import('./components/DraggableWidget'))
 const DEFAULT_WEATHER_API_KEY = 'bd5e378503939ddaee76f12ad7a97608';
 
 const App: React.FC = () => {
-  const [settings, setSettings] = useLocalStorage<Settings>('homeTabSettings-v6', {
+  const [settings, setSettings] = useLocalStorage<Settings>('homeTabSettings-v7', {
     wallpaperUrl: 'https://images.unsplash.com/photo-1507525428034-b723a9ce6890?q=80&w=2070&auto=format&fit=crop',
     theme: 'aurora',
     clockType: 'digital',
     searchEngine: 'google',
     userName: '',
-    widgets: { clock: true, weather: true, calendar: true, todoList: true, aiAssistant: false, appShortcuts: false, musicPlayer: false, newsFeed: true, analogClock: false },
-    widgetSizes: { clock: 'small', analogClock: 'small', weather: 'medium', calendar: 'small', todoList: 'medium', aiAssistant: 'medium', appShortcuts: 'medium', musicPlayer: 'medium', newsFeed: 'medium' },
+    widgets: { clock: true, weather: true, calendar: true, todoList: true, aiAssistant: false, notes: false, appShortcuts: false, musicPlayer: false, newsFeed: true, analogClock: false },
+    widgetSizes: { clock: 'small', analogClock: 'small', weather: 'medium', calendar: 'small', todoList: 'medium', aiAssistant: 'large', notes: 'medium', appShortcuts: 'medium', musicPlayer: 'medium', newsFeed: 'medium' },
     widgetPositions: {
       clock: { x: 50, y: 100 },
       weather: { x: 400, y: 80 },
@@ -46,6 +48,7 @@ const App: React.FC = () => {
       newsFeed: { x: 700, y: 350 },
       analogClock: { x: 200, y: 100 },
       aiAssistant: { x: 400, y: 350 },
+      notes: { x: 600, y: 400 },
       appShortcuts: { x: 500, y: 500 },
       musicPlayer: { x: 800, y: 500 },
     },
@@ -65,6 +68,29 @@ const App: React.FC = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isFocusMode, setIsFocusMode] = useState(false);
 
+  // Apply manual custom colors
+  useEffect(() => {
+    if (settings.customColors && !settings.autoThemeFromWallpaper) {
+      applyCustomColors(settings.customColors);
+    }
+  }, [settings.customColors, settings.autoThemeFromWallpaper]);
+
+  // Apply custom colors or extract from wallpaper
+  useEffect(() => {
+    if (settings.autoThemeFromWallpaper && (settings.wallpaperFile || settings.wallpaperUrl)) {
+      // Auto-detect colors from wallpaper
+      const imageUrl = settings.wallpaperFile || settings.wallpaperUrl || '';
+      extractColorsFromImage(imageUrl)
+        .then((colors) => {
+          console.log('Extracted colors:', colors);
+          applyCustomColors(colors);
+        })
+        .catch((error) => {
+          console.error('Failed to extract colors:', error);
+        });
+    }
+  }, [settings.wallpaperFile, settings.wallpaperUrl, settings.autoThemeFromWallpaper]);
+
   const updateWidgetPosition = (id: WidgetId, x: number, y: number) => {
     setSettings(prev => ({
       ...prev,
@@ -81,7 +107,8 @@ const App: React.FC = () => {
     weather: <Weather apiKey={settings.apiKeys.weather} />,
     calendar: <Calendar />,
     todoList: <TodoList />,
-    aiAssistant: <AIWidget apiKey={settings.apiKeys.gemini} />,
+    aiAssistant: <AIWidget apiKey={settings.apiKeys.gemini} groqKey={settings.apiKeys.groq} />,
+    notes: <NotesWidget />,
     appShortcuts: <AppShortcuts shortcuts={settings.shortcuts} />,
     musicPlayer: <MusicPlayer />,
     newsFeed: <NewsFeed />,
@@ -93,28 +120,26 @@ const App: React.FC = () => {
             className={`h-screen w-screen text-white bg-cover bg-center bg-fixed overflow-hidden relative ${!settings.wallpaperFile && !settings.wallpaperUrl ? 'bg-theme-gradient' : ''}`}
             style={{ backgroundImage: settings.wallpaperFile || settings.wallpaperUrl ? `url(${settings.wallpaperFile || settings.wallpaperUrl})` : undefined }}
         >
-            {/* Top-Left: Logo/Brand */}
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="fixed top-6 left-6 z-50"
-            >
-              <div className="flex items-center gap-3 px-4 py-3 bg-black/30 backdrop-blur-md rounded-2xl border border-white/10">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">I</span>
+            {/* Top-Left: Logo/Brand & Focus Button */}
+            <div className="fixed top-6 left-6 z-50 flex items-center gap-3">
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+              >
+                <div className="flex items-center gap-3 px-4 py-3 bg-black/30 backdrop-blur-md rounded-2xl border border-white/10">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center">
+                    <span className="text-white font-bold text-lg">I</span>
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-white">Ionex</div>
+                    <div className="text-xs text-white/70">New Tab</div>
+                  </div>
                 </div>
-                <div>
-                  <div className="text-sm font-bold text-white">Ionex</div>
-                  <div className="text-xs text-white/70">New Tab</div>
-                </div>
-              </div>
-            </motion.div>
+              </motion.div>
 
-            {/* Top-Right: Settings & Focus Mode */}
-            <div className="fixed top-6 right-6 z-50 flex items-center gap-3">
               {/* Focus Mode Button */}
               <motion.button 
-                initial={{ opacity: 0, x: 20 }}
+                initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 }}
                 onClick={() => setIsFocusMode(true)} 
@@ -124,8 +149,10 @@ const App: React.FC = () => {
               >
                 <Zap className="w-6 h-6 icon-color group-hover:rotate-12 transition-transform duration-300" />
               </motion.button>
+            </div>
 
-              {/* Settings Button */}
+            {/* Top-Right: Settings Button */}
+            <div className="fixed top-6 right-6 z-50">
               <motion.button 
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}

@@ -34,7 +34,23 @@ body {
 }
 
 
-/* Theme variables */
+/* Theme variables - MaterialYou pattern */
+
+:root {
+    /* Default MaterialYou color system */
+    --bg-color: #BBD6FD;
+    --accent-light-tint: #E2EEFF;
+    --darker-color: #3569B2;
+    --dark-color: #4382EC;
+    --text-color-dark: #1B3041;
+    --whitish-color: #FFFFFF;
+    /* Legacy variables for backwards compatibility */
+    --primary-color: #4382EC;
+    --secondary-color: #3569B2;
+    --accent-color: #5B9EFF;
+    --bg-gradient-start: #1B3041;
+    --bg-gradient-end: #3569B2;
+}
 
 .theme-aurora {
     --primary-color: #a78bfa;
@@ -42,6 +58,14 @@ body {
     --accent-color: #c084fc;
     --bg-gradient-start: #1e1b4b;
     --bg-gradient-end: #312e81;
+    --default-wallpaper: url('https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2070');
+    /* MaterialYou shades */
+    --dark-color: #a78bfa;
+    --bg-color: #e9d5ff;
+    --accent-light-tint: #f3e8ff;
+    --darker-color: #7c3aed;
+    --text-color-dark: #4c1d95;
+    --whitish-color: #ffffff;
 }
 
 .theme-sunset {
@@ -50,6 +74,14 @@ body {
     --accent-color: #fbbf24;
     --bg-gradient-start: #7c2d12;
     --bg-gradient-end: #9a3412;
+    --default-wallpaper: url('https://images.unsplash.com/photo-1495567720989-cebdbdd97913?q=80&w=2070');
+    /* MaterialYou shades */
+    --dark-color: #fb923c;
+    --bg-color: #fed7aa;
+    --accent-light-tint: #ffedd5;
+    --darker-color: #c2410c;
+    --text-color-dark: #7c2d12;
+    --whitish-color: #ffffff;
 }
 
 .theme-ocean {
@@ -58,6 +90,14 @@ body {
     --accent-color: #22d3ee;
     --bg-gradient-start: #164e63;
     --bg-gradient-end: #0e7490;
+    --default-wallpaper: url('https://images.unsplash.com/photo-1505142468610-359e7d316be0?q=80&w=2026');
+    /* MaterialYou shades */
+    --dark-color: #06b6d4;
+    --bg-color: #a5f3fc;
+    --accent-light-tint: #cffafe;
+    --darker-color: #0e7490;
+    --text-color-dark: #164e63;
+    --whitish-color: #ffffff;
 }
 
 .theme-forest {
@@ -66,6 +106,14 @@ body {
     --accent-color: #6ee7b7;
     --bg-gradient-start: #064e3b;
     --bg-gradient-end: #065f46;
+    --default-wallpaper: url('https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2232');
+    /* MaterialYou shades */
+    --dark-color: #34d399;
+    --bg-color: #a7f3d0;
+    --accent-light-tint: #d1fae5;
+    --darker-color: #065f46;
+    --text-color-dark: #064e3b;
+    --whitish-color: #ffffff;
 }
 
 .icon-color {
@@ -177,5 +225,42 @@ body {
     to {
         opacity: 1;
         transform: scale(1);
+    }
+}
+
+
+/* Focus Mode calming animations */
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes breathe {
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.3;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.5;
+    }
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
     }
 }

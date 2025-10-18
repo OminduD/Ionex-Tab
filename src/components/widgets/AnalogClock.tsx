@@ -21,19 +21,29 @@ const AnalogClock: React.FC<AnalogClockProps> = ({ showDigital = false }) => {
   const hourAngle = (hours * 30 + minutes * 0.5) - 90;
 
   return (
-    <div className="flex flex-col items-center justify-center h-full">
+    <div className="flex flex-col items-center justify-center h-full p-4">
       <div className="relative w-40 h-40">
+        {/* Glow effect */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent opacity-10 rounded-full blur-xl" />
+        
         {/* Clock face */}
-        <svg className="w-full h-full" viewBox="0 0 200 200">
-          {/* Clock circle */}
+        <svg className="w-full h-full relative z-10" viewBox="0 0 200 200">
+          {/* Clock circle with gradient */}
+          <defs>
+            <linearGradient id="clockGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" className="text-primary" style={{ stopColor: 'var(--primary-color)' }} />
+              <stop offset="100%" className="text-accent" style={{ stopColor: 'var(--accent-color)' }} />
+            </linearGradient>
+          </defs>
+          
           <circle
             cx="100"
             cy="100"
             r="90"
-            fill="none"
-            stroke="currentColor"
+            fill="rgba(255,255,255,0.05)"
+            stroke="url(#clockGradient)"
             strokeWidth="4"
-            className="opacity-30"
+            className="opacity-80"
           />
           
           {/* Hour markers */}

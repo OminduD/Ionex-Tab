@@ -24,7 +24,7 @@ const aiTools: AITool[] = [
   { name: 'Mistral', url: 'https://chat.mistral.ai', icon: Zap, color: '#ff7000' },
   { name: 'Pi AI', url: 'https://pi.ai', icon: Brain, color: '#ff6b6b' },
   { name: 'DeepSeek', url: 'https://chat.deepseek.com', icon: Code, color: '#4a9eff' },
-  { name: 'Groq', url: 'https://groq.com', icon: Zap, color: '#f97316' },
+  { name: 'Grok AI', url: 'https://x.com/i/grok', icon: Zap, color: '#f97316' },
   { name: 'HuggingChat', url: 'https://huggingface.co/chat', icon: MessageSquare, color: '#ffbe0b' },
 ];
 

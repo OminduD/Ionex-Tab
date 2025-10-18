@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { Todo } from '../../types';
 import { CheckSquareIcon, SquareIcon, Trash2Icon, PlusIcon } from '../icons';
+import { Download, Upload } from 'lucide-react';
 
 const TodoList: React.FC = () => {
   const [todos, setTodos] = useLocalStorage<Todo[]>('homeTabTodos', []);
@@ -22,9 +23,58 @@ const TodoList: React.FC = () => {
     setTodos(todos.filter((todo: Todo) => todo.id !== id));
   };
 
+  const exportTodos = () => {
+    const dataStr = JSON.stringify(todos, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `todos-${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const importTodos = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const importedTodos = JSON.parse(event.target?.result as string);
+          setTodos(importedTodos);
+        } catch (error) {
+          alert('Invalid file format');
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
+
   return (
     <div className="p-4 h-full flex flex-col">
-      <h3 className="text-lg font-bold mb-3">To-Do List</h3>
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-lg font-bold">To-Do List</h3>
+        <div className="flex gap-2">
+          <button
+            onClick={exportTodos}
+            title="Export todos"
+            className="p-2 bg-white/10 hover:bg-white/20 rounded transition-colors"
+          >
+            <Download className="w-4 h-4" />
+          </button>
+          <label className="cursor-pointer">
+            <input
+              type="file"
+              accept=".json"
+              onChange={importTodos}
+              className="hidden"
+            />
+            <div className="p-2 bg-white/10 hover:bg-white/20 rounded transition-colors">
+              <Upload className="w-4 h-4" />
+            </div>
+          </label>
+        </div>
+      </div>
       
       <div className="flex gap-2 mb-3">
         <input
@@ -37,6 +87,7 @@ const TodoList: React.FC = () => {
         />
         <button
           onClick={addTodo}
+          title="Add todo"
           className="bg-white/20 hover:bg-white/30 rounded px-3 py-2 transition-colors"
         >
           <PlusIcon className="w-5 h-5" />
