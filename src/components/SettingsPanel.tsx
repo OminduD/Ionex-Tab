@@ -95,6 +95,21 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                     </button>
                 </div>
 
+                {/* Personal Settings Section */}
+                <section className="mb-6">
+                    <h3 className="text-lg font-semibold mb-3">Personal Settings</h3>
+                    <div>
+                        <label className="block text-sm mb-2 opacity-70">Your Name (for greeting)</label>
+                        <input
+                            type="text"
+                            value={localSettings.userName || ''}
+                            onChange={(e) => setLocalSettings({ ...localSettings, userName: e.target.value })}
+                            placeholder="Enter your name"
+                            className="w-full bg-white/10 rounded-lg px-4 py-2 outline-none focus:bg-white/20"
+                        />
+                    </div>
+                </section>
+
                 {/* Wallpaper Section */}
                 <section className="mb-6">
                     <h3 className="text-lg font-semibold mb-3">Wallpaper</h3>

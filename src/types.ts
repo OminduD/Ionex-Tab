@@ -31,6 +31,7 @@ export interface Settings {
   widgetSizes: Record<string, WidgetSize>;
   widgetPositions: Record<string, WidgetPosition>;
   shortcuts: Shortcut[];
+  userName?: string; // User's name for greeting
   apiKeys: {
     weather: string;
     gemini: string;

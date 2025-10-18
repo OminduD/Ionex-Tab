@@ -9,7 +9,9 @@ import { SettingsPanel } from './components/SettingsPanel';
 import { SearchBar } from './components/SearchBar';
 import { QuickLinks } from './components/QuickLinks';
 import { AIToolsButton } from './components/AIToolsButton';
+import { Greeting } from './components/Greeting';
 import { motion } from 'framer-motion';
+import { Zap } from 'lucide-react';
 
 // Dynamically import widgets
 const Clock = React.lazy(() => import('./components/widgets/Clock'));
@@ -24,12 +26,16 @@ const NewsFeed = React.lazy(() => import('./components/widgets/NewsFeed'));
 const FocusMode = React.lazy(() => import('./components/widgets/FocusMode'));
 const DraggableWidget = React.lazy(() => import('./components/DraggableWidget'));
 
+// Default API key for weather (free tier OpenWeatherMap)
+const DEFAULT_WEATHER_API_KEY = 'bd5e378503939ddaee76f12ad7a97608';
+
 const App: React.FC = () => {
-  const [settings, setSettings] = useLocalStorage<Settings>('homeTabSettings-v5', {
+  const [settings, setSettings] = useLocalStorage<Settings>('homeTabSettings-v6', {
     wallpaperUrl: 'https://images.unsplash.com/photo-1507525428034-b723a9ce6890?q=80&w=2070&auto=format&fit=crop',
     theme: 'aurora',
     clockType: 'digital',
     searchEngine: 'google',
+    userName: '',
     widgets: { clock: true, weather: true, calendar: true, todoList: true, aiAssistant: false, appShortcuts: false, musicPlayer: false, newsFeed: true, analogClock: false },
     widgetSizes: { clock: 'small', analogClock: 'small', weather: 'medium', calendar: 'small', todoList: 'medium', aiAssistant: 'medium', appShortcuts: 'medium', musicPlayer: 'medium', newsFeed: 'medium' },
     widgetPositions: {
@@ -53,7 +59,7 @@ const App: React.FC = () => {
         { id: '7', name: 'Twitter', url: 'https://twitter.com', icon: 'twitter' },
         { id: '8', name: 'Figma', url: 'https://figma.com', icon: 'figma' },
     ],
-    apiKeys: { weather: '', gemini: '' },
+    apiKeys: { weather: DEFAULT_WEATHER_API_KEY, gemini: '' },
   });
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -84,8 +90,8 @@ const App: React.FC = () => {
   return (
     <div className={`theme-${settings.theme} font-sans`}>
         <div 
-            className="h-screen w-screen text-white bg-cover bg-center bg-fixed overflow-hidden relative"
-            style={{ backgroundImage: `url(${settings.wallpaperFile || settings.wallpaperUrl})` }}
+            className={`h-screen w-screen text-white bg-cover bg-center bg-fixed overflow-hidden relative ${!settings.wallpaperFile && !settings.wallpaperUrl ? 'bg-theme-gradient' : ''}`}
+            style={{ backgroundImage: settings.wallpaperFile || settings.wallpaperUrl ? `url(${settings.wallpaperFile || settings.wallpaperUrl})` : undefined }}
         >
             {/* Top-Left: Logo/Brand */}
             <motion.div 
@@ -104,28 +110,48 @@ const App: React.FC = () => {
               </div>
             </motion.div>
 
-            {/* Top-Right: Settings */}
-            <motion.button 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              onClick={() => setIsSettingsOpen(true)} 
-              className="fixed top-6 right-6 z-50 p-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 hover:bg-black/40 transition-all hover:scale-110" 
-              aria-label="Settings"
-            >
-              <SettingsIcon className="w-6 h-6 icon-color" />
-            </motion.button>
+            {/* Top-Right: Settings & Focus Mode */}
+            <div className="fixed top-6 right-6 z-50 flex items-center gap-3">
+              {/* Focus Mode Button */}
+              <motion.button 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 }}
+                onClick={() => setIsFocusMode(true)} 
+                className="p-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 hover:bg-black/40 transition-all hover:scale-110 group" 
+                aria-label="Focus Mode"
+                title="Focus Mode"
+              >
+                <Zap className="w-6 h-6 icon-color group-hover:rotate-12 transition-transform duration-300" />
+              </motion.button>
+
+              {/* Settings Button */}
+              <motion.button 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                onClick={() => setIsSettingsOpen(true)} 
+                className="p-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 hover:bg-black/40 transition-all hover:scale-110" 
+                aria-label="Settings"
+              >
+                <SettingsIcon className="w-6 h-6 icon-color" />
+              </motion.button>
+            </div>
 
             {/* Bottom-Left: AI Tools Button */}
             <AIToolsButton />
 
-            {/* Center: Search Bar (Fixed Position) */}
+            {/* Center: Greeting + Search Bar (Fixed Position) */}
             <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 w-full max-w-4xl px-6">
+              <Greeting userName={settings.userName} />
+              
               <SearchBar 
                 selectedEngine={settings.searchEngine}
                 onEngineChange={(engine) => setSettings({ ...settings, searchEngine: engine })}
               />
-              
-              {/* Quick Links Bar (Fixed Below Search) */}
+            </div>
+
+            {/* Bottom: Quick Links Bar (Fixed at Bottom) */}
+            <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40 w-full max-w-6xl px-6">
               <QuickLinks 
                 shortcuts={settings.shortcuts}
                 theme={settings.theme}
@@ -146,7 +172,7 @@ const App: React.FC = () => {
                                key={widgetId}
                                id={widgetId}
                                position={position}
-                               onPositionChange={(x, y) => updateWidgetPosition(widgetId, x, y)}
+                               onPositionChange={(x: number, y: number) => updateWidgetPosition(widgetId, x, y)}
                                size={settings.widgetSizes[widgetId] || 'small'}
                            >
                                {widgetMap[widgetId]}

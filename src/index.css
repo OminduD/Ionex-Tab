@@ -40,24 +40,32 @@ body {
     --primary-color: #a78bfa;
     --secondary-color: #818cf8;
     --accent-color: #c084fc;
+    --bg-gradient-start: #1e1b4b;
+    --bg-gradient-end: #312e81;
 }
 
 .theme-sunset {
     --primary-color: #fb923c;
     --secondary-color: #f59e0b;
     --accent-color: #fbbf24;
+    --bg-gradient-start: #7c2d12;
+    --bg-gradient-end: #9a3412;
 }
 
 .theme-ocean {
     --primary-color: #06b6d4;
     --secondary-color: #0891b2;
     --accent-color: #22d3ee;
+    --bg-gradient-start: #164e63;
+    --bg-gradient-end: #0e7490;
 }
 
 .theme-forest {
     --primary-color: #34d399;
     --secondary-color: #10b981;
     --accent-color: #6ee7b7;
+    --bg-gradient-start: #064e3b;
+    --bg-gradient-end: #065f46;
 }
 
 .icon-color {
@@ -72,7 +80,45 @@ body {
     background-color: var(--primary-color, #a78bfa);
 }
 
+.bg-theme-secondary {
+    background-color: var(--secondary-color, #818cf8);
+}
+
+.bg-theme-accent {
+    background-color: var(--accent-color, #c084fc);
+}
+
 .border-theme-primary {
+    border-color: var(--primary-color, #a78bfa);
+}
+
+.border-theme-accent {
+    border-color: var(--accent-color, #c084fc);
+}
+
+.text-theme-primary {
+    color: var(--primary-color, #a78bfa);
+}
+
+.text-theme-accent {
+    color: var(--accent-color, #c084fc);
+}
+
+
+/* Theme background (when no wallpaper) */
+
+.bg-theme-gradient {
+    background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+}
+
+
+/* Hover states with theme colors */
+
+.hover-theme-primary:hover {
+    background-color: var(--primary-color, #a78bfa);
+}
+
+.hover-theme-border:hover {
     border-color: var(--primary-color, #a78bfa);
 }
 

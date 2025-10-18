@@ -3,8 +3,8 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search } from 'lucide-react';
-import { SiGoogle, SiDuckduckgo, SiBrave, SiYoutube } from 'react-icons/si';
+import { Search, Globe } from 'lucide-react';
+import { SiGoogle, SiDuckduckgo, SiBrave, SiYoutube, SiBaidu } from 'react-icons/si';
 import { TbBrandBing } from 'react-icons/tb';
 
 interface SearchEngine {
@@ -20,6 +20,11 @@ const searchEngines: SearchEngine[] = [
   { id: 'bing', name: 'Bing', icon: TbBrandBing, searchUrl: 'https://www.bing.com/search?q=' },
   { id: 'brave', name: 'Brave', icon: SiBrave, searchUrl: 'https://search.brave.com/search?q=' },
   { id: 'youtube', name: 'YouTube', icon: SiYoutube, searchUrl: 'https://www.youtube.com/results?search_query=' },
+  { id: 'ecosia', name: 'Ecosia', icon: Globe, searchUrl: 'https://www.ecosia.org/search?q=' },
+  { id: 'startpage', name: 'Start', icon: Globe, searchUrl: 'https://www.startpage.com/do/search?q=' },
+  { id: 'qwant', name: 'Qwant', icon: Globe, searchUrl: 'https://www.qwant.com/?q=' },
+  { id: 'yandex', name: 'Yandex', icon: Globe, searchUrl: 'https://yandex.com/search/?text=' },
+  { id: 'baidu', name: 'Baidu', icon: SiBaidu, searchUrl: 'https://www.baidu.com/s?wd=' },
 ];
 
 interface Props {
@@ -35,8 +40,8 @@ export const SearchBar: React.FC<Props> = ({ selectedEngine = 'google', onEngine
     e.preventDefault();
     if (query.trim()) {
       const engine = searchEngines.find(e => e.id === activeEngine) || searchEngines[0];
-      window.open(engine.searchUrl + encodeURIComponent(query), '_blank');
-      setQuery('');
+      // Search in current tab instead of new tab
+      window.location.href = engine.searchUrl + encodeURIComponent(query);
     }
   };
 
