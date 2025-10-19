@@ -10,6 +10,7 @@ import { SearchBar } from './components/SearchBar';
 import { QuickLinks } from './components/QuickLinks';
 import { AIToolsButton } from './components/AIToolsButton';
 import { Greeting } from './components/Greeting';
+import { QuoteAndIP } from './components/QuoteAndIP';
 import { motion } from 'framer-motion';
 import { Zap } from 'lucide-react';
 import { extractColorsFromImage, applyCustomColors } from './utils/colorExtractorImproved';

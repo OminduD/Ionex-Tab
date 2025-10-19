@@ -132,7 +132,7 @@ export const Greeting: React.FC<GreetingProps> = ({ userName }) => {
           ))}
         </AnimatePresence>
 
-        {/* Username with wave animation */}
+        {/* Username without wave animation */}
         {userName && (
           <>
             <motion.span
@@ -141,7 +141,7 @@ export const Greeting: React.FC<GreetingProps> = ({ userName }) => {
               transition={{ delay: 0.5 }}
               className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent"
             >
-              ,
+              , 
             </motion.span>
             {nameChars.map((char, index) => (
               <motion.span

@@ -1,9 +1,10 @@
 // src/components/SettingsPanel.tsx
-// The settings panel component for managing all user preferences.
+// The settings panel component - Completely redesigned with animations and new UI
 
 import React, { useState, useEffect } from 'react';
 import { Settings, WidgetSize } from '../types';
 import { XIcon, PlusIcon, Trash2Icon, UploadIcon, ImageIcon } from './icons';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
   settings: Settings;
@@ -12,26 +13,54 @@ interface Props {
   onClose: () => void;
 }
 
-const themes: Record<string, { name: string; class: string; wallpaper: string }> = {
+const themes: Record<string, { name: string; class: string; wallpaper: string; colors: string[] }> = {
     aurora: { 
         name: 'Aurora', 
         class: 'bg-gradient-to-br from-indigo-500 to-purple-600',
-        wallpaper: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2070&auto=format&fit=crop'
+        wallpaper: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2070&auto=format&fit=crop',
+        colors: ['#6366f1', '#8b5cf6', '#a855f7']
     },
     sunset: { 
         name: 'Sunset', 
         class: 'bg-gradient-to-br from-orange-500 to-red-600',
-        wallpaper: 'https://images.unsplash.com/photo-1495567720989-cebdbdd97913?q=80&w=2070&auto=format&fit=crop'
+        wallpaper: 'https://images.unsplash.com/photo-1495567720989-cebdbdd97913?q=80&w=2070&auto=format&fit=crop',
+        colors: ['#f97316', '#ef4444', '#dc2626']
     },
     forest: { 
         name: 'Forest', 
-        class: 'bg-gradient-to-br from-green-500 to-teal-600',
-        wallpaper: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop'
+        class: 'bg-gradient-to-br from-green-600 to-emerald-700',
+        wallpaper: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop',
+        colors: ['#16a34a', '#047857', '#065f46']
     },
     ocean: { 
         name: 'Ocean', 
-        class: 'bg-gradient-to-br from-blue-400 to-cyan-500',
-        wallpaper: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?q=80&w=2026&auto=format&fit=crop'
+        class: 'bg-gradient-to-br from-blue-500 to-sky-600',
+        wallpaper: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?q=80&w=2026&auto=format&fit=crop',
+        colors: ['#3b82f6', '#0284c7', '#0369a1']
+    },
+    midnight: {
+        name: 'Midnight',
+        class: 'bg-gradient-to-br from-slate-900 to-purple-900',
+        wallpaper: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070&auto=format&fit=crop',
+        colors: ['#0f172a', '#581c87', '#6b21a8']
+    },
+    lavender: {
+        name: 'Lavender',
+        class: 'bg-gradient-to-br from-violet-400 to-fuchsia-500',
+        wallpaper: 'https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029&auto=format&fit=crop',
+        colors: ['#a78bfa', '#d946ef', '#c026d3']
+    },
+    coral: {
+        name: 'Coral',
+        class: 'bg-gradient-to-br from-rose-500 to-amber-500',
+        wallpaper: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop',
+        colors: ['#f43f5e', '#f59e0b', '#d97706']
+    },
+    emerald: {
+        name: 'Emerald',
+        class: 'bg-gradient-to-br from-teal-400 to-cyan-600',
+        wallpaper: 'https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2932&auto=format&fit=crop',
+        colors: ['#2dd4bf', '#0891b2', '#0e7490']
     },
 };
 
@@ -99,286 +128,452 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
     };
 
     return (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center" onClick={handleSave}>
-            <div
-                className="bg-gray-900/95 backdrop-blur-lg p-6 rounded-2xl text-white shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto m-4 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
-                onClick={e => e.stopPropagation()}
-            >
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold">Settings</h2>
-                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
-                        <XIcon className="w-6 h-6" />
-                    </button>
-                </div>
-
-                {/* Personal Settings Section */}
-                <section className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3">Personal Settings</h3>
-                    <div>
-                        <label className="block text-sm mb-2 opacity-70">Your Name (for greeting)</label>
-                        <input
-                            type="text"
-                            value={localSettings.userName || ''}
-                            onChange={(e) => setLocalSettings({ ...localSettings, userName: e.target.value })}
-                            placeholder="Enter your name"
-                            className="w-full bg-white/10 rounded-lg px-4 py-2 outline-none focus:bg-white/20"
-                        />
-                    </div>
-                </section>
-
-                {/* Wallpaper Section */}
-                <section className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3">Wallpaper</h3>
-                    
-                    {/* Auto Theme Toggle */}
-                    <div className="mb-3 p-3 bg-white/5 rounded-lg">
-                        <label className="flex items-center gap-3 cursor-pointer">
-                            <input
-                                type="checkbox"
-                                checked={localSettings.autoThemeFromWallpaper || false}
-                                onChange={(e) => setLocalSettings({ 
-                                    ...localSettings, 
-                                    autoThemeFromWallpaper: e.target.checked 
-                                })}
-                                className="w-5 h-5 rounded"
+        <AnimatePresence>
+            {isVisible && (
+                <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                    onClick={handleSave}
+                >
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                        animate={{ scale: 1, opacity: 1, y: 0 }}
+                        exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                        className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-3xl shadow-2xl"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        {/* Animated gradient background */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+                            <motion.div
+                                className="absolute inset-0 opacity-30"
+                                animate={{
+                                    background: [
+                                        'radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%)',
+                                        'radial-gradient(circle at 80% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%)',
+                                        'radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%)',
+                                    ],
+                                }}
+                                transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
                             />
-                            <div>
-                                <div className="font-medium">Auto-detect theme colors from wallpaper</div>
-                                <div className="text-xs text-white/60">Automatically extract and apply colors from your wallpaper</div>
-                            </div>
-                        </label>
-                    </div>
-                    
-                    {/* Upload from device */}
-                    <div className="mb-3">
-                        <label className="block text-sm mb-2 opacity-70">Upload from Device</label>
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleFileUpload}
-                                className="hidden"
-                                id="wallpaper-upload"
-                            />
-                            <label 
-                                htmlFor="wallpaper-upload"
-                                className="flex-1 bg-white/10 rounded-lg px-4 py-2 cursor-pointer hover:bg-white/20 transition-colors flex items-center gap-2"
+                        </div>
+
+                        {/* Content container */}
+                        <div className="relative bg-black/20 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
+                            {/* Header */}
+                            <motion.div 
+                                initial={{ y: -20, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ delay: 0.1 }}
+                                className="sticky top-0 z-10 bg-gradient-to-r from-gray-900/95 to-gray-800/95 backdrop-blur-xl border-b border-white/10 px-8 py-6"
                             >
-                                <UploadIcon className="w-5 h-5" />
-                                <span>{localSettings.wallpaperFile ? 'Change Image' : 'Choose Image'}</span>
-                            </label>
-                            {localSettings.wallpaperFile && (
-                                <button
-                                    onClick={() => setLocalSettings({ ...localSettings, wallpaperFile: undefined })}
-                                    className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-colors"
+                                <div className="flex justify-between items-center">
+                                    <div className="flex items-center gap-4">
+                                        <motion.img 
+                                            src="/Ionex.png" 
+                                            alt="Ionex Logo" 
+                                            className="w-12 h-12 rounded-xl object-contain"
+                                            whileHover={{ rotate: 360, scale: 1.1 }}
+                                            transition={{ duration: 0.6 }}
+                                            onError={(e) => e.currentTarget.style.display = 'none'}
+                                        />
+                                        <div>
+                                            <motion.h2 
+                                                initial={{ x: -20 }}
+                                                animate={{ x: 0 }}
+                                                className="text-3xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent"
+                                            >
+                                                Settings
+                                            </motion.h2>
+                                            <p className="text-sm text-white/50">Customize your experience</p>
+                                        </div>
+                                    </div>
+                                    <motion.button 
+                                        onClick={onClose}
+                                        whileHover={{ scale: 1.1, rotate: 90 }}
+                                        whileTap={{ scale: 0.9 }}
+                                        className="p-3 hover:bg-white/10 rounded-xl transition-colors group"
+                                        title="Close"
+                                    >
+                                        <XIcon className="w-6 h-6 text-white/70 group-hover:text-white" />
+                                    </motion.button>
+                                </div>
+                            </motion.div>
+
+                            {/* Scrollable content */}
+                            <div className="overflow-y-auto max-h-[calc(90vh-120px)] px-8 py-6 space-y-8 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
+                                
+                                {/* Personal Settings */}
+                                <motion.section
+                                    initial={{ x: -50, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.2 }}
+                                    className="space-y-4"
                                 >
-                                    Clear
-                                </button>
-                            )}
-                        </div>
-                    </div>
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <span className="material-icons text-primary" style={{ fontSize: '28px' }}>person</span>
+                                        <h3 className="text-2xl font-bold text-white">Personal</h3>
+                                    </div>
+                                    <motion.div 
+                                        whileHover={{ scale: 1.01 }}
+                                        className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all"
+                                    >
+                                        <label className="block text-sm font-medium text-white/70 mb-3">Your Name</label>
+                                        <input
+                                            type="text"
+                                            value={localSettings.userName || ''}
+                                            onChange={(e) => setLocalSettings({ ...localSettings, userName: e.target.value })}
+                                            placeholder="Enter your name"
+                                            className="w-full bg-white/10 border border-white/20 rounded-xl px-5 py-3 text-white outline-none focus:bg-white/15 focus:border-primary transition-all placeholder-white/30"
+                                        />
+                                    </motion.div>
+                                </motion.section>
 
-                    {/* URL input */}
-                    <div>
-                        <label className="block text-sm mb-2 opacity-70">Or use Image URL</label>
-                        <div className="flex items-center gap-2">
-                            <ImageIcon className="w-5 h-5 opacity-50" />
-                            <input
-                                type="text"
-                                value={localSettings.wallpaperUrl}
-                                onChange={(e) => setLocalSettings({ ...localSettings, wallpaperUrl: e.target.value, wallpaperFile: undefined })}
-                                placeholder="Enter image URL"
-                                className="flex-1 bg-white/10 rounded-lg px-4 py-2 outline-none focus:bg-white/20"
-                                disabled={!!localSettings.wallpaperFile}
-                            />
-                        </div>
-                    </div>
-                </section>
-
-                {/* Theme Section */}
-                <section className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3">Theme</h3>
-                    <div className="grid grid-cols-2 gap-3">
-                        {Object.entries(themes).map(([key, theme]) => (
-                            <button
-                                key={key}
-                                onClick={() => setLocalSettings({ 
-                                    ...localSettings, 
-                                    theme: key, 
-                                    customColors: undefined,
-                                    wallpaperUrl: theme.wallpaper,
-                                    wallpaperFile: undefined
-                                })}
-                                className={`p-3 rounded-lg ${theme.class} ${localSettings.theme === key && !localSettings.customColors ? 'ring-2 ring-white' : ''} transition-all`}
-                            >
-                                {theme.name}
-                            </button>
-                        ))}
-                    </div>
-                </section>
-
-
-
-                {/* Widgets Section */}
-                <section className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3">Widgets</h3>
-                    <div className="space-y-2">
-                        {Object.entries(localSettings.widgets).map(([key, enabled]) => (
-                            <div key={key} className="p-3 bg-white/5 rounded-lg hover:bg-white/10">
-                                <label className="flex items-center justify-between cursor-pointer">
-                                    <span className="capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                                    <input
-                                        type="checkbox"
-                                        checked={Boolean(enabled)}
-                                        onChange={(e) => setLocalSettings({
-                                            ...localSettings,
-                                            widgets: { ...localSettings.widgets, [key]: e.target.checked }
-                                        })}
-                                        className="w-5 h-5"
-                                    />
-                                </label>
-                                {enabled && (
-                                    <div className="mt-2 flex gap-2">
-                                        <span className="text-xs opacity-70">Size:</span>
-                                        {(['small', 'medium', 'large'] as WidgetSize[]).map((size) => (
-                                            <button
-                                                key={size}
-                                                onClick={() => setLocalSettings({
-                                                    ...localSettings,
-                                                    widgetSizes: { ...localSettings.widgetSizes, [key]: size }
+                                {/* Theme Section */}
+                                <motion.section
+                                    initial={{ x: -50, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.3 }}
+                                    className="space-y-4"
+                                >
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <span className="material-icons text-primary" style={{ fontSize: '28px' }}>palette</span>
+                                        <h3 className="text-2xl font-bold text-white">Themes</h3>
+                                    </div>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        {Object.entries(themes).map(([key, theme], index) => (
+                                            <motion.button
+                                                key={key}
+                                                initial={{ scale: 0, opacity: 0 }}
+                                                animate={{ scale: 1, opacity: 1 }}
+                                                transition={{ delay: 0.4 + index * 0.05, type: 'spring' }}
+                                                whileHover={{ scale: 1.05, y: -5 }}
+                                                whileTap={{ scale: 0.95 }}
+                                                onClick={() => setLocalSettings({ 
+                                                    ...localSettings, 
+                                                    theme: key, 
+                                                    customColors: undefined,
+                                                    wallpaperUrl: theme.wallpaper,
+                                                    wallpaperFile: undefined
                                                 })}
-                                                className={`text-xs px-2 py-1 rounded ${
-                                                    localSettings.widgetSizes[key] === size 
-                                                        ? 'bg-blue-500 text-white' 
-                                                        : 'bg-white/10 text-white/70'
+                                                className={`relative p-6 rounded-2xl ${theme.class} overflow-hidden group ${
+                                                    localSettings.theme === key ? 'ring-4 ring-white shadow-2xl' : 'ring-2 ring-white/20'
                                                 }`}
                                             >
-                                                {size}
-                                            </button>
+                                                {/* Animated shine effect */}
+                                                <motion.div
+                                                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                                                    initial={{ x: '-100%' }}
+                                                    whileHover={{ x: '100%' }}
+                                                    transition={{ duration: 0.6 }}
+                                                />
+                                                
+                                                <div className="relative z-10">
+                                                    <div className="text-white font-bold text-lg mb-2">{theme.name}</div>
+                                                    <div className="flex gap-1 justify-center">
+                                                        {theme.colors.map((color, i) => (
+                                                            <motion.div
+                                                                key={i}
+                                                                className="w-3 h-3 rounded-full border border-white/30"
+                                                                style={{ backgroundColor: color }}
+                                                                whileHover={{ scale: 1.5 }}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                                
+                                                {localSettings.theme === key && (
+                                                    <motion.div
+                                                        initial={{ scale: 0 }}
+                                                        animate={{ scale: 1 }}
+                                                        className="absolute top-2 right-2"
+                                                    >
+                                                        <span className="material-icons text-white" style={{ fontSize: '24px' }}>check_circle</span>
+                                                    </motion.div>
+                                                )}
+                                            </motion.button>
                                         ))}
                                     </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </section>
+                                </motion.section>
 
-                {/* Clock Type Section */}
-                <section className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3">Clock Display</h3>
-                    <div className="grid grid-cols-3 gap-3">
-                        {['digital', 'analog', 'both'].map((type) => (
-                            <button
-                                key={type}
-                                onClick={() => setLocalSettings({ ...localSettings, clockType: type as 'digital' | 'analog' | 'both' })}
-                                className={`p-3 rounded-lg ${localSettings.clockType === type ? 'bg-blue-500' : 'bg-white/10'} hover:bg-blue-600 transition-all capitalize`}
+                                {/* Wallpaper Section */}
+                                <motion.section
+                                    initial={{ x: -50, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.5 }}
+                                    className="space-y-4"
+                                >
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <span className="material-icons text-primary" style={{ fontSize: '28px' }}>wallpaper</span>
+                                        <h3 className="text-2xl font-bold text-white">Wallpaper</h3>
+                                    </div>
+                                    
+                                    {/* Auto Theme Toggle */}
+                                    <motion.div 
+                                        whileHover={{ scale: 1.01 }}
+                                        className="bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-md rounded-2xl p-5 border border-white/20"
+                                    >
+                                        <label className="flex items-center gap-4 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={localSettings.autoThemeFromWallpaper || false}
+                                                onChange={(e) => setLocalSettings({ 
+                                                    ...localSettings, 
+                                                    autoThemeFromWallpaper: e.target.checked 
+                                                })}
+                                                className="w-6 h-6 rounded-lg accent-primary"
+                                            />
+                                            <div>
+                                                <div className="font-semibold text-white">Auto-detect Colors</div>
+                                                <div className="text-sm text-white/60">Extract theme from wallpaper</div>
+                                            </div>
+                                        </label>
+                                    </motion.div>
+                                    
+                                    {/* Upload & URL */}
+                                    <div className="grid md:grid-cols-2 gap-4">
+                                        <motion.div whileHover={{ scale: 1.02 }} className="space-y-3">
+                                            <label className="block text-sm font-medium text-white/70">Upload Image</label>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleFileUpload}
+                                                className="hidden"
+                                                id="wallpaper-upload"
+                                            />
+                                            <label 
+                                                htmlFor="wallpaper-upload"
+                                                className="flex items-center justify-center gap-3 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl px-5 py-4 cursor-pointer transition-all group"
+                                            >
+                                                <UploadIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                                                <span className="font-medium">{localSettings.wallpaperFile ? 'Change' : 'Choose'}</span>
+                                            </label>
+                                        </motion.div>
+
+                                        <motion.div whileHover={{ scale: 1.02 }} className="space-y-3">
+                                            <label className="block text-sm font-medium text-white/70">Image URL</label>
+                                            <div className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-xl px-4 py-3">
+                                                <ImageIcon className="w-5 h-5 text-white/50" />
+                                                <input
+                                                    type="text"
+                                                    value={localSettings.wallpaperUrl}
+                                                    onChange={(e) => setLocalSettings({ ...localSettings, wallpaperUrl: e.target.value, wallpaperFile: undefined })}
+                                                    placeholder="Enter URL"
+                                                    className="flex-1 bg-transparent text-white outline-none placeholder-white/30"
+                                                    disabled={!!localSettings.wallpaperFile}
+                                                />
+                                            </div>
+                                        </motion.div>
+                                    </div>
+                                </motion.section>
+
+                                {/* Widgets Section */}
+                                <motion.section
+                                    initial={{ x: -50, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.6 }}
+                                    className="space-y-4"
+                                >
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <span className="material-icons text-primary" style={{ fontSize: '28px' }}>widgets</span>
+                                        <h3 className="text-2xl font-bold text-white">Widgets</h3>
+                                    </div>
+                                    <div className="grid md:grid-cols-2 gap-3">
+                                        {Object.entries(localSettings.widgets).map(([key, enabled], index) => (
+                                            <motion.div
+                                                key={key}
+                                                initial={{ scale: 0.9, opacity: 0 }}
+                                                animate={{ scale: 1, opacity: 1 }}
+                                                transition={{ delay: 0.7 + index * 0.03 }}
+                                                whileHover={{ scale: 1.02 }}
+                                                className="bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 transition-all"
+                                            >
+                                                <label className="flex items-center justify-between cursor-pointer mb-3">
+                                                    <span className="capitalize font-medium">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={Boolean(enabled)}
+                                                        onChange={(e) => setLocalSettings({
+                                                            ...localSettings,
+                                                            widgets: { ...localSettings.widgets, [key]: e.target.checked }
+                                                        })}
+                                                        className="w-5 h-5 accent-primary rounded"
+                                                    />
+                                                </label>
+                                                {enabled && (
+                                                    <motion.div 
+                                                        initial={{ height: 0, opacity: 0 }}
+                                                        animate={{ height: 'auto', opacity: 1 }}
+                                                        className="flex gap-2"
+                                                    >
+                                                        {(['small', 'medium', 'large'] as WidgetSize[]).map((size) => (
+                                                            <motion.button
+                                                                key={size}
+                                                                whileHover={{ scale: 1.1 }}
+                                                                whileTap={{ scale: 0.95 }}
+                                                                onClick={() => setLocalSettings({
+                                                                    ...localSettings,
+                                                                    widgetSizes: { ...localSettings.widgetSizes, [key]: size }
+                                                                })}
+                                                                className={`flex-1 text-xs px-3 py-2 rounded-lg font-medium transition-all ${
+                                                                    localSettings.widgetSizes[key] === size 
+                                                                        ? 'bg-gradient-to-r from-primary to-accent text-white shadow-lg' 
+                                                                        : 'bg-white/10 text-white/70 hover:bg-white/20'
+                                                                }`}
+                                                            >
+                                                                {size}
+                                                            </motion.button>
+                                                        ))}
+                                                    </motion.div>
+                                                )}
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                </motion.section>
+
+                                {/* Shortcuts Section */}
+                                <motion.section
+                                    initial={{ x: -50, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.7 }}
+                                    className="space-y-4"
+                                >
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <span className="material-icons text-primary" style={{ fontSize: '28px' }}>link</span>
+                                        <h3 className="text-2xl font-bold text-white">Quick Links</h3>
+                                    </div>
+                                    <div className="space-y-2 mb-4">
+                                        <AnimatePresence>
+                                            {localSettings.shortcuts.map((shortcut, index) => (
+                                                <motion.div
+                                                    key={shortcut.id}
+                                                    initial={{ x: -20, opacity: 0 }}
+                                                    animate={{ x: 0, opacity: 1 }}
+                                                    exit={{ x: 20, opacity: 0 }}
+                                                    transition={{ delay: index * 0.05 }}
+                                                    className="flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 group"
+                                                >
+                                                    <span className="material-icons text-white/70" style={{ fontSize: '20px' }}>public</span>
+                                                    <span className="flex-1 font-medium">{shortcut.name}</span>
+                                                    <motion.button 
+                                                        onClick={() => deleteShortcut(shortcut.id)}
+                                                        whileHover={{ scale: 1.1, rotate: 90 }}
+                                                        whileTap={{ scale: 0.9 }}
+                                                        className="p-2 hover:bg-red-500/20 rounded-lg transition-colors"
+                                                        title="Delete"
+                                                    >
+                                                        <Trash2Icon className="w-4 h-4 text-red-400" />
+                                                    </motion.button>
+                                                </motion.div>
+                                            ))}
+                                        </AnimatePresence>
+                                    </div>
+                                    <motion.div 
+                                        whileHover={{ scale: 1.01 }}
+                                        className="flex gap-2 bg-white/5 p-3 rounded-xl border border-white/10"
+                                    >
+                                        <input
+                                            type="text"
+                                            value={newShortcutName}
+                                            onChange={(e) => setNewShortcutName(e.target.value)}
+                                            placeholder="Name"
+                                            className="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white outline-none focus:bg-white/15 focus:border-primary transition-all placeholder-white/30"
+                                        />
+                                        <input
+                                            type="text"
+                                            value={newShortcutUrl}
+                                            onChange={(e) => setNewShortcutUrl(e.target.value)}
+                                            placeholder="URL"
+                                            className="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white outline-none focus:bg-white/15 focus:border-primary transition-all placeholder-white/30"
+                                        />
+                                        <motion.button 
+                                            onClick={addShortcut}
+                                            whileHover={{ scale: 1.1 }}
+                                            whileTap={{ scale: 0.9 }}
+                                            className="p-2 bg-gradient-to-r from-primary to-accent rounded-lg transition-all hover:shadow-lg"
+                                            title="Add shortcut"
+                                        >
+                                            <PlusIcon className="w-6 h-6" />
+                                        </motion.button>
+                                    </motion.div>
+                                </motion.section>
+
+                                {/* API Keys Section */}
+                                <motion.section
+                                    initial={{ x: -50, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.8 }}
+                                    className="space-y-4"
+                                >
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <span className="material-icons text-primary" style={{ fontSize: '28px' }}>key</span>
+                                        <h3 className="text-2xl font-bold text-white">API Keys</h3>
+                                    </div>
+                                    <div className="space-y-4">
+                                        {[
+                                            { key: 'gemini', label: 'Gemini AI', link: 'https://aistudio.google.com/app/apikey', icon: 'smart_toy' },
+                                            { key: 'groq', label: 'Groq AI', link: 'https://console.groq.com', icon: 'rocket_launch' }
+                                        ].map((api, index) => (
+                                            <motion.div
+                                                key={api.key}
+                                                initial={{ y: 20, opacity: 0 }}
+                                                animate={{ y: 0, opacity: 1 }}
+                                                transition={{ delay: 0.9 + index * 0.1 }}
+                                                whileHover={{ scale: 1.01 }}
+                                                className="bg-white/5 backdrop-blur-md rounded-xl p-5 border border-white/10"
+                                            >
+                                                <div className="flex items-center gap-2 mb-3">
+                                                    <span className="material-icons text-accent" style={{ fontSize: '24px' }}>{api.icon}</span>
+                                                    <label className="font-semibold text-white">{api.label}</label>
+                                                </div>
+                                                <input
+                                                    type="password"
+                                                    value={localSettings.apiKeys[api.key as 'gemini' | 'groq'] || ''}
+                                                    onChange={(e) => setLocalSettings({
+                                                        ...localSettings,
+                                                        apiKeys: { ...localSettings.apiKeys, [api.key]: e.target.value }
+                                                    })}
+                                                    placeholder={`Enter ${api.label} API key`}
+                                                    className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white outline-none focus:bg-white/15 focus:border-primary transition-all placeholder-white/30 mb-2"
+                                                />
+                                                <a 
+                                                    href={api.link} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer" 
+                                                    className="text-xs text-accent hover:text-primary transition-colors flex items-center gap-1"
+                                                >
+                                                    <span className="material-icons" style={{ fontSize: '14px' }}>open_in_new</span>
+                                                    Get API Key
+                                                </a>
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                </motion.section>
+                            </div>
+
+                            {/* Footer with Save Button */}
+                            <motion.div 
+                                initial={{ y: 20, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ delay: 0.9 }}
+                                className="sticky bottom-0 bg-gradient-to-t from-gray-900 to-gray-900/95 backdrop-blur-xl border-t border-white/10 px-8 py-6"
                             >
-                                {type}
-                            </button>
-                        ))}
-                    </div>
-                </section>
-
-                {/* App Shortcuts Section */}
-                <section className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3">App Shortcuts</h3>
-                    <div className="space-y-2 mb-3">
-                        {localSettings.shortcuts.map(shortcut => (
-                            <div key={shortcut.id} className="flex items-center gap-2 p-2 bg-white/5 rounded-lg">
-                                <span className="flex-1">{shortcut.name}</span>
-                                <button onClick={() => deleteShortcut(shortcut.id)} className="p-2 hover:bg-white/10 rounded transition-colors">
-                                    <Trash2Icon className="w-4 h-4" />
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="flex gap-2">
-                        <input
-                            type="text"
-                            value={newShortcutName}
-                            onChange={(e) => setNewShortcutName(e.target.value)}
-                            placeholder="Name"
-                            className="flex-1 bg-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:bg-white/20"
-                        />
-                        <input
-                            type="text"
-                            value={newShortcutUrl}
-                            onChange={(e) => setNewShortcutUrl(e.target.value)}
-                            placeholder="URL"
-                            className="flex-1 bg-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:bg-white/20"
-                        />
-                        <button onClick={addShortcut} className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors">
-                            <PlusIcon className="w-5 h-5" />
-                        </button>
-                    </div>
-                </section>
-
-                {/* API Keys Section */}
-                <section className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3">API Keys</h3>
-                    <div className="space-y-3">
-                        <div>
-                            <label className="block text-sm mb-1 opacity-70">OpenWeatherMap API Key</label>
-                            <input
-                                type="password"
-                                value={localSettings.apiKeys.weather}
-                                onChange={(e) => setLocalSettings({
-                                    ...localSettings,
-                                    apiKeys: { ...localSettings.apiKeys, weather: e.target.value }
-                                })}
-                                placeholder="Enter weather API key"
-                                className="w-full bg-white/10 rounded-lg px-4 py-2 outline-none focus:bg-white/20"
-                            />
+                                <motion.button
+                                    onClick={handleSave}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    className="w-full bg-gradient-to-r from-primary via-secondary to-accent text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-2xl flex items-center justify-center gap-2 group"
+                                >
+                                    <span className="material-icons group-hover:rotate-90 transition-transform" style={{ fontSize: '24px' }}>save</span>
+                                    <span className="text-lg">Save & Apply Changes</span>
+                                </motion.button>
+                            </motion.div>
                         </div>
-                        <div>
-                            <label className="block text-sm mb-1 opacity-70">Gemini AI API Key</label>
-                            <input
-                                type="password"
-                                value={localSettings.apiKeys.gemini || ''}
-                                onChange={(e) => setLocalSettings({
-                                    ...localSettings,
-                                    apiKeys: { ...localSettings.apiKeys, gemini: e.target.value }
-                                })}
-                                placeholder="Enter Gemini API key"
-                                className="w-full bg-white/10 rounded-lg px-4 py-2 outline-none focus:bg-white/20"
-                            />
-                            <p className="text-xs text-white/50 mt-1">Get your free API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">Google AI Studio</a></p>
-                        </div>
-                        <div>
-                            <label className="block text-sm mb-1 opacity-70">Groq AI API Key</label>
-                            <input
-                                type="password"
-                                value={localSettings.apiKeys.groq || ''}
-                                onChange={(e) => setLocalSettings({
-                                    ...localSettings,
-                                    apiKeys: { ...localSettings.apiKeys, groq: e.target.value }
-                                })}
-                                placeholder="Enter Groq AI API key"
-                                className="w-full bg-white/10 rounded-lg px-4 py-2 outline-none focus:bg-white/20"
-                            />
-                            <p className="text-xs text-white/50 mt-1">Get your free API key from <a href="https://console.groq.com" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">console.groq.com</a></p>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Music Player Section */}
-                <section className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3">Music Player</h3>
-                    <div className="space-y-3">
-                        <p className="text-sm text-white/70">Connect your music streaming accounts for Focus Mode</p>
-                        <div className="bg-white/5 rounded-lg p-4">
-                            <p className="text-sm text-white/60">Music player connections will be available in the next update. For now, enjoy the embedded YouTube ambient sounds in Focus Mode!</p>
-                        </div>
-                    </div>
-                </section>
-
-                <button
-                    onClick={handleSave}
-                    className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition-colors"
-                >
-                    Save & Close
-                </button>
-            </div>
-        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
 };
