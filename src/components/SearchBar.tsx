@@ -3,30 +3,28 @@
 
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Globe, Leaf } from 'lucide-react';
-import { SiGoogle, SiDuckduckgo, SiBrave, SiYoutube, SiBaidu } from 'react-icons/si';
-import { TbBrandBing } from 'react-icons/tb';
+import { Search } from 'lucide-react';
 import SearchSuggestions from './SearchSuggestions';
 
 interface SearchEngine {
   id: string;
   name: string;
-  icon: React.ElementType;
+  icon: string; // Material icon name
   searchUrl: string;
   color?: string;
 }
 
 const searchEngines: SearchEngine[] = [
-  { id: 'google', name: 'Google', icon: SiGoogle, searchUrl: 'https://www.google.com/search?q=', color: '#4285f4' },
-  { id: 'duckduckgo', name: 'Duck', icon: SiDuckduckgo, searchUrl: 'https://duckduckgo.com/?q=', color: '#de5833' },
-  { id: 'bing', name: 'Bing', icon: TbBrandBing, searchUrl: 'https://www.bing.com/search?q=', color: '#008373' },
-  { id: 'brave', name: 'Brave', icon: SiBrave, searchUrl: 'https://search.brave.com/search?q=', color: '#fb542b' },
-  { id: 'youtube', name: 'YouTube', icon: SiYoutube, searchUrl: 'https://www.youtube.com/results?search_query=', color: '#ff0000' },
-  { id: 'ecosia', name: 'Ecosia', icon: Leaf, searchUrl: 'https://www.ecosia.org/search?q=', color: '#57a23e' },
-  { id: 'startpage', name: 'Start', icon: Globe, searchUrl: 'https://www.startpage.com/do/search?q=', color: '#4b8cff' },
-  { id: 'qwant', name: 'Qwant', icon: Globe, searchUrl: 'https://www.qwant.com/?q=', color: '#5482e5' },
-  { id: 'yandex', name: 'Yandex', icon: Globe, searchUrl: 'https://yandex.com/search/?text=', color: '#fc3f1d' },
-  { id: 'baidu', name: 'Baidu', icon: SiBaidu, searchUrl: 'https://www.baidu.com/s?wd=', color: '#2319dc' },
+  { id: 'google', name: 'Google', icon: 'search', searchUrl: 'https://www.google.com/search?q=', color: '#4285f4' },
+  { id: 'duckduckgo', name: 'Duck', icon: 'privacy_tip', searchUrl: 'https://duckduckgo.com/?q=', color: '#de5833' },
+  { id: 'bing', name: 'Bing', icon: 'travel_explore', searchUrl: 'https://www.bing.com/search?q=', color: '#008373' },
+  { id: 'brave', name: 'Brave', icon: 'shield', searchUrl: 'https://search.brave.com/search?q=', color: '#fb542b' },
+  { id: 'youtube', name: 'YouTube', icon: 'play_circle', searchUrl: 'https://www.youtube.com/results?search_query=', color: '#ff0000' },
+  { id: 'ecosia', name: 'Ecosia', icon: 'eco', searchUrl: 'https://www.ecosia.org/search?q=', color: '#57a23e' },
+  { id: 'startpage', name: 'Start', icon: 'home', searchUrl: 'https://www.startpage.com/do/search?q=', color: '#4b8cff' },
+  { id: 'qwant', name: 'Qwant', icon: 'language', searchUrl: 'https://www.qwant.com/?q=', color: '#5482e5' },
+  { id: 'yandex', name: 'Yandex', icon: 'public', searchUrl: 'https://yandex.com/search/?text=', color: '#fc3f1d' },
+  { id: 'baidu', name: 'Baidu', icon: 'manage_search', searchUrl: 'https://www.baidu.com/s?wd=', color: '#2319dc' },
 ];
 
 interface Props {
@@ -134,7 +132,6 @@ export const SearchBar: React.FC<Props> = ({ selectedEngine = 'google', onEngine
 
           <div className="flex flex-wrap items-center justify-center gap-2 max-w-4xl">
             {searchEngines.map((engine, index) => {
-              const IconComponent = engine.icon;
               const isActive = activeEngine === engine.id;
               
               return (
@@ -156,10 +153,15 @@ export const SearchBar: React.FC<Props> = ({ selectedEngine = 'google', onEngine
                     boxShadow: isActive && engine.color ? `0 0 20px ${engine.color}40` : undefined
                   }}
                 >
-                  <IconComponent 
-                    className="w-4 h-4" 
-                    style={{ color: isActive ? 'white' : engine.color }}
-                  />
+                  <span 
+                    className="material-icons" 
+                    style={{ 
+                      fontSize: '18px',
+                      color: isActive ? 'white' : engine.color 
+                    }}
+                  >
+                    {engine.icon}
+                  </span>
                   <span>{engine.name}</span>
                 </motion.button>
               );

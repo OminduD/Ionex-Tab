@@ -116,6 +116,70 @@ body {
     --whitish-color: #ffffff;
 }
 
+.theme-midnight {
+    --primary-color: #a78bfa;
+    --secondary-color: #7c3aed;
+    --accent-color: #8b5cf6;
+    --bg-gradient-start: #111827;
+    --bg-gradient-end: #5b21b6;
+    --default-wallpaper: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070');
+    /* MaterialYou shades */
+    --dark-color: #a78bfa;
+    --bg-color: #ddd6fe;
+    --accent-light-tint: #ede9fe;
+    --darker-color: #6d28d9;
+    --text-color-dark: #4c1d95;
+    --whitish-color: #ffffff;
+}
+
+.theme-neon {
+    --primary-color: #d946ef;
+    --secondary-color: #06b6d4;
+    --accent-color: #8b5cf6;
+    --bg-gradient-start: #701a75;
+    --bg-gradient-end: #0e7490;
+    --default-wallpaper: url('https://images.unsplash.com/photo-1550859492-d5da9d8e45f3?q=80&w=2070');
+    /* MaterialYou shades */
+    --dark-color: #d946ef;
+    --bg-color: #fae8ff;
+    --accent-light-tint: #f5d0fe;
+    --darker-color: #a21caf;
+    --text-color-dark: #701a75;
+    --whitish-color: #ffffff;
+}
+
+.theme-cherry {
+    --primary-color: #db2777;
+    --secondary-color: #dc2626;
+    --accent-color: #be123c;
+    --bg-gradient-start: #881337;
+    --bg-gradient-end: #991b1b;
+    --default-wallpaper: url('https://images.unsplash.com/photo-1528459199957-0ff28496a7f6?q=80&w=2070');
+    /* MaterialYou shades */
+    --dark-color: #db2777;
+    --bg-color: #fce7f3;
+    --accent-light-tint: #fbcfe8;
+    --darker-color: #9f1239;
+    --text-color-dark: #881337;
+    --whitish-color: #ffffff;
+}
+
+.theme-mint {
+    --primary-color: #2dd4bf;
+    --secondary-color: #16a34a;
+    --accent-color: #14b8a6;
+    --bg-gradient-start: #065f46;
+    --bg-gradient-end: #166534;
+    --default-wallpaper: url('https://images.unsplash.com/photo-1516298773066-c48f8e9bd92b?q=80&w=2070');
+    /* MaterialYou shades */
+    --dark-color: #2dd4bf;
+    --bg-color: #99f6e4;
+    --accent-light-tint: #ccfbf1;
+    --darker-color: #0f766e;
+    --text-color-dark: #134e4a;
+    --whitish-color: #ffffff;
+}
+
 .icon-color {
     color: var(--primary-color, #a78bfa) !important;
 }

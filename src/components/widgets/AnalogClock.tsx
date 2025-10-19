@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 interface AnalogClockProps {
   showDigital?: boolean;
+  timeFormat?: '12h' | '24h';
 }
 
-const AnalogClock: React.FC<AnalogClockProps> = ({ showDigital = false }) => {
+const AnalogClock: React.FC<AnalogClockProps> = ({ showDigital = false, timeFormat = '24h' }) => {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -67,39 +68,40 @@ const AnalogClock: React.FC<AnalogClockProps> = ({ showDigital = false }) => {
             );
           })}
 
-          {/* Hour hand */}
+          {/* Hour hand with theme color */}
           <line
             x1="100"
             y1="100"
             x2={100 + 45 * Math.cos(hourAngle * Math.PI / 180)}
             y2={100 + 45 * Math.sin(hourAngle * Math.PI / 180)}
-            stroke="currentColor"
+            stroke="var(--primary-color)"
             strokeWidth="6"
             strokeLinecap="round"
-            className="opacity-80"
+            className="drop-shadow-md"
           />
 
-          {/* Minute hand */}
+          {/* Minute hand with theme color */}
           <line
             x1="100"
             y1="100"
             x2={100 + 65 * Math.cos(minuteAngle * Math.PI / 180)}
             y2={100 + 65 * Math.sin(minuteAngle * Math.PI / 180)}
-            stroke="currentColor"
+            stroke="var(--secondary-color)"
             strokeWidth="4"
             strokeLinecap="round"
-            className="opacity-90"
+            className="drop-shadow-md"
           />
 
-          {/* Second hand */}
+          {/* Second hand with theme color */}
           <line
             x1="100"
             y1="100"
             x2={100 + 75 * Math.cos(secondAngle * Math.PI / 180)}
             y2={100 + 75 * Math.sin(secondAngle * Math.PI / 180)}
-            stroke="#ef4444"
+            stroke="var(--accent-color)"
             strokeWidth="2"
             strokeLinecap="round"
+            className="drop-shadow-lg"
           />
 
           {/* Center dot */}
@@ -108,8 +110,12 @@ const AnalogClock: React.FC<AnalogClockProps> = ({ showDigital = false }) => {
       </div>
       
       {showDigital && (
-        <div className="text-2xl font-bold mt-4">
-          {time.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+        <div className="text-2xl font-bold mt-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          {time.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: timeFormat === '12h'
+          })}
         </div>
       )}
       

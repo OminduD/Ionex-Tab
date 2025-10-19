@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-const Clock: React.FC = () => {
+interface ClockProps {
+  timeFormat?: '12h' | '24h';
+}
+
+const Clock: React.FC<ClockProps> = ({ timeFormat = '24h' }) => {
   const [time, setTime] = useState(new Date());
   const [prevMinute, setPrevMinute] = useState(time.getMinutes());
 
@@ -37,7 +41,7 @@ const Clock: React.FC = () => {
           {time.toLocaleTimeString('en-US', { 
             hour: '2-digit', 
             minute: '2-digit',
-            hour12: false 
+            hour12: timeFormat === '12h' 
           })}
           <motion.span
             animate={{ opacity: [1, 0, 1] }}

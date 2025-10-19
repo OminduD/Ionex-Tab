@@ -1,155 +1,210 @@
 // src/components/QuoteAndIP.tsx
-// Component to display random inspirational quotes and user's IP address
+// Display random inspirational quotes and IP address
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { RefreshCw, MapPin } from 'lucide-react';
 
-interface Quote {
-  text: string;
-  author: string;
-}
-
-const quotes: Quote[] = [
-  { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
-  { text: "Innovation distinguishes between a leader and a follower.", author: "Steve Jobs" },
-  { text: "Code is like humor. When you have to explain it, it's bad.", author: "Cory House" },
-  { text: "First, solve the problem. Then, write the code.", author: "John Johnson" },
-  { text: "Experience is the name everyone gives to their mistakes.", author: "Oscar Wilde" },
-  { text: "The best error message is the one that never shows up.", author: "Thomas Fuchs" },
-  { text: "Simplicity is the soul of efficiency.", author: "Austin Freeman" },
-  { text: "Make it work, make it right, make it fast.", author: "Kent Beck" },
-  { text: "Any fool can write code that a computer can understand.", author: "Martin Fowler" },
-  { text: "Good code is its own best documentation.", author: "Steve McConnell" },
-  { text: "Programming isn't about what you know; it's about what you can figure out.", author: "Chris Pine" },
-  { text: "The function of good software is to make the complex appear simple.", author: "Grady Booch" },
-  { text: "It's not a bug; it's an undocumented feature.", author: "Anonymous" },
-  { text: "Talk is cheap. Show me the code.", author: "Linus Torvalds" },
-  { text: "Code never lies, comments sometimes do.", author: "Ron Jeffries" },
-  { text: "The best way to predict the future is to invent it.", author: "Alan Kay" },
-  { text: "Learning to write programs stretches your mind.", author: "Bill Gates" },
-  { text: "Software is a great combination between artistry and engineering.", author: "Bill Gates" },
-  { text: "Before software can be reusable it first has to be usable.", author: "Ralph Johnson" },
-  { text: "Perfection is achieved not when there is nothing more to add.", author: "Antoine de Saint-Exupéry" },
-  { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins" },
-  { text: "Success is not final, failure is not fatal.", author: "Winston Churchill" },
-  { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
-  { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
-  { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+const quotes = [
+  "The only way to do great work is to love what you do. - Steve Jobs",
+  "Innovation distinguishes between a leader and a follower. - Steve Jobs",
+  "Code is like humor. When you have to explain it, it's bad. - Cory House",
+  "First, solve the problem. Then, write the code. - John Johnson",
+  "Experience is the name everyone gives to their mistakes. - Oscar Wilde",
+  "In order to be irreplaceable, one must always be different. - Coco Chanel",
+  "Simplicity is the soul of efficiency. - Austin Freeman",
+  "Make it work, make it right, make it fast. - Kent Beck",
+  "The best error message is the one that never shows up. - Thomas Fuchs",
+  "Perfection is achieved not when there is nothing more to add, but rather when there is nothing more to take away. - Antoine de Saint-Exupery",
+  "Any fool can write code that a computer can understand. Good programmers write code that humans can understand. - Martin Fowler",
+  "The most disastrous thing that you can ever learn is your first programming language. - Alan Kay",
+  "Programming isn't about what you know; it's about what you can figure out. - Chris Pine",
+  "The best way to predict the future is to invent it. - Alan Kay",
+  "Stay hungry, stay foolish. - Steve Jobs",
+  "Your time is limited, don't waste it living someone else's life. - Steve Jobs",
+  "Be yourself; everyone else is already taken. - Oscar Wilde",
+  "Believe you can and you're halfway there. - Theodore Roosevelt",
+  "The only impossible journey is the one you never begin. - Tony Robbins",
+  "Life is what happens when you're busy making other plans. - John Lennon",
+  "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt",
+  "It is during our darkest moments that we must focus to see the light. - Aristotle",
+  "Success is not final, failure is not fatal: it is the courage to continue that counts. - Winston Churchill",
+  "The way to get started is to quit talking and begin doing. - Walt Disney",
+  "Don't watch the clock; do what it does. Keep going. - Sam Levenson"
 ];
 
-export const QuoteAndIP: React.FC = () => {
-  const [currentQuote, setCurrentQuote] = useState<Quote>(quotes[0]);
-  const [ipAddress, setIpAddress] = useState<string>('Loading...');
-  const [location, setLocation] = useState<string>('');
-  const [isRefreshing, setIsRefreshing] = useState(false);
+interface QuoteAndIPProps {
+  showQuotes?: boolean;
+  showIP?: boolean;
+}
 
-  // Function to get a random quote
-  const getRandomQuote = () => {
-    const randomIndex = Math.floor(Math.random() * quotes.length);
-    return quotes[randomIndex];
-  };
+export const QuoteAndIP: React.FC<QuoteAndIPProps> = ({ showQuotes = true, showIP = true }) => {
+  const [quote, setQuote] = useState('');
+  const [ip, setIp] = useState('');
+  const [location, setLocation] = useState('');
 
-  // Fetch IP address on mount
   useEffect(() => {
-    fetchIPAddress();
-  }, []);
+    // Set random quote
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    setQuote(randomQuote);
 
-  const fetchIPAddress = async () => {
-    try {
-      // Using ipapi.co for free IP geolocation
-      const response = await fetch('https://ipapi.co/json/');
-      const data = await response.json();
-      
-      if (data.ip) {
-        setIpAddress(data.ip);
+    // Fetch IP address
+    fetch('https://api.ipify.org?format=json')
+      .then(response => response.json())
+      .then(data => {
+        setIp(data.ip);
+        // Get location info
+        return fetch(`https://ipapi.co/${data.ip}/json/`);
+      })
+      .then(response => response.json())
+      .then(data => {
         if (data.city && data.country_name) {
           setLocation(`${data.city}, ${data.country_name}`);
         }
-      }
-    } catch (error) {
-      console.error('Failed to fetch IP address:', error);
-      setIpAddress('Unable to fetch IP');
-    }
-  };
-
-  const handleRefreshQuote = () => {
-    setIsRefreshing(true);
-    setCurrentQuote(getRandomQuote());
-    setTimeout(() => setIsRefreshing(false), 600);
-  };
-
-  // Change quote every 30 seconds
-  useEffect(() => {
-    setCurrentQuote(getRandomQuote());
-    
-    const interval = setInterval(() => {
-      setCurrentQuote(getRandomQuote());
-    }, 30000); // 30 seconds
-
-    return () => clearInterval(interval);
+      })
+      .catch(error => {
+        console.error('Error fetching IP:', error);
+        setIp('Unable to fetch IP');
+      });
   }, []);
+
+  // Don't render if both are hidden
+  if (!showQuotes && !showIP) return null;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
       transition={{ delay: 0.3, duration: 0.5 }}
-      className="w-full max-w-4xl mx-auto mt-8 mb-6"
+      className="mt-8 space-y-4 text-center"
     >
-      {/* Quote Section */}
-      <div className="bg-black/20 backdrop-blur-md rounded-2xl border border-white/10 p-6 mb-4">
-        <div className="flex items-start justify-between gap-4">
-          <motion.div
-            key={currentQuote.text}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="flex-1"
-          >
-            <p className="text-white/90 text-lg font-light italic mb-2">
-              "{currentQuote.text}"
-            </p>
-            <p className="text-white/60 text-sm">
-              — {currentQuote.author}
-            </p>
-          </motion.div>
-          
-          <motion.button
-            onClick={handleRefreshQuote}
-            whileHover={{ scale: 1.1, rotate: 90 }}
-            whileTap={{ scale: 0.9 }}
-            className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex-shrink-0"
-            aria-label="Get new quote"
-            animate={isRefreshing ? { rotate: 360 } : { rotate: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <RefreshCw className="w-5 h-5 text-white/70" />
-          </motion.button>
-        </div>
-      </div>
-
-      {/* IP Address Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4, duration: 0.5 }}
-        className="flex items-center justify-center gap-6 text-white/70 text-sm"
-      >
-        <div className="flex items-center gap-2 bg-black/20 backdrop-blur-md rounded-xl px-4 py-2 border border-white/10">
-          <span className="material-icons text-primary" style={{ fontSize: '18px' }}>
-            computer
-          </span>
-          <span>IP: {ipAddress}</span>
-        </div>
-        
-        {location && (
-          <div className="flex items-center gap-2 bg-black/20 backdrop-blur-md rounded-xl px-4 py-2 border border-white/10">
-            <MapPin className="w-4 h-4 text-secondary" />
-            <span>{location}</span>
+      {/* Quote */}
+      {showQuotes && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4, duration: 0.6, type: "spring" }}
+          className="relative group"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-secondary/20 to-accent/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="relative px-8 py-4 bg-black/30 backdrop-blur-xl rounded-2xl border border-white/20 max-w-3xl mx-auto shadow-2xl hover:border-white/30 transition-all duration-300">
+            <div className="flex items-start gap-3">
+              <span className="material-icons text-primary mt-1 flex-shrink-0 text-2xl">
+                format_quote
+              </span>
+              <p className="text-white/95 text-sm md:text-base italic font-light leading-relaxed flex-1">
+                {quote}
+              </p>
+              <span className="material-icons text-accent mt-1 flex-shrink-0 rotate-180 text-2xl">
+                format_quote
+              </span>
+            </div>
           </div>
-        )}
-      </motion.div>
+        </motion.div>
+      )}
+
+      {/* IP Address - Enhanced with Animation */}
+      {showIP && ip && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.6, duration: 0.6, type: "spring" }}
+          className="relative group"
+        >
+          {/* Animated gradient glow */}
+          <motion.div 
+            animate={{ 
+              opacity: [0.3, 0.6, 0.3],
+              scale: [1, 1.05, 1]
+            }}
+            transition={{ 
+              duration: 3, 
+              repeat: Infinity,
+              ease: "easeInOut" 
+            }}
+            className="absolute inset-0 bg-gradient-to-r from-primary/30 via-secondary/30 to-accent/30 rounded-full blur-2xl"
+          />
+          
+          <div className="relative flex items-center justify-center gap-5 px-8 py-3 bg-black/40 backdrop-blur-xl rounded-full border border-white/30 max-w-xl mx-auto shadow-2xl hover:border-white/40 hover:shadow-primary/20 transition-all duration-300">
+            <div className="flex items-center gap-3">
+              {/* Animated globe icon */}
+              <motion.span 
+                animate={{ 
+                  rotate: [0, 360],
+                }}
+                transition={{ 
+                  duration: 20, 
+                  repeat: Infinity,
+                  ease: "linear" 
+                }}
+                className="material-icons text-primary text-2xl drop-shadow-lg"
+              >
+                public
+              </motion.span>
+              
+              <span className="text-white/80 text-sm font-medium tracking-wide">IP:</span>
+              
+              {/* IP Address with pulse effect */}
+              <motion.span 
+                animate={{ 
+                  boxShadow: [
+                    '0 0 10px rgba(var(--primary-color-rgb, 167, 139, 250), 0.3)',
+                    '0 0 20px rgba(var(--primary-color-rgb, 167, 139, 250), 0.6)',
+                    '0 0 10px rgba(var(--primary-color-rgb, 167, 139, 250), 0.3)'
+                  ]
+                }}
+                transition={{ 
+                  duration: 2, 
+                  repeat: Infinity,
+                  ease: "easeInOut" 
+                }}
+                className="text-white font-mono text-sm font-bold bg-gradient-to-r from-white/15 to-white/10 px-4 py-1.5 rounded-lg border border-white/20 backdrop-blur-sm"
+              >
+                {ip}
+              </motion.span>
+            </div>
+            
+            {location && (
+              <>
+                {/* Animated divider */}
+                <motion.div 
+                  animate={{ 
+                    opacity: [0.3, 0.6, 0.3],
+                    scaleY: [0.8, 1, 0.8]
+                  }}
+                  transition={{ 
+                    duration: 2, 
+                    repeat: Infinity,
+                    ease: "easeInOut" 
+                  }}
+                  className="w-px h-6 bg-gradient-to-b from-transparent via-white/40 to-transparent"
+                />
+                
+                <div className="flex items-center gap-2">
+                  {/* Animated location pin */}
+                  <motion.span 
+                    animate={{ 
+                      y: [0, -3, 0],
+                    }}
+                    transition={{ 
+                      duration: 2, 
+                      repeat: Infinity,
+                      ease: "easeInOut" 
+                    }}
+                    className="material-icons text-accent text-2xl drop-shadow-lg"
+                  >
+                    location_on
+                  </motion.span>
+                  
+                  <span className="text-white/95 text-sm font-medium">{location}</span>
+                </div>
+              </>
+            )}
+          </div>
+        </motion.div>
+      )}
     </motion.div>
   );
 };
+
+export default QuoteAndIP;

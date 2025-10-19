@@ -26,16 +26,21 @@ export interface Settings {
   wallpaperFile?: string; // Base64 encoded image from device
   theme: string;
   clockType: 'digital' | 'analog' | 'both';
+  timeFormat?: '12h' | '24h'; // 12-hour (AM/PM) or 24-hour time format
   searchEngine: string;
   widgets: Record<string, boolean>;
   widgetSizes: Record<string, WidgetSize>;
   widgetPositions: Record<string, WidgetPosition>;
   shortcuts: Shortcut[];
   userName?: string; // User's name for greeting
+  showQuotesAndIP?: boolean; // Toggle for quotes and IP display (legacy - keeping for backward compatibility)
+  showQuotes?: boolean; // Separate toggle for quotes
+  showIP?: boolean; // Separate toggle for IP address
   apiKeys: {
     weather: string;
     gemini: string;
     groq?: string;
+    news?: string; // News API key for real-time news
   };
   connectedMusicPlatforms?: string[];
   customColors?: {

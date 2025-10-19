@@ -16,51 +16,51 @@ interface Props {
 const themes: Record<string, { name: string; class: string; wallpaper: string; colors: string[] }> = {
     aurora: { 
         name: 'Aurora', 
-        class: 'bg-gradient-to-br from-indigo-500 to-purple-600',
+        class: 'bg-gradient-to-br from-purple-600 to-blue-500',
         wallpaper: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2070&auto=format&fit=crop',
-        colors: ['#6366f1', '#8b5cf6', '#a855f7']
+        colors: ['#9333ea', '#3b82f6', '#6366f1']
     },
     sunset: { 
         name: 'Sunset', 
-        class: 'bg-gradient-to-br from-orange-500 to-red-600',
+        class: 'bg-gradient-to-br from-amber-500 to-rose-600',
         wallpaper: 'https://images.unsplash.com/photo-1495567720989-cebdbdd97913?q=80&w=2070&auto=format&fit=crop',
-        colors: ['#f97316', '#ef4444', '#dc2626']
+        colors: ['#f59e0b', '#f43f5e', '#e11d48']
     },
     forest: { 
         name: 'Forest', 
-        class: 'bg-gradient-to-br from-green-600 to-emerald-700',
+        class: 'bg-gradient-to-br from-lime-600 to-emerald-700',
         wallpaper: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop',
-        colors: ['#16a34a', '#047857', '#065f46']
+        colors: ['#65a30d', '#059669', '#047857']
     },
     ocean: { 
         name: 'Ocean', 
-        class: 'bg-gradient-to-br from-blue-500 to-sky-600',
+        class: 'bg-gradient-to-br from-sky-400 to-blue-700',
         wallpaper: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?q=80&w=2026&auto=format&fit=crop',
-        colors: ['#3b82f6', '#0284c7', '#0369a1']
+        colors: ['#38bdf8', '#1d4ed8', '#0369a1']
     },
     midnight: {
         name: 'Midnight',
-        class: 'bg-gradient-to-br from-slate-900 to-purple-900',
+        class: 'bg-gradient-to-br from-gray-900 to-violet-900',
         wallpaper: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070&auto=format&fit=crop',
-        colors: ['#0f172a', '#581c87', '#6b21a8']
+        colors: ['#a78bfa', '#7c3aed', '#8b5cf6']
     },
-    lavender: {
-        name: 'Lavender',
-        class: 'bg-gradient-to-br from-violet-400 to-fuchsia-500',
-        wallpaper: 'https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029&auto=format&fit=crop',
-        colors: ['#a78bfa', '#d946ef', '#c026d3']
+    neon: {
+        name: 'Neon',
+        class: 'bg-gradient-to-br from-fuchsia-500 to-cyan-500',
+        wallpaper: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=2187&auto=format&fit=crop',
+        colors: ['#d946ef', '#06b6d4', '#8b5cf6']
     },
-    coral: {
-        name: 'Coral',
-        class: 'bg-gradient-to-br from-rose-500 to-amber-500',
-        wallpaper: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop',
-        colors: ['#f43f5e', '#f59e0b', '#d97706']
+    cherry: {
+        name: 'Cherry',
+        class: 'bg-gradient-to-br from-pink-600 to-red-700',
+        wallpaper: 'https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?q=80&w=2070&auto=format&fit=crop',
+        colors: ['#db2777', '#dc2626', '#be123c']
     },
-    emerald: {
-        name: 'Emerald',
-        class: 'bg-gradient-to-br from-teal-400 to-cyan-600',
-        wallpaper: 'https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2932&auto=format&fit=crop',
-        colors: ['#2dd4bf', '#0891b2', '#0e7490']
+    mint: {
+        name: 'Mint',
+        class: 'bg-gradient-to-br from-teal-400 to-green-600',
+        wallpaper: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?q=80&w=2070&auto=format&fit=crop',
+        colors: ['#2dd4bf', '#16a34a', '#14b8a6']
     },
 };
 
@@ -218,16 +218,65 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                     </div>
                                     <motion.div 
                                         whileHover={{ scale: 1.01 }}
-                                        className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all"
+                                        className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all space-y-4"
                                     >
-                                        <label className="block text-sm font-medium text-white/70 mb-3">Your Name</label>
-                                        <input
-                                            type="text"
-                                            value={localSettings.userName || ''}
-                                            onChange={(e) => setLocalSettings({ ...localSettings, userName: e.target.value })}
-                                            placeholder="Enter your name"
-                                            className="w-full bg-white/10 border border-white/20 rounded-xl px-5 py-3 text-white outline-none focus:bg-white/15 focus:border-primary transition-all placeholder-white/30"
-                                        />
+                                        <div>
+                                            <label className="block text-sm font-medium text-white/70 mb-3">Your Name</label>
+                                            <input
+                                                type="text"
+                                                value={localSettings.userName || ''}
+                                                onChange={(e) => setLocalSettings({ ...localSettings, userName: e.target.value })}
+                                                placeholder="Enter your name"
+                                                className="w-full bg-white/10 border border-white/20 rounded-xl px-5 py-3 text-white outline-none focus:bg-white/15 focus:border-primary transition-all placeholder-white/30"
+                                            />
+                                        </div>
+                                        
+                                        {/* Separate toggles for Quotes and IP */}
+                                        <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                                            <div className="flex items-center gap-2">
+                                                <span className="material-icons text-primary text-2xl">format_quote</span>
+                                                <div>
+                                                    <label className="text-sm font-medium text-white">Show Quotes</label>
+                                                    <p className="text-xs text-white/50">Display inspirational quotes</p>
+                                                </div>
+                                            </div>
+                                            <motion.button
+                                                whileTap={{ scale: 0.9 }}
+                                                onClick={() => setLocalSettings({ ...localSettings, showQuotes: !localSettings.showQuotes })}
+                                                className={`relative w-14 h-7 rounded-full transition-colors ${
+                                                    localSettings.showQuotes ? 'bg-gradient-to-r from-primary to-accent' : 'bg-white/20'
+                                                }`}
+                                            >
+                                                <motion.div
+                                                    animate={{ x: localSettings.showQuotes ? 28 : 2 }}
+                                                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                                                    className="absolute top-1 w-5 h-5 bg-white rounded-full shadow-lg"
+                                                />
+                                            </motion.button>
+                                        </div>
+                                        
+                                        <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                                            <div className="flex items-center gap-2">
+                                                <span className="material-icons text-secondary text-2xl">public</span>
+                                                <div>
+                                                    <label className="text-sm font-medium text-white">Show IP Address</label>
+                                                    <p className="text-xs text-white/50">Display IP and location info</p>
+                                                </div>
+                                            </div>
+                                            <motion.button
+                                                whileTap={{ scale: 0.9 }}
+                                                onClick={() => setLocalSettings({ ...localSettings, showIP: !localSettings.showIP })}
+                                                className={`relative w-14 h-7 rounded-full transition-colors ${
+                                                    localSettings.showIP ? 'bg-gradient-to-r from-secondary to-accent' : 'bg-white/20'
+                                                }`}
+                                            >
+                                                <motion.div
+                                                    animate={{ x: localSettings.showIP ? 28 : 2 }}
+                                                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                                                    className="absolute top-1 w-5 h-5 bg-white rounded-full shadow-lg"
+                                                />
+                                            </motion.button>
+                                        </div>
                                     </motion.div>
                                 </motion.section>
 
@@ -367,6 +416,86 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                             </div>
                                         </motion.div>
                                     </div>
+                                </motion.section>
+
+                                {/* Clock Settings Section */}
+                                <motion.section
+                                    initial={{ x: -50, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.55 }}
+                                    className="space-y-4"
+                                >
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <span className="material-icons text-primary" style={{ fontSize: '28px' }}>schedule</span>
+                                        <h3 className="text-2xl font-bold text-white">Clock Settings</h3>
+                                    </div>
+                                    <motion.div
+                                        initial={{ scale: 0.95, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        transition={{ delay: 0.6 }}
+                                        className="bg-white/5 backdrop-blur-md rounded-xl p-6 border border-white/10 space-y-4"
+                                    >
+                                        <div className="space-y-3">
+                                            <label className="block text-sm font-medium text-white/90">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <span className="material-icons text-primary text-xl">schedule</span>
+                                                    <span>Clock Type</span>
+                                                </div>
+                                            </label>
+                                            <div className="grid grid-cols-3 gap-2">
+                                                {['digital', 'analog', 'both'].map((type) => (
+                                                    <motion.button
+                                                        key={type}
+                                                        whileHover={{ scale: 1.05 }}
+                                                        whileTap={{ scale: 0.95 }}
+                                                        onClick={() => setLocalSettings({ ...localSettings, clockType: type as 'digital' | 'analog' | 'both' })}
+                                                        className={`py-2 px-4 rounded-lg font-medium transition-all ${
+                                                            localSettings.clockType === type
+                                                                ? 'bg-gradient-to-r from-primary to-accent text-white shadow-lg'
+                                                                : 'bg-white/10 text-white/70 hover:bg-white/20'
+                                                        }`}
+                                                    >
+                                                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                                                    </motion.button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="space-y-3 pt-4 border-t border-white/10">
+                                            <label className="block text-sm font-medium text-white/90">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <span className="material-icons text-secondary text-xl">access_time</span>
+                                                    <span>Time Format</span>
+                                                </div>
+                                            </label>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <motion.button
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    onClick={() => setLocalSettings({ ...localSettings, timeFormat: '12h' })}
+                                                    className={`py-2 px-4 rounded-lg font-medium transition-all ${
+                                                        localSettings.timeFormat === '12h'
+                                                            ? 'bg-gradient-to-r from-secondary to-accent text-white shadow-lg'
+                                                            : 'bg-white/10 text-white/70 hover:bg-white/20'
+                                                    }`}
+                                                >
+                                                    12 Hour (AM/PM)
+                                                </motion.button>
+                                                <motion.button
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    onClick={() => setLocalSettings({ ...localSettings, timeFormat: '24h' })}
+                                                    className={`py-2 px-4 rounded-lg font-medium transition-all ${
+                                                        localSettings.timeFormat === '24h'
+                                                            ? 'bg-gradient-to-r from-secondary to-accent text-white shadow-lg'
+                                                            : 'bg-white/10 text-white/70 hover:bg-white/20'
+                                                    }`}
+                                                >
+                                                    24 Hour
+                                                </motion.button>
+                                            </div>
+                                        </div>
+                                    </motion.div>
                                 </motion.section>
 
                                 {/* Widgets Section */}
@@ -513,8 +642,10 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                     </div>
                                     <div className="space-y-4">
                                         {[
-                                            { key: 'gemini', label: 'Gemini AI', link: 'https://aistudio.google.com/app/apikey', icon: 'smart_toy' },
-                                            { key: 'groq', label: 'Groq AI', link: 'https://console.groq.com', icon: 'rocket_launch' }
+                                            { key: 'weather', label: 'Weather API', link: 'https://openweathermap.org/api', icon: 'cloud', description: 'For weather widget' },
+                                            { key: 'news', label: 'News API', link: 'https://newsapi.org/register', icon: 'newspaper', description: 'For real-time news feed' },
+                                            { key: 'gemini', label: 'Gemini AI', link: 'https://aistudio.google.com/app/apikey', icon: 'smart_toy', description: 'For AI assistant' },
+                                            { key: 'groq', label: 'Groq AI', link: 'https://console.groq.com', icon: 'rocket_launch', description: 'For AI chat' }
                                         ].map((api, index) => (
                                             <motion.div
                                                 key={api.key}
@@ -530,7 +661,7 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                                 </div>
                                                 <input
                                                     type="password"
-                                                    value={localSettings.apiKeys[api.key as 'gemini' | 'groq'] || ''}
+                                                    value={localSettings.apiKeys[api.key as keyof typeof localSettings.apiKeys] || ''}
                                                     onChange={(e) => setLocalSettings({
                                                         ...localSettings,
                                                         apiKeys: { ...localSettings.apiKeys, [api.key]: e.target.value }

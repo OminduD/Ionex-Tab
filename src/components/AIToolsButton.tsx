@@ -78,9 +78,12 @@ export const AIToolsButton: React.FC = () => {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 shadow-lg flex items-center justify-center transition-all ${
+        className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all ${
           isOpen ? 'rotate-180' : ''
         }`}
+        style={{
+          background: `linear-gradient(to bottom right, var(--primary-color), var(--secondary-color), var(--accent-color))`
+        }}
       >
         <Sparkles className="w-6 h-6 text-white" />
       </motion.button>

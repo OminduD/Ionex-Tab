@@ -37,17 +37,20 @@ const App: React.FC = () => {
     wallpaperUrl: 'https://images.unsplash.com/photo-1507525428034-b723a9ce6890?q=80&w=2070&auto=format&fit=crop',
     theme: 'aurora',
     clockType: 'digital',
+    timeFormat: '24h', // Default to 24-hour format
     searchEngine: 'google',
     userName: '',
-    widgets: { clock: true, weather: true, calendar: true, todoList: true, aiAssistant: true, notes: true, appShortcuts: false, musicPlayer: false, newsFeed: true, analogClock: false },
-    widgetSizes: { clock: 'small', analogClock: 'small', weather: 'medium', calendar: 'small', todoList: 'medium', aiAssistant: 'large', notes: 'medium', appShortcuts: 'medium', musicPlayer: 'medium', newsFeed: 'medium' },
+    showQuotesAndIP: true, // Legacy support
+    showQuotes: true, // Separate toggle for quotes
+    showIP: true, // Separate toggle for IP
+    widgets: { clock: true, weather: true, calendar: true, todoList: true, aiAssistant: true, notes: true, appShortcuts: false, musicPlayer: false, newsFeed: true },
+    widgetSizes: { clock: 'small', weather: 'medium', calendar: 'small', todoList: 'medium', aiAssistant: 'large', notes: 'medium', appShortcuts: 'medium', musicPlayer: 'medium', newsFeed: 'medium' },
     widgetPositions: {
       clock: { x: 50, y: 100 },
       weather: { x: 400, y: 80 },
       calendar: { x: 900, y: 100 },
       todoList: { x: 100, y: 350 },
       newsFeed: { x: 700, y: 350 },
-      analogClock: { x: 200, y: 100 },
       aiAssistant: { x: 400, y: 350 },
       notes: { x: 600, y: 400 },
       appShortcuts: { x: 500, y: 500 },
@@ -103,8 +106,17 @@ const App: React.FC = () => {
   };
 
   const widgetMap: Record<WidgetId, React.ReactNode> = {
-    clock: settings.clockType === 'digital' || settings.clockType === 'both' ? <Clock /> : null,
-    analogClock: settings.clockType === 'analog' || settings.clockType === 'both' ? <AnalogClock showDigital={settings.clockType === 'both'} /> : null,
+    clock: (
+      <>
+        {(settings.clockType === 'digital' || settings.clockType === 'both') && (
+          <Clock timeFormat={settings.timeFormat} />
+        )}
+        {(settings.clockType === 'analog' || settings.clockType === 'both') && (
+          <AnalogClock showDigital={settings.clockType === 'both'} timeFormat={settings.timeFormat} />
+        )}
+      </>
+    ),
+    analogClock: null, // Deprecated - now controlled by clockType setting
     weather: <Weather apiKey={settings.apiKeys.weather} />,
     calendar: <Calendar />,
     todoList: <TodoList />,
@@ -112,7 +124,7 @@ const App: React.FC = () => {
     notes: <NotesWidget />,
     appShortcuts: <AppShortcuts shortcuts={settings.shortcuts} />,
     musicPlayer: <MusicPlayer />,
-    newsFeed: <NewsFeed />,
+    newsFeed: <NewsFeed apiKey={settings.apiKeys.news} />,
   };
 
   return (
@@ -175,6 +187,12 @@ const App: React.FC = () => {
               <SearchBar 
                 selectedEngine={settings.searchEngine}
                 onEngineChange={(engine) => setSettings({ ...settings, searchEngine: engine })}
+              />
+
+              {/* Quote and IP Address */}
+              <QuoteAndIP 
+                showQuotes={settings.showQuotes ?? settings.showQuotesAndIP ?? true} 
+                showIP={settings.showIP ?? settings.showQuotesAndIP ?? true}
               />
             </div>
 
