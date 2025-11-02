@@ -76,7 +76,17 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
     if (!isVisible) return null;
 
     const handleSave = () => {
-        setSettings(localSettings);
+        // Trim all API keys before saving
+        const trimmedSettings = {
+            ...localSettings,
+            apiKeys: {
+                weather: localSettings.apiKeys.weather?.trim() || '',
+                gemini: localSettings.apiKeys.gemini?.trim() || '',
+                groq: localSettings.apiKeys.groq?.trim() || '',
+                news: localSettings.apiKeys.news?.trim() || '',
+            }
+        };
+        setSettings(trimmedSettings);
         onClose();
     };
 
