@@ -66,7 +66,7 @@ const App: React.FC = () => {
         { id: '7', name: 'Twitter', url: 'https://twitter.com', icon: 'twitter' },
         { id: '8', name: 'Figma', url: 'https://figma.com', icon: 'figma' },
     ],
-    apiKeys: { weather: DEFAULT_WEATHER_API_KEY, gemini: '' },
+    apiKeys: { weather: DEFAULT_WEATHER_API_KEY, groq: '' },
   });
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -120,7 +120,7 @@ const App: React.FC = () => {
     weather: <Weather apiKey={settings.apiKeys.weather} />,
     calendar: <Calendar />,
     todoList: <TodoList />,
-    aiAssistant: <AIWidget apiKey={settings.apiKeys.gemini} groqKey={settings.apiKeys.groq} />,
+    aiAssistant: <AIWidget groqKey={settings.apiKeys.groq || ''} />,
     notes: <NotesWidget />,
     appShortcuts: <AppShortcuts shortcuts={settings.shortcuts} />,
     musicPlayer: <MusicPlayer />,
