@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ThemeParticles } from '../ThemeParticles';
 
-const Calendar: React.FC = () => {
+interface CalendarProps {
+  theme?: string;
+}
+
+const Calendar: React.FC<CalendarProps> = ({ theme = 'aurora' }) => {
   const [date, setDate] = useState(new Date());
   const [days, setDays] = useState<(number | null)[]>([]);
 
@@ -35,6 +40,10 @@ const Calendar: React.FC = () => {
     setDate(new Date(date.getFullYear(), date.getMonth() + delta, 1));
   };
 
+  const goToToday = () => {
+    setDate(new Date());
+  };
+
   const isToday = (day: number | null) => {
     if (!day) return false;
     const now = new Date();
@@ -47,6 +56,9 @@ const Calendar: React.FC = () => {
 
   return (
     <div className="p-4 h-full flex flex-col relative overflow-hidden">
+      {/* Theme Particles */}
+      <ThemeParticles theme={theme} density="low" />
+      
       {/* Background gradient glow */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 blur-2xl pointer-events-none" />
       
@@ -62,14 +74,26 @@ const Calendar: React.FC = () => {
           <ChevronLeft className="w-5 h-5" />
         </motion.button>
         
-        <motion.div
-          key={monthName}
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center font-bold text-base bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent px-3"
-        >
-          {monthName}
-        </motion.div>
+        <div className="flex flex-col items-center gap-1">
+          <motion.div
+            key={monthName}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center font-bold text-base bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent px-3"
+          >
+            {monthName}
+          </motion.div>
+          
+          {/* Today Button */}
+          <motion.button
+            whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.2)' }}
+            whileTap={{ scale: 0.95 }}
+            onClick={goToToday}
+            className="px-3 py-1 text-[10px] font-semibold rounded-full bg-gradient-to-r from-primary/20 to-accent/20 text-white/80 hover:text-white border border-white/20 hover:border-white/40 transition-all backdrop-blur-sm"
+          >
+            Today
+          </motion.button>
+        </div>
         
         <motion.button
           whileHover={{ scale: 1.1, backgroundColor: 'rgba(255,255,255,0.15)' }}
