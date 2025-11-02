@@ -1,11 +1,13 @@
 import React from 'react';
 import { Shortcut } from '../../types';
+import { ThemeParticles } from '../ThemeParticles';
 
 interface AppShortcutsProps {
   shortcuts: Shortcut[];
+  theme?: string;
 }
 
-const AppShortcuts: React.FC<AppShortcutsProps> = ({ shortcuts }) => {
+const AppShortcuts: React.FC<AppShortcutsProps> = ({ shortcuts, theme = 'aurora' }) => {
   const handleShortcutClick = (url: string) => {
     window.open(url, '_blank');
   };
@@ -20,8 +22,11 @@ const AppShortcuts: React.FC<AppShortcutsProps> = ({ shortcuts }) => {
   };
 
   return (
-    <div className="p-4 h-full">
-      <h3 className="text-lg font-bold mb-3">Quick Links</h3>
+    <div className="p-4 h-full relative overflow-hidden">
+      {/* Theme Particles */}
+      <ThemeParticles theme={theme} density="low" />
+      
+      <h3 className="text-lg font-bold mb-3 relative z-10">Quick Links</h3>
       <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
         {shortcuts.map(shortcut => {
           const iconUrl = shortcut.icon || getDefaultIcon(shortcut.url);
