@@ -81,7 +81,6 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
             ...localSettings,
             apiKeys: {
                 weather: localSettings.apiKeys.weather?.trim() || '',
-                gemini: localSettings.apiKeys.gemini?.trim() || '',
                 groq: localSettings.apiKeys.groq?.trim() || '',
                 news: localSettings.apiKeys.news?.trim() || '',
             }
@@ -654,8 +653,7 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                         {[
                                             { key: 'weather', label: 'Weather API', link: 'https://openweathermap.org/api', icon: 'cloud', description: 'For weather widget' },
                                             { key: 'news', label: 'News API', link: 'https://newsapi.org/register', icon: 'newspaper', description: 'For real-time news feed' },
-                                            { key: 'gemini', label: 'Gemini AI', link: 'https://aistudio.google.com/app/apikey', icon: 'smart_toy', description: 'For AI assistant' },
-                                            { key: 'groq', label: 'Groq AI', link: 'https://console.groq.com', icon: 'rocket_launch', description: 'For AI chat' }
+                                            { key: 'groq', label: 'Groq AI', link: 'https://console.groq.com', icon: 'rocket_launch', description: 'For AI assistant' }
                                         ].map((api, index) => (
                                             <motion.div
                                                 key={api.key}
