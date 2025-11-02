@@ -328,3 +328,135 @@ body {
         transform: translateY(-20px);
     }
 }
+
+/* Markdown Content Styling */
+.markdown-content {
+    font-size: 0.875rem;
+    line-height: 1.7;
+}
+
+.markdown-content > *:first-child {
+    margin-top: 0 !important;
+}
+
+.markdown-content > *:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* Code blocks with syntax highlighting */
+.markdown-content pre {
+    background: rgba(0, 0, 0, 0.6) !important;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+}
+
+.markdown-content pre code {
+    display: block;
+    padding: 1rem;
+    background: transparent !important;
+    border: none !important;
+    font-size: 0.813rem;
+    line-height: 1.6;
+}
+
+/* Inline code */
+.markdown-content code {
+    font-family: 'Fira Code', 'Monaco', 'Consolas', 'Courier New', monospace;
+    font-size: 0.85em;
+}
+
+/* Lists */
+.markdown-content ul,
+.markdown-content ol {
+    padding-left: 1.5rem;
+}
+
+.markdown-content li {
+    margin: 0.25rem 0;
+}
+
+.markdown-content li > p {
+    margin: 0.25rem 0;
+}
+
+/* Nested lists */
+.markdown-content ul ul,
+.markdown-content ol ul,
+.markdown-content ul ol,
+.markdown-content ol ol {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Tables */
+.markdown-content table {
+    font-size: 0.875rem;
+}
+
+/* Blockquotes */
+.markdown-content blockquote {
+    font-style: italic;
+}
+
+.markdown-content blockquote > p {
+    margin: 0;
+}
+
+/* Links */
+.markdown-content a {
+    text-decoration-thickness: 1px;
+}
+
+.markdown-content a:hover {
+    text-decoration-thickness: 2px;
+}
+
+/* Task lists (GitHub Flavored Markdown) */
+.markdown-content input[type="checkbox"] {
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+/* Horizontal rules */
+.markdown-content hr {
+    margin: 1.5rem 0;
+    border: none;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Images */
+.markdown-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+}
+
+/* Headings with animations */
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.markdown-content h1:hover,
+.markdown-content h2:hover,
+.markdown-content h3:hover {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+/* Code block language label */
+.markdown-content pre[class*="language-"]::before {
+    content: attr(class);
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
