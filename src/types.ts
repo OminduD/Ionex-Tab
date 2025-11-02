@@ -38,8 +38,7 @@ export interface Settings {
   showIP?: boolean; // Separate toggle for IP address
   apiKeys: {
     weather: string;
-    gemini: string;
-    groq?: string;
+    groq: string;
     news?: string; // News API key for real-time news
   };
   connectedMusicPlatforms?: string[];
