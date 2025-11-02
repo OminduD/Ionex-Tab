@@ -3,13 +3,15 @@ import { SunIcon } from '../icons';
 import { fetchWeatherData } from '../../services/api';
 import { motion } from 'framer-motion';
 import { Cloud, CloudRain, CloudSnow, Wind, Droplets, Eye, Gauge } from 'lucide-react';
+import { ThemeParticles } from '../ThemeParticles';
 
 interface WeatherProps {
   apiKey: string;
   size?: 'small' | 'medium' | 'large';
+  theme?: string;
 }
 
-const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium' }) => {
+const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium', theme = 'aurora' }) => {
   const [weather, setWeather] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -21,14 +23,10 @@ const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium' }) => {
       setLoading(false);
     };
 
-    if (apiKey) {
-      loadWeather();
-      const interval = setInterval(loadWeather, 600000); // Update every 10 minutes
-      return () => clearInterval(interval);
-    } else {
-      setWeather({ error: 'API key not set' });
-      setLoading(false);
-    }
+    // Open-Meteo is FREE and doesn't require API key!
+    loadWeather();
+    const interval = setInterval(loadWeather, 600000); // Update every 10 minutes
+    return () => clearInterval(interval);
   }, [apiKey]);
 
   const getWeatherIcon = (condition: string) => {
@@ -69,6 +67,9 @@ const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium' }) => {
         animate={{ opacity: 1, scale: 1 }}
         className="flex flex-col items-center justify-center h-full relative overflow-hidden"
       >
+        {/* Theme Particles */}
+        <ThemeParticles theme={theme} density="low" />
+        
         {/* Gradient glow */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-secondary/10 to-accent/20 blur-2xl" />
         
@@ -97,6 +98,9 @@ const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium' }) => {
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col h-full p-4 relative overflow-hidden rounded-2xl"
       >
+        {/* Theme Particles */}
+        <ThemeParticles theme={theme} density="medium" />
+        
         {/* Animated background */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20" />
         <motion.div 
