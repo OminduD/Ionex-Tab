@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Newspaper, RefreshCw, ExternalLink, TrendingUp } from 'lucide-react';
+import { ThemeParticles } from '../ThemeParticles';
 
 interface NewsItem {
   title: string;
@@ -12,9 +13,10 @@ interface NewsItem {
 
 interface NewsFeedProps {
   apiKey?: string;
+  theme?: string;
 }
 
-const NewsFeed: React.FC<NewsFeedProps> = ({ apiKey }) => {
+const NewsFeed: React.FC<NewsFeedProps> = ({ apiKey, theme = 'aurora' }) => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -180,6 +182,9 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ apiKey }) => {
 
   return (
     <div className="p-4 h-full flex flex-col relative overflow-hidden">
+      {/* Theme Particles */}
+      <ThemeParticles theme={theme} density="low" />
+      
       {/* Animated background gradient */}
       <motion.div 
         animate={{ 
