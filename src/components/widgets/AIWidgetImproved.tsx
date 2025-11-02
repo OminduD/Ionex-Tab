@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Send, Trash2, Copy, Check, Zap } from 'lucide-react';
+import { Sparkles, Send, Trash2, Copy, Check } from 'lucide-react';
 
 interface AIWidgetProps {
-  apiKey: string;
-  groqKey?: string;
+  groqKey: string;
 }
 
 interface Message {
@@ -14,14 +13,11 @@ interface Message {
   timestamp: Date;
 }
 
-type AIProvider = 'gemini' | 'groq';
-
-const AIWidgetImproved: React.FC<AIWidgetProps> = ({ apiKey, groqKey }) => {
+const AIWidgetImproved: React.FC<AIWidgetProps> = ({ groqKey }) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
-  const [provider, setProvider] = useState<AIProvider>('gemini');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -34,7 +30,7 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ apiKey, groqKey }) => {
   }, [messages]);
 
   const handleSubmit = async () => {
-    const currentKey = provider === 'gemini' ? apiKey : groqKey;
+    const currentKey = groqKey?.trim();
     if (!input.trim() || !currentKey) return;
 
     const userMessage: Message = {
@@ -45,75 +41,64 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ apiKey, groqKey }) => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const userInput = input.trim();
     setInput('');
     setLoading(true);
 
     try {
-      let aiResponse = '';
+      // Groq API
+      console.log('⚡ Using Groq API with key:', currentKey.substring(0, 10) + '...');
+      
+      const response = await fetch(
+        'https://api.groq.com/openai/v1/chat/completions',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentKey}`,
+          },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            messages: [
+              {
+                role: 'user',
+                content: userInput,
+              },
+            ],
+            temperature: 0.7,
+            max_tokens: 1024,
+          }),
+        }
+      );
 
-      if (provider === 'gemini') {
-        const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              contents: [
-                {
-                  parts: [
-                    {
-                      text: input.trim(),
-                    },
-                  ],
-                },
-              ],
-            }),
-          }
-        );
-
-        const data = await response.json();
+      console.log('📡 Response status:', response.status, response.statusText);
+      
+      const data = await response.json();
+      console.log('📦 Response data:', data);
+      
+      if (!response.ok) {
+        console.error('❌ Groq API error:', data);
+        console.error('Status code:', response.status);
+        console.error('Full error:', JSON.stringify(data, null, 2));
         
-        if (!response.ok) {
-          console.error('Gemini API error:', data);
-          throw new Error(data.error?.message || 'Gemini API request failed');
+        // Extract the actual error message from the API response
+        const apiErrorMessage = data.error?.message || data.message || 'Unknown error';
+        
+        let errorMsg = `Groq API Error (${response.status}): ${apiErrorMessage}`;
+        
+        // Add helpful hints based on status code
+        if (response.status === 401) {
+          errorMsg += '\n\n💡 This usually means:\n- Invalid API key\n- API key is not active\n- Go to https://console.groq.com to check your API key';
+        } else if (response.status === 429) {
+          errorMsg += '\n\n💡 Rate limit exceeded. Free tier has limited requests per minute.';
+        } else if (response.status === 404) {
+          errorMsg += '\n\n💡 The model might not be available or the endpoint changed.';
         }
         
-        aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I could not generate a response.';
-      } else {
-        // Groq API
-        const response = await fetch(
-          'https://api.groq.com/openai/v1/chat/completions',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${groqKey}`,
-            },
-            body: JSON.stringify({
-              model: 'llama-3.1-70b-versatile',
-              messages: [
-                {
-                  role: 'user',
-                  content: input.trim(),
-                },
-              ],
-              temperature: 0.7,
-              max_tokens: 1024,
-            }),
-          }
-        );
-
-        const data = await response.json();
-        
-        if (!response.ok) {
-          console.error('Groq API error:', data);
-          throw new Error(data.error?.message || 'Groq API request failed');
-        }
-        
-        aiResponse = data.choices?.[0]?.message?.content || 'Sorry, I could not generate a response.';
+        throw new Error(errorMsg);
       }
+      
+      const aiResponse = data.choices?.[0]?.message?.content || 'Sorry, I could not generate a response.';
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -124,11 +109,29 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ apiKey, groqKey }) => {
 
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
-      console.error('AI Error:', error);
+      console.error('💥 AI Error:', error);
+      console.error('Error type:', typeof error);
+      console.error('Error details:', error);
+      
+      let errorContent = 'Sorry, there was an error processing your request.';
+      
+      if (error instanceof Error) {
+        // Check if it's a network error
+        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+          errorContent = '🌐 Network Error: Unable to connect to the AI service.\n\n💡 Possible causes:\n- No internet connection\n- Firewall blocking the request\n- VPN interfering with the connection\n- API service is down\n\nPlease check your connection and try again.';
+        } else if (error.message.includes('CORS')) {
+          errorContent = '🚫 CORS Error: Browser blocked the request.\n\n💡 This is a browser security issue. The API might not support direct browser requests.';
+        } else {
+          errorContent = error.message;
+        }
+      } else if (typeof error === 'string') {
+        errorContent = error;
+      }
+      
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'Sorry, there was an error processing your request. Please check your API key.',
+        content: errorContent,
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -163,36 +166,10 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ apiKey, groqKey }) => {
             <Sparkles className="w-6 h-6 icon-color" />
           </motion.div>
           <h3 className="text-lg font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            AI Assistant
+            AI Assistant (Groq)
           </h3>
         </div>
         <div className="flex items-center gap-2">
-          {/* Provider Selector */}
-          <div className="flex bg-white/5 rounded-lg p-1">
-            <button
-              onClick={() => setProvider('gemini')}
-              className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
-                provider === 'gemini'
-                  ? 'bg-gradient-to-r from-primary to-secondary text-white'
-                  : 'text-white/60 hover:text-white/80'
-              }`}
-              title="Switch to Gemini AI"
-            >
-              Gemini
-            </button>
-            <button
-              onClick={() => setProvider('groq')}
-              className={`px-3 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1 ${
-                provider === 'groq'
-                  ? 'bg-gradient-to-r from-secondary to-accent text-white'
-                  : 'text-white/60 hover:text-white/80'
-              }`}
-              title="Switch to Groq AI"
-            >
-              <Zap className="w-3 h-3" />
-              Groq
-            </button>
-          </div>
           {messages.length > 0 && (
             <button
               onClick={clearChat}
@@ -312,9 +289,9 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ apiKey, groqKey }) => {
 
       {/* Input Area */}
       <div className="p-4 bg-white/10 backdrop-blur-md border-t border-white/10">
-        {!(provider === 'gemini' ? apiKey : groqKey) ? (
+        {!groqKey ? (
           <div className="text-center text-sm text-yellow-400 bg-yellow-400/10 rounded-lg p-3">
-            ⚠️ Please add your {provider === 'gemini' ? 'Gemini' : 'Groq'} API key in Settings to use AI Assistant
+            ⚠️ Please add your Groq API key in Settings to use AI Assistant
           </div>
         ) : (
           <div className="flex gap-2">
