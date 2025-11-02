@@ -4,6 +4,7 @@ import { Sparkles, Send, Trash2, Copy, Check } from 'lucide-react';
 
 interface AIWidgetProps {
   groqKey: string;
+  theme?: string;
 }
 
 interface Message {
@@ -13,13 +14,29 @@ interface Message {
   timestamp: Date;
 }
 
-const AIWidgetImproved: React.FC<AIWidgetProps> = ({ groqKey }) => {
+// Theme-based particle configurations
+const getThemeParticles = (theme: string = 'aurora'): { emoji: string; count: number; animation: string } => {
+  const configs: Record<string, { emoji: string; count: number; animation: string }> = {
+    ocean: { emoji: '🫧', count: 15, animation: 'bubbles' },
+    forest: { emoji: '🍃', count: 12, animation: 'leaves' },
+    sunset: { emoji: '✨', count: 20, animation: 'sparkles' },
+    midnight: { emoji: '⭐', count: 25, animation: 'stars' },
+    neon: { emoji: '⚡', count: 18, animation: 'electric' },
+    aurora: { emoji: '🌈', count: 10, animation: 'waves' },
+    cherry: { emoji: '🌸', count: 15, animation: 'petals' },
+    mint: { emoji: '💎', count: 12, animation: 'sparkles' },
+  };
+  return configs[theme] || configs.aurora;
+};
+
+const AIWidgetImproved: React.FC<AIWidgetProps> = ({ groqKey, theme = 'aurora' }) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const themeConfig = getThemeParticles(theme);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -151,112 +168,271 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ groqKey }) => {
     setMessages([]);
   };
 
+  // Generate particles for background animation
+  const particles = Array.from({ length: themeConfig.count }, (_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: Math.random() * 20 + 10,
+    duration: Math.random() * 10 + 15,
+    delay: Math.random() * 5,
+  }));
+
   return (
-    <div className="h-full flex flex-col bg-white/5 backdrop-blur-md rounded-lg overflow-hidden border border-white/10">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 bg-white/10 backdrop-blur-md border-b border-white/10">
-        <div className="flex items-center gap-2">
+    <div className="h-full flex flex-col relative overflow-hidden rounded-2xl border border-white/20 shadow-2xl">
+      {/* Animated Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-white/10 to-white/5 backdrop-blur-xl" />
+      
+      {/* Theme-based Particle Animation */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {particles.map((particle) => (
           <motion.div
-            animate={{
-              rotate: [0, 10, -10, 10, 0],
-              scale: [1, 1.1, 1, 1.1, 1],
+            key={particle.id}
+            className="absolute text-2xl opacity-30"
+            style={{
+              left: `${particle.x}%`,
+              top: `${particle.y}%`,
+              fontSize: `${particle.size}px`,
             }}
-            transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+            animate={{
+              y: themeConfig.animation === 'bubbles' ? [0, -400] : 
+                 themeConfig.animation === 'leaves' ? [0, 400] :
+                 themeConfig.animation === 'petals' ? [0, 400] :
+                 [0, -20, 0],
+              x: themeConfig.animation === 'leaves' || themeConfig.animation === 'petals' 
+                 ? [0, Math.random() * 100 - 50] 
+                 : [0, Math.random() * 20 - 10, 0],
+              rotate: themeConfig.animation === 'leaves' || themeConfig.animation === 'petals'
+                     ? [0, 360] : 0,
+              opacity: [0.1, 0.3, 0.1],
+              scale: themeConfig.animation === 'stars' ? [1, 1.5, 1] : 1,
+            }}
+            transition={{
+              duration: particle.duration,
+              delay: particle.delay,
+              repeat: Infinity,
+              ease: "linear",
+            }}
           >
-            <Sparkles className="w-6 h-6 icon-color" />
+            {themeConfig.emoji}
           </motion.div>
-          <h3 className="text-lg font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            AI Assistant (Groq)
-          </h3>
+        ))}
+      </div>
+
+      {/* Glowing Border Effect */}
+      <motion.div
+        className="absolute inset-0 rounded-2xl opacity-50"
+        style={{
+          background: 'linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color))',
+          filter: 'blur(20px)',
+        }}
+        animate={{
+          opacity: [0.3, 0.5, 0.3],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+
+      {/* Header */}
+      <div className="relative z-10 flex items-center justify-between p-5 bg-gradient-to-r from-white/10 via-white/5 to-white/10 backdrop-blur-md border-b border-white/20">
+        <div className="flex items-center gap-3">
+          <motion.div
+            className="relative"
+            animate={{
+              rotate: [0, 360],
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-full blur-lg opacity-50" />
+            <Sparkles className="w-7 h-7 icon-color relative z-10" />
+          </motion.div>
+          <div>
+            <h3 className="text-lg font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+              AI Assistant
+            </h3>
+            <p className="text-xs text-white/50">Powered by Groq LLaMA 3.3</p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           {messages.length > 0 && (
-            <button
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               onClick={clearChat}
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors group"
+              className="p-2.5 bg-white/10 hover:bg-red-500/20 rounded-xl transition-all group border border-white/10 hover:border-red-400/30"
               title="Clear chat"
             >
               <Trash2 className="w-4 h-4 text-white/60 group-hover:text-red-400 transition-colors" />
-            </button>
+            </motion.button>
           )}
         </div>
       </div>
 
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
+      <div className="relative z-10 flex-1 overflow-y-auto p-5 space-y-4 scrollbar-thin scrollbar-thumb-white/30 scrollbar-track-transparent hover:scrollbar-thumb-white/50">
         <AnimatePresence>
           {messages.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex flex-col items-center justify-center h-full space-y-4"
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="flex flex-col items-center justify-center h-full space-y-6 px-4"
             >
+              {/* Animated Icon */}
               <div className="relative">
                 <motion.div
                   animate={{
-                    scale: [1, 1.2, 1],
-                    opacity: [0.5, 1, 0.5],
+                    scale: [1, 1.3, 1],
+                    rotate: [0, 180, 360],
                   }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-full blur-xl"
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute inset-0 bg-gradient-to-r from-primary via-accent to-secondary rounded-full blur-2xl opacity-60"
                 />
-                <Sparkles className="w-16 h-16 icon-color relative z-10" />
+                <motion.div
+                  animate={{
+                    y: [0, -10, 0],
+                  }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  className="relative"
+                >
+                  <Sparkles className="w-20 h-20 icon-color drop-shadow-2xl" />
+                </motion.div>
               </div>
-              <div className="text-center">
-                <p className="text-lg font-semibold text-white/80">How can I help you today?</p>
-                <p className="text-sm text-white/50 mt-2">Ask me anything!</p>
-              </div>
-              <div className="grid grid-cols-2 gap-2 mt-4">
+              
+              {/* Welcome Text */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="text-center space-y-3"
+              >
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+                  Welcome to AI Assistant
+                </h2>
+                <p className="text-base text-white/70 max-w-md">
+                  I'm powered by Groq's LLaMA 3.3 70B model. Ask me anything!
+                </p>
+              </motion.div>
+              
+              {/* Suggestion Chips */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="grid grid-cols-2 gap-3 max-w-lg w-full"
+              >
                 {[
-                  'Explain quantum computing',
-                  'Write a poem about code',
-                  'Tips for productivity',
-                  'Fun facts about space',
+                  { icon: '🧠', text: 'Explain quantum computing' },
+                  { icon: '✍️', text: 'Write a poem about code' },
+                  { icon: '⚡', text: 'Tips for productivity' },
+                  { icon: '🚀', text: 'Fun facts about space' },
                 ].map((prompt, index) => (
-                  <button
+                  <motion.button
                     key={index}
-                    onClick={() => setInput(prompt)}
-                    className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm text-white/80 hover:text-white transition-all"
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setInput(prompt.text)}
+                    className="px-4 py-3 bg-gradient-to-br from-white/10 to-white/5 hover:from-white/20 hover:to-white/10 rounded-xl text-sm text-white/80 hover:text-white transition-all backdrop-blur-sm border border-white/10 hover:border-white/30 shadow-lg flex items-center gap-2"
                   >
-                    {prompt}
-                  </button>
+                    <span className="text-lg">{prompt.icon}</span>
+                    <span className="flex-1 text-left">{prompt.text}</span>
+                  </motion.button>
                 ))}
-              </div>
+              </motion.div>
             </motion.div>
           ) : (
             messages.map((message, index) => (
               <motion.div
                 key={message.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ 
+                  delay: index * 0.05,
+                  type: "spring",
+                  stiffness: 200,
+                  damping: 20
+                }}
+                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} group`}
               >
-                <div
-                  className={`max-w-[80%] rounded-2xl p-4 ${
+                {/* Assistant Avatar */}
+                {message.role === 'assistant' && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: index * 0.05 + 0.1 }}
+                    className="flex-shrink-0 mr-2 mt-1"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
+                      <Sparkles className="w-4 h-4 text-white" />
+                    </div>
+                  </motion.div>
+                )}
+                
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  className={`max-w-[75%] rounded-2xl p-4 shadow-xl relative ${
                     message.role === 'user'
-                      ? 'bg-gradient-to-r from-primary to-accent text-white'
-                      : 'bg-white/10 backdrop-blur-md text-white/90'
+                      ? 'bg-gradient-to-br from-primary via-accent to-secondary text-white border border-white/20'
+                      : 'bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl text-white/95 border border-white/20'
                   }`}
                 >
-                  <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
-                  {message.role === 'assistant' && (
-                    <div className="flex items-center gap-2 mt-3 pt-3 border-t border-white/10">
-                      <button
-                        onClick={() => copyToClipboard(message.content, message.id)}
-                        className="p-1.5 hover:bg-white/10 rounded-lg transition-colors group"
-                        title="Copy"
-                      >
-                        {copied === message.id ? (
-                          <Check className="w-3.5 h-3.5 text-green-400" />
-                        ) : (
-                          <Copy className="w-3.5 h-3.5 text-white/50 group-hover:text-white/80" />
-                        )}
-                      </button>
-                      <span className="text-xs text-white/40">{message.timestamp.toLocaleTimeString()}</span>
+                  {/* Message glow effect */}
+                  <div className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-50 transition-opacity blur-xl ${
+                    message.role === 'user' 
+                      ? 'bg-gradient-to-r from-primary to-accent' 
+                      : 'bg-white/20'
+                  }`} />
+                  
+                  <div className="relative z-10">
+                    <div className="whitespace-pre-wrap text-sm leading-relaxed font-medium">
+                      {message.content}
                     </div>
-                  )}
-                </div>
+                    {message.role === 'assistant' && (
+                      <div className="flex items-center justify-between gap-3 mt-3 pt-3 border-t border-white/20">
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => copyToClipboard(message.content, message.id)}
+                          className="p-2 hover:bg-white/20 rounded-lg transition-all group/btn backdrop-blur-sm"
+                          title="Copy message"
+                        >
+                          {copied === message.id ? (
+                            <Check className="w-4 h-4 text-green-400" />
+                          ) : (
+                            <Copy className="w-4 h-4 text-white/60 group-hover/btn:text-white/90" />
+                          )}
+                        </motion.button>
+                        <span className="text-xs text-white/50 font-mono">
+                          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                    )}
+                    {message.role === 'user' && (
+                      <div className="flex justify-end mt-2">
+                        <span className="text-xs text-white/70 font-mono">
+                          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+                
+                {/* User Avatar */}
+                {message.role === 'user' && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: index * 0.05 + 0.1 }}
+                    className="flex-shrink-0 ml-2 mt-1"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-white/20 to-white/10 flex items-center justify-center backdrop-blur-sm border border-white/30 shadow-lg">
+                      <span className="text-sm">👤</span>
+                    </div>
+                  </motion.div>
+                )}
               </motion.div>
             ))
           )}
@@ -264,22 +440,47 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ groqKey }) => {
 
         {loading && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex justify-start"
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            className="flex justify-start group"
           >
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 flex items-center gap-3">
-              <div className="flex gap-1">
+            {/* AI Avatar */}
+            <div className="flex-shrink-0 mr-2 mt-1">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg"
+              >
+                <Sparkles className="w-4 h-4 text-white" />
+              </motion.div>
+            </div>
+            
+            <div className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-2xl p-4 flex items-center gap-4 border border-white/20 shadow-xl">
+              <div className="flex gap-1.5">
                 {[0, 1, 2].map((i) => (
                   <motion.div
                     key={i}
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.2 }}
-                    className="w-2 h-2 bg-theme-primary rounded-full"
+                    animate={{ 
+                      y: [0, -12, 0],
+                      scale: [1, 1.2, 1],
+                    }}
+                    transition={{ 
+                      duration: 0.8, 
+                      repeat: Infinity, 
+                      delay: i * 0.15,
+                      ease: "easeInOut"
+                    }}
+                    className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-primary to-accent shadow-lg"
                   />
                 ))}
               </div>
-              <span className="text-sm text-white/70">Thinking...</span>
+              <motion.span
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="text-sm text-white/80 font-medium"
+              >
+                AI is thinking...
+              </motion.span>
             </div>
           </motion.div>
         )}
@@ -288,31 +489,60 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ groqKey }) => {
       </div>
 
       {/* Input Area */}
-      <div className="p-4 bg-white/10 backdrop-blur-md border-t border-white/10">
+      <div className="relative z-10 p-5 bg-gradient-to-r from-white/10 via-white/5 to-white/10 backdrop-blur-md border-t border-white/20">
         {!groqKey ? (
-          <div className="text-center text-sm text-yellow-400 bg-yellow-400/10 rounded-lg p-3">
-            ⚠️ Please add your Groq API key in Settings to use AI Assistant
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center text-sm text-yellow-300 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl p-4 backdrop-blur-sm border border-yellow-400/30 shadow-lg"
+          >
+            <span className="text-lg mr-2">⚠️</span>
+            <span className="font-medium">Please add your Groq API key in Settings to use AI Assistant</span>
+          </motion.div>
         ) : (
-          <div className="flex gap-2">
-            <input
-              ref={inputRef}
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && !loading && handleSubmit()}
-              placeholder="Type your message..."
-              className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm text-white outline-none focus:bg-white/15 focus:border-theme-primary transition-all placeholder:text-white/40"
-              disabled={loading}
-            />
-            <button
+          <div className="flex gap-3">
+            <div className="flex-1 relative group">
+              <input
+                ref={inputRef}
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && !loading && handleSubmit()}
+                placeholder="Type your message... (Press Enter to send)"
+                className="w-full bg-white/10 border-2 border-white/20 focus:border-primary rounded-xl px-5 py-3.5 text-sm text-white outline-none focus:bg-white/15 transition-all placeholder:text-white/40 font-medium backdrop-blur-sm shadow-lg"
+                disabled={loading}
+              />
+              <motion.div
+                className="absolute inset-0 rounded-xl opacity-0 group-focus-within:opacity-100 transition-opacity pointer-events-none"
+                style={{
+                  background: 'linear-gradient(90deg, var(--primary-color), var(--accent-color))',
+                  filter: 'blur(15px)',
+                  zIndex: -1,
+                }}
+              />
+            </div>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={handleSubmit}
               disabled={loading || !input.trim()}
-              className="bg-gradient-to-r from-primary to-accent hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl px-6 py-3 transition-all transform hover:scale-105 active:scale-95"
+              className="relative bg-gradient-to-r from-primary via-accent to-secondary hover:shadow-2xl disabled:opacity-40 disabled:cursor-not-allowed rounded-xl px-7 py-3.5 transition-all shadow-xl border border-white/20 overflow-hidden group"
               title="Send message"
             >
-              <Send className="w-5 h-5 text-white" />
-            </button>
+              {/* Button glow effect */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0"
+                animate={{
+                  x: ['-100%', '200%'],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatDelay: 1,
+                }}
+              />
+              <Send className="w-5 h-5 text-white relative z-10" />
+            </motion.button>
           </div>
         )}
       </div>
