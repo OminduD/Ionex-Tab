@@ -82,7 +82,6 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
             apiKeys: {
                 weather: localSettings.apiKeys.weather?.trim() || '',
                 groq: localSettings.apiKeys.groq?.trim() || '',
-                news: localSettings.apiKeys.news?.trim() || '',
             }
         };
         setSettings(trimmedSettings);
@@ -651,8 +650,19 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                     </div>
                                     <div className="space-y-4">
                                         {[
-                                            { key: 'weather', label: 'Weather API', link: 'https://openweathermap.org/api', icon: 'cloud', description: 'For weather widget' },
-                                            { key: 'news', label: 'News API', link: 'https://newsapi.org/register', icon: 'newspaper', description: 'For real-time news feed' },
+                                            { 
+                                                key: 'weather', 
+                                                label: 'Weather API (Optional)', 
+                                                link: 'https://open-meteo.com/', 
+                                                icon: 'cloud', 
+                                                description: '✅ Using FREE Open-Meteo (No API key needed!)',
+                                                alternatives: [
+                                                    { name: '✅ Open-Meteo (Active)', url: 'https://open-meteo.com/', free: 'Built-in - No key needed!' },
+                                                    { name: 'WeatherAPI.com', url: 'https://www.weatherapi.com/signup.aspx', free: '1M calls/month' },
+                                                    { name: 'Tomorrow.io', url: 'https://www.tomorrow.io/weather-api/', free: '1000 calls/day' },
+                                                    { name: '7Timer!', url: 'http://www.7timer.info/doc.php', free: 'Unlimited & Free' }
+                                                ]
+                                            },
                                             { key: 'groq', label: 'Groq AI', link: 'https://console.groq.com', icon: 'rocket_launch', description: 'For AI assistant' }
                                         ].map((api, index) => (
                                             <motion.div
@@ -681,11 +691,34 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                                     href={api.link} 
                                                     target="_blank" 
                                                     rel="noopener noreferrer" 
-                                                    className="text-xs text-accent hover:text-primary transition-colors flex items-center gap-1"
+                                                    className="text-xs text-accent hover:text-primary transition-colors flex items-center gap-1 mb-3"
                                                 >
                                                     <span className="material-icons" style={{ fontSize: '14px' }}>open_in_new</span>
-                                                    Get API Key
+                                                    Get API Key - {api.description}
                                                 </a>
+                                                
+                                                {/* Show free alternatives for Weather API */}
+                                                {api.key === 'weather' && (api as any).alternatives && (
+                                                    <div className="mt-3 pt-3 border-t border-white/10">
+                                                        <p className="text-xs text-white/70 mb-2 font-semibold">🆓 Free Weather API Alternatives:</p>
+                                                        <div className="space-y-1">
+                                                            {(api as any).alternatives.map((alt: any, i: number) => (
+                                                                <a
+                                                                    key={i}
+                                                                    href={alt.url}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="text-xs text-green-400 hover:text-green-300 transition-colors flex items-center gap-1 group"
+                                                                >
+                                                                    <span className="material-icons text-green-500 group-hover:text-green-400" style={{ fontSize: '12px' }}>check_circle</span>
+                                                                    <span className="font-medium">{alt.name}</span>
+                                                                    <span className="text-white/50">- {alt.free}</span>
+                                                                </a>
+                                                            ))}
+                                                        </div>
+                                                        <p className="text-[10px] text-yellow-400/80 mt-2">⭐ Recommended: WeatherAPI.com or Open-Meteo (no key needed!)</p>
+                                                    </div>
+                                                )}
                                             </motion.div>
                                         ))}
                                     </div>
