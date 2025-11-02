@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Send, Trash2, Copy, Check } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface AIWidgetProps {
   groqKey: string;
@@ -387,9 +389,71 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ groqKey, theme = 'aurora' }
                   }`} />
                   
                   <div className="relative z-10">
-                    <div className="whitespace-pre-wrap text-sm leading-relaxed font-medium">
-                      {message.content}
-                    </div>
+                    {message.role === 'assistant' ? (
+                      <div className="markdown-content text-sm leading-relaxed">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            // Headings
+                            h1: ({node, ...props}) => <h1 className="text-2xl font-bold mb-3 mt-4 text-white border-b border-white/20 pb-2" {...props} />,
+                            h2: ({node, ...props}) => <h2 className="text-xl font-bold mb-2 mt-3 text-white" {...props} />,
+                            h3: ({node, ...props}) => <h3 className="text-lg font-semibold mb-2 mt-3 text-white/90" {...props} />,
+                            h4: ({node, ...props}) => <h4 className="text-base font-semibold mb-2 mt-2 text-white/90" {...props} />,
+                            h5: ({node, ...props}) => <h5 className="text-sm font-semibold mb-1 mt-2 text-white/80" {...props} />,
+                            h6: ({node, ...props}) => <h6 className="text-sm font-semibold mb-1 mt-2 text-white/70" {...props} />,
+                            
+                            // Paragraphs
+                            p: ({node, ...props}) => <p className="mb-3 text-white/95 leading-relaxed" {...props} />,
+                            
+                            // Lists
+                            ul: ({node, ...props}) => <ul className="list-disc list-inside mb-3 space-y-1 text-white/90 ml-2" {...props} />,
+                            ol: ({node, ...props}) => <ol className="list-decimal list-inside mb-3 space-y-1 text-white/90 ml-2" {...props} />,
+                            li: ({node, ...props}) => <li className="ml-2 leading-relaxed" {...props} />,
+                            
+                            // Code
+                            code: ({node, inline, ...props}: any) => 
+                              inline ? (
+                                <code className="bg-black/30 text-cyan-300 px-2 py-0.5 rounded text-xs font-mono border border-cyan-500/30" {...props} />
+                              ) : (
+                                <code className="block bg-black/40 text-green-300 p-3 rounded-lg text-xs font-mono overflow-x-auto border border-green-500/20 my-2 leading-relaxed" {...props} />
+                              ),
+                            pre: ({node, ...props}) => <pre className="bg-black/40 rounded-lg p-3 overflow-x-auto border border-white/10 my-3 shadow-lg" {...props} />,
+                            
+                            // Links
+                            a: ({node, ...props}) => <a className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors" target="_blank" rel="noopener noreferrer" {...props} />,
+                            
+                            // Blockquotes
+                            blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-primary/60 pl-4 py-2 my-3 bg-white/5 rounded-r italic text-white/80" {...props} />,
+                            
+                            // Tables
+                            table: ({node, ...props}) => <div className="overflow-x-auto my-3"><table className="min-w-full border-collapse border border-white/20 rounded-lg overflow-hidden" {...props} /></div>,
+                            thead: ({node, ...props}) => <thead className="bg-white/10" {...props} />,
+                            tbody: ({node, ...props}) => <tbody {...props} />,
+                            tr: ({node, ...props}) => <tr className="border-b border-white/10 hover:bg-white/5 transition-colors" {...props} />,
+                            th: ({node, ...props}) => <th className="px-4 py-2 text-left font-semibold text-white border border-white/20" {...props} />,
+                            td: ({node, ...props}) => <td className="px-4 py-2 text-white/90 border border-white/10" {...props} />,
+                            
+                            // Horizontal rule
+                            hr: ({node, ...props}) => <hr className="my-4 border-white/20" {...props} />,
+                            
+                            // Strong/Bold
+                            strong: ({node, ...props}) => <strong className="font-bold text-white" {...props} />,
+                            
+                            // Emphasis/Italic
+                            em: ({node, ...props}) => <em className="italic text-white/95" {...props} />,
+                            
+                            // Strikethrough
+                            del: ({node, ...props}) => <del className="line-through text-white/70" {...props} />,
+                          }}
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                      </div>
+                    ) : (
+                      <div className="whitespace-pre-wrap text-sm leading-relaxed font-medium">
+                        {message.content}
+                      </div>
+                    )}
                     {message.role === 'assistant' && (
                       <div className="flex items-center justify-between gap-3 mt-3 pt-3 border-t border-white/20">
                         <motion.button
