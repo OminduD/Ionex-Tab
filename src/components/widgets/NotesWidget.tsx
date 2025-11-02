@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { StickyNote, Plus, Trash2, Edit2, Check, X } from 'lucide-react';
+import { ThemeParticles } from '../ThemeParticles';
 
 interface Note {
   id: string;
@@ -9,6 +10,10 @@ interface Note {
   color: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+interface NotesWidgetProps {
+  theme?: string;
 }
 
 const noteColors = [
@@ -20,7 +25,7 @@ const noteColors = [
   { name: 'Orange', bg: 'from-orange-200 to-orange-300', text: 'text-orange-900' },
 ];
 
-const NotesWidget: React.FC = () => {
+const NotesWidget: React.FC<NotesWidgetProps> = ({ theme = 'aurora' }) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [isAddingNote, setIsAddingNote] = useState(false);
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
@@ -81,9 +86,12 @@ const NotesWidget: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white/5 backdrop-blur-md rounded-lg overflow-hidden border border-white/10">
+    <div className="h-full flex flex-col bg-white/5 backdrop-blur-md rounded-lg overflow-hidden border border-white/10 relative">
+      {/* Theme Particles */}
+      <ThemeParticles theme={theme} density="low" />
+      
       {/* Header */}
-      <div className="flex items-center justify-between p-4 bg-white/10 backdrop-blur-md border-b border-white/10">
+      <div className="relative z-10 flex items-center justify-between p-4 bg-white/10 backdrop-blur-md border-b border-white/10">
         <div className="flex items-center gap-2">
           <StickyNote className="w-5 h-5 icon-color" />
           <h3 className="text-lg font-bold text-white">Quick Notes</h3>
