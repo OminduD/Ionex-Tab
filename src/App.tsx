@@ -14,6 +14,7 @@ import { QuoteAndIP } from './components/QuoteAndIP';
 import { motion } from 'framer-motion';
 import { Zap } from 'lucide-react';
 import { extractColorsFromImage, applyCustomColors } from './utils/colorExtractorImproved';
+import { getRandomWallpaper } from './utils/themeWallpapers';
 
 // Dynamically import widgets
 const Clock = React.lazy(() => import('./components/widgets/Clock'));
@@ -28,6 +29,7 @@ const MusicPlayer = React.lazy(() => import('./components/widgets/MusicPlayer'))
 const NewsFeed = React.lazy(() => import('./components/widgets/NewsFeed'));
 const FocusMode = React.lazy(() => import('./components/widgets/FocusMode'));
 const DraggableWidget = React.lazy(() => import('./components/DraggableWidget'));
+const FullscreenAnimation = React.lazy(() => import('./components/FullscreenAnimation'));
 
 // Default API key for weather (free tier OpenWeatherMap)
 const DEFAULT_WEATHER_API_KEY = 'bd5e378503939ddaee76f12ad7a97608';
@@ -71,6 +73,21 @@ const App: React.FC = () => {
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isFocusMode, setIsFocusMode] = useState(false);
+  const [showFullscreenAnimation, setShowFullscreenAnimation] = useState(false);
+
+  // Set random wallpaper from theme bundle on first load or theme change
+  useEffect(() => {
+    // Only set random wallpaper if user hasn't uploaded a custom wallpaper
+    if (!settings.wallpaperFile) {
+      const randomWallpaper = getRandomWallpaper(settings.theme);
+      if (settings.wallpaperUrl !== randomWallpaper) {
+        setSettings(prev => ({
+          ...prev,
+          wallpaperUrl: randomWallpaper
+        }));
+      }
+    }
+  }, [settings.theme]); // Trigger when theme changes
 
   // Apply manual custom colors
   useEffect(() => {
@@ -109,22 +126,22 @@ const App: React.FC = () => {
     clock: (
       <>
         {(settings.clockType === 'digital' || settings.clockType === 'both') && (
-          <Clock timeFormat={settings.timeFormat} />
+          <Clock timeFormat={settings.timeFormat} theme={settings.theme} />
         )}
         {(settings.clockType === 'analog' || settings.clockType === 'both') && (
-          <AnalogClock showDigital={settings.clockType === 'both'} timeFormat={settings.timeFormat} />
+          <AnalogClock showDigital={settings.clockType === 'both'} timeFormat={settings.timeFormat} theme={settings.theme} />
         )}
       </>
     ),
     analogClock: null, // Deprecated - now controlled by clockType setting
-    weather: <Weather apiKey={settings.apiKeys.weather} />,
-    calendar: <Calendar />,
-    todoList: <TodoList />,
-    aiAssistant: <AIWidget groqKey={settings.apiKeys.groq || ''} />,
-    notes: <NotesWidget />,
-    appShortcuts: <AppShortcuts shortcuts={settings.shortcuts} />,
-    musicPlayer: <MusicPlayer />,
-    newsFeed: <NewsFeed apiKey={settings.apiKeys.news} />,
+    weather: <Weather apiKey={settings.apiKeys.weather} theme={settings.theme} />,
+    calendar: <Calendar theme={settings.theme} />,
+    todoList: <TodoList theme={settings.theme} />,
+    aiAssistant: <AIWidget groqKey={settings.apiKeys.groq || ''} theme={settings.theme} />,
+    notes: <NotesWidget theme={settings.theme} />,
+    appShortcuts: <AppShortcuts shortcuts={settings.shortcuts} theme={settings.theme} />,
+    musicPlayer: <MusicPlayer theme={settings.theme} />,
+    newsFeed: <NewsFeed apiKey={settings.apiKeys.news} theme={settings.theme} />,
   };
 
   return (
@@ -138,16 +155,74 @@ const App: React.FC = () => {
               <motion.div 
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                style={{ perspective: 1000 }}
               >
-                <div className="flex items-center gap-3 px-4 py-3 bg-black/30 backdrop-blur-md rounded-2xl border border-white/10">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">I</span>
-                  </div>
+                <motion.button
+                  onClick={() => {
+                    setShowFullscreenAnimation(true);
+                  }}
+                  whileHover={{
+                    rotateY: settings.theme === 'neon' ? [0, 180, 360] : 
+                             settings.theme === 'aurora' ? [0, 360] :
+                             settings.theme === 'midnight' ? [0, -360] : 0,
+                    rotateX: settings.theme === 'ocean' ? [0, 360] : 0,
+                    scale: 1.1,
+                  }}
+                  transition={{
+                    duration: settings.theme === 'neon' ? 0.8 : 
+                             settings.theme === 'aurora' ? 1.2 :
+                             settings.theme === 'midnight' ? 1 : 0.3,
+                    type: "spring",
+                    stiffness: 200,
+                  }}
+                  className="flex items-center gap-3 px-4 py-3 bg-black/30 backdrop-blur-md rounded-2xl border border-white/10 hover:bg-black/40 transition-colors cursor-pointer"
+                  style={{ transformStyle: 'preserve-3d' }}
+                >
+                  <motion.div 
+                    className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center relative"
+                    animate={{
+                      boxShadow: settings.theme === 'neon' ? 
+                        [
+                          '0 0 20px rgba(236, 72, 153, 0.5)',
+                          '0 0 40px rgba(59, 130, 246, 0.8)',
+                          '0 0 20px rgba(236, 72, 153, 0.5)',
+                        ] :
+                        settings.theme === 'aurora' ?
+                        [
+                          '0 0 20px rgba(139, 92, 246, 0.5)',
+                          '0 0 40px rgba(59, 130, 246, 0.8)',
+                          '0 0 20px rgba(139, 92, 246, 0.5)',
+                        ] :
+                        settings.theme === 'midnight' ?
+                        [
+                          '0 0 20px rgba(167, 139, 250, 0.5)',
+                          '0 0 40px rgba(139, 92, 246, 0.8)',
+                          '0 0 20px rgba(167, 139, 250, 0.5)',
+                        ] : 'none'
+                    }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <motion.span 
+                      className="text-white font-bold text-lg"
+                      animate={{
+                        rotateZ: settings.theme === 'neon' ? [0, 360] : 0,
+                      }}
+                      transition={{
+                        duration: 20,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
+                    >
+                      I
+                    </motion.span>
+                  </motion.div>
                   <div>
                     <div className="text-sm font-bold text-white">Ionex</div>
                     <div className="text-xs text-white/70">New Tab</div>
                   </div>
-                </div>
+                </motion.button>
               </motion.div>
 
               {/* Focus Mode Button */}
@@ -240,6 +315,15 @@ const App: React.FC = () => {
                 isVisible={isSettingsOpen}
                 onClose={() => setIsSettingsOpen(false)}
             />
+
+            {/* Fullscreen Animation */}
+            <React.Suspense fallback={null}>
+                <FullscreenAnimation
+                    theme={settings.theme}
+                    isVisible={showFullscreenAnimation}
+                    onComplete={() => setShowFullscreenAnimation(false)}
+                />
+            </React.Suspense>
         </div>
     </div>
   );
