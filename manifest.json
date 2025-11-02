@@ -7,12 +7,19 @@
         "newtab": "index.html"
     },
     "permissions": [
-        "storage"
+        "storage",
+        "geolocation"
     ],
     "host_permissions": [
-        "https://api.openweathermap.org/*",
-        "https://generativelanguage.googleapis.com/*"
+        "https://api.open-meteo.com/*",
+        "https://api.groq.com/*",
+        "https://nominatim.openstreetmap.org/*",
+        "https://api.quotable.io/*",
+        "https://api.ipify.org/*"
     ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; connect-src 'self' https://api.open-meteo.com https://api.groq.com https://nominatim.openstreetmap.org https://api.quotable.io https://api.ipify.org https://images.unsplash.com;"
+    },
     "icons": {
         "16": "icons/icon16.png",
         "48": "icons/icon48.png",

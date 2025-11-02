@@ -7,8 +7,15 @@
         "newtab": "index.html"
     },
     "permissions": [
-        "storage"
+        "storage",
+        "geolocation",
+        "https://api.open-meteo.com/*",
+        "https://api.groq.com/*",
+        "https://nominatim.openstreetmap.org/*",
+        "https://api.quotable.io/*",
+        "https://api.ipify.org/*"
     ],
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'; connect-src 'self' https://api.open-meteo.com https://api.groq.com https://nominatim.openstreetmap.org https://api.quotable.io https://api.ipify.org https://images.unsplash.com;",
     "browser_specific_settings": {
         "gecko": {
             "id": "ionex-tab@omindu.dev",
@@ -16,8 +23,8 @@
         }
     },
     "icons": {
-        "16": "icon16.png",
-        "48": "icon48.png",
-        "128": "icon128.png"
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
     }
 }

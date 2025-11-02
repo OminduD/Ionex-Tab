@@ -5,6 +5,9 @@
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build && cp manifest.json dist/",
+        "build:chrome": "tsc && vite build && cp manifest.json dist/",
+        "build:firefox": "tsc && vite build && cp manifest-firefox.json dist/manifest.json",
+        "build:all": "npm run build:chrome && mkdir -p dist-firefox && cp -r dist/* dist-firefox/ && cp manifest-firefox.json dist-firefox/manifest.json",
         "preview": "vite preview",
         "type-check": "tsc --noEmit"
     },
