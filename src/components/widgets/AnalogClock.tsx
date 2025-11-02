@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { ThemeParticles } from '../ThemeParticles';
 
 interface AnalogClockProps {
   showDigital?: boolean;
   timeFormat?: '12h' | '24h';
+  theme?: string;
 }
 
-const AnalogClock: React.FC<AnalogClockProps> = ({ showDigital = false, timeFormat = '24h' }) => {
+const AnalogClock: React.FC<AnalogClockProps> = ({ showDigital = false, timeFormat = '24h', theme = 'aurora' }) => {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -22,8 +24,11 @@ const AnalogClock: React.FC<AnalogClockProps> = ({ showDigital = false, timeForm
   const hourAngle = (hours * 30 + minutes * 0.5) - 90;
 
   return (
-    <div className="flex flex-col items-center justify-center h-full p-4">
-      <div className="relative w-40 h-40">
+    <div className="flex flex-col items-center justify-center h-full p-4 relative overflow-hidden">
+      {/* Theme Particles */}
+      <ThemeParticles theme={theme} density="low" />
+      
+      <div className="relative w-40 h-40 z-10">
         {/* Glow effect */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent opacity-10 rounded-full blur-xl" />
         
