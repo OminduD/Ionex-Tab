@@ -3,8 +3,13 @@ import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { Todo } from '../../types';
 import { CheckSquareIcon, SquareIcon, Trash2Icon, PlusIcon } from '../icons';
 import { Download, Upload } from 'lucide-react';
+import { ThemeParticles } from '../ThemeParticles';
 
-const TodoList: React.FC = () => {
+interface TodoListProps {
+  theme?: string;
+}
+
+const TodoList: React.FC<TodoListProps> = ({ theme = 'aurora' }) => {
   const [todos, setTodos] = useLocalStorage<Todo[]>('homeTabTodos', []);
   const [newTodo, setNewTodo] = useState('');
 
@@ -51,8 +56,11 @@ const TodoList: React.FC = () => {
   };
 
   return (
-    <div className="p-4 h-full flex flex-col">
-      <div className="flex items-center justify-between mb-3">
+    <div className="p-4 h-full flex flex-col relative overflow-hidden">
+      {/* Theme Particles */}
+      <ThemeParticles theme={theme} density="low" />
+      
+      <div className="relative z-10 flex items-center justify-between mb-3">
         <h3 className="text-lg font-bold">To-Do List</h3>
         <div className="flex gap-2">
           <button
