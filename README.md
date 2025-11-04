@@ -119,8 +119,8 @@
 • **Focus Mode** with Pomodoro timer  
 • **Drag & drop widgets** - customize your layout  
       
-    </td>
-    <td width="50%" valign="top">
+</td>
+<td width="50%" valign="top">
       
 ### 🌤️ No Setup Needed
 • **Free weather API** - no key required  
@@ -134,8 +134,8 @@
 • **Notes Widget** with 6 colors  
 • **Music Player** with ambient tracks  
       
-    </td>
-  </tr>
+</td>
+</tr>
 </table>
 
 <br/>
@@ -250,8 +250,8 @@
 - ✨ **Theme Particles**
 - 🎨 **Glassmorphism UI**
       
-    </td>
-    <td width="50%" valign="top">
+</td>
+<td width="50%" valign="top">
       
 #### 📝 Markdown Elements
 - Headings (H1-H6) with hover
@@ -263,8 +263,8 @@
 - Task lists with checkboxes
 - Horizontal rules & images
       
-    </td>
-  </tr>
+</td>
+</tr>
 </table>
 
 <div align="center">
@@ -356,8 +356,8 @@
 - 🏙️ City name
 - 🎨 Weather icons
       
-    </td>
-    <td width="50%" valign="top">
+</td>
+<td width="50%" valign="top">
       
 **🔍 Smart Search Bar**
 
@@ -376,8 +376,8 @@
 - ⚡ Instant switching
 - 🎨 Material icons
       
-    </td>
-  </tr>
+</td>
+</tr>
 </table>
 
 **Quick Links Bar**
@@ -867,8 +867,8 @@ Uses free [Open-Meteo API](https://open-meteo.com/) with auto-location detection
 - Design custom icons
 - Improve UI/UX
       
-    </td>
-    <td width="50%" valign="top">
+</td>
+<td width="50%" valign="top">
       
 **💡 Suggest & Share**
 - Request features in [Discussions](https://github.com/OminduD/Ionex-Tab/discussions)
@@ -882,8 +882,8 @@ Uses free [Open-Meteo API](https://open-meteo.com/) with auto-location detection
 - Help other users
 - Translate to other languages
       
-    </td>
-  </tr>
+</td>
+</tr>
 </table>
 
 ### Development Workflow
@@ -1001,8 +1001,8 @@ See the [LICENSE](LICENSE) file for details.
 - 🎯 **Goal Tracker** - Long-term goals
 - 🌓 **System Theme** - Auto dark/light
       
-    </td>
-    <td width="50%" valign="top">
+</td>
+<td width="50%" valign="top">
       
 ### 🚀 Long-term Vision
 
@@ -1019,8 +1019,8 @@ See the [LICENSE](LICENSE) file for details.
 - 📱 **Mobile App** - Companion app
 - 🤝 **Collaboration** - Shared workspaces
       
-    </td>
-  </tr>
+</td>
+</tr>
 </table>
 
 <br/>
