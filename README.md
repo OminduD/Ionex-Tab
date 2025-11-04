@@ -94,7 +94,7 @@
 <br/>
 
 <!-- Why Section -->
-## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Star-Struck.png" width="35" height="35"/> Why Ionex Tab?
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Star-Struck.png" width="35" height="35" alt="Star Struck"/> Why Ionex Tab?
 
 <div align="center">
   <i>Transform your browser's new tab into a personalized productivity workspace.<br/>
@@ -145,9 +145,9 @@
 
 <br/>
 
-## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Sparkles.png" width="35" height="35"/> Complete Feature List
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Sparkles.png" width="35" height="35" alt="Sparkles"/> Complete Feature List
 
-### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Artist%20Palette.png" width="30" height="30"/> Themes & Customization
+### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Artist%20Palette.png" width="30" height="30" alt="Palette"/> Themes & Customization
 
 <div align="center">
 
@@ -224,7 +224,7 @@
 - 🎚️ Adjustable widget sizes (small, medium, large)
 - 🎨 Custom color picker (manual theme colors)
 
-### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Robot.png" width="30" height="30"/> AI Assistant
+### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Robot.png" width="30" height="30" alt="Robot"/> AI Assistant
 
 <div align="center">
 
@@ -271,7 +271,7 @@
   <sub>💡 <i>Ask anything - get beautifully formatted responses instantly!</i></sub>
 </div>
 
-### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Alarm%20Clock.png" width="30" height="30"/> Time & Productivity Widgets
+### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Alarm%20Clock.png" width="30" height="30" alt="Clock"/> Time & Productivity Widgets
 
 <table>
   <tr>
@@ -335,7 +335,7 @@
   </tr>
 </table>
 
-### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Globe%20Showing%20Americas.png" width="30" height="30"/> Information & Search
+### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Globe%20Showing%20Americas.png" width="30" height="30" alt="Globe"/> Information & Search
 
 <table>
   <tr>
@@ -482,7 +482,7 @@
 
 <br/>
 
-## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="35" height="35"/> Installation
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="35" height="35" alt="Rocket"/> Installation
 
 ### 📦 From Browser Stores (Recommended)
 
@@ -619,7 +619,7 @@ Uses free [Open-Meteo API](https://open-meteo.com/) with auto-location detection
 
 <br/>
 
-## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Hammer%20and%20Wrench.png" width="35" height="35"/> Tech Stack
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Hammer%20and%20Wrench.png" width="35" height="35" alt="Tools"/> Tech Stack
 
 <div align="center">
 
@@ -706,7 +706,7 @@ Uses free [Open-Meteo API](https://open-meteo.com/) with auto-location detection
 
 <br/>
 
-## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Books.png" width="35" height="35"/> Documentation
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Books.png" width="35" height="35" alt="Books"/> Documentation
 
 <div align="center">
 
@@ -754,7 +754,7 @@ Uses free [Open-Meteo API](https://open-meteo.com/) with auto-location detection
 
 <br/>
 
-## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Memo.png" width="35" height="35"/> Browser Compatibility
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Memo.png" width="35" height="35" alt="Memo"/> Browser Compatibility
 
 <div align="center">
 
@@ -835,7 +835,7 @@ Uses free [Open-Meteo API](https://open-meteo.com/) with auto-location detection
 
 <br/>
 
-## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Handshake.png" width="35" height="35"/> Contributing
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Handshake.png" width="35" height="35" alt="Handshake"/> Contributing
 
 <div align="center">
 
@@ -849,7 +849,7 @@ Uses free [Open-Meteo API](https://open-meteo.com/) with auto-location detection
 
 <br/>
 
-### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Waving%20Hand.png" width="25" height="25"/> Ways to Contribute
+### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Waving%20Hand.png" width="25" height="25" alt="Wave"/> Ways to Contribute
 
 <table>
   <tr>
@@ -924,7 +924,7 @@ git push origin feature/your-feature-name
 
 <br/>
 
-## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Page%20with%20Curl.png" width="35" height="35"/> License
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Page%20with%20Curl.png" width="35" height="35" alt="License"/> License
 
 <div align="center">
 
@@ -974,7 +974,7 @@ See the [LICENSE](LICENSE) file for details.
 
 ---
 
-## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/World%20Map.png" width="35" height="35"/> Roadmap
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/World%20Map.png" width="35" height="35" alt="Map"/> Roadmap
 
 <div align="center">
 
@@ -1032,7 +1032,7 @@ See the [LICENSE](LICENSE) file for details.
 
 <div align="center">
 
-## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Star.png" width="35" height="35"/> Star History
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Star.png" width="35" height="35" alt="Star"/> Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=OminduD/Ionex-Tab&type=Date)](https://star-history.com/#OminduD/Ionex-Tab&Date)
 
@@ -1043,7 +1043,7 @@ See the [LICENSE](LICENSE) file for details.
 
 <br/>
 
-### Made with <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Red%20Heart.png" width="20" height="20"/> for a better browsing experience
+### Made with <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Red%20Heart.png" width="20" height="20" alt="Heart"/> for a better browsing experience
 
 <br/>
 
