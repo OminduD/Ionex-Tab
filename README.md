@@ -91,37 +91,124 @@
 
 </div>
 
----
+<br/>
 
-## 🎯 Why Ionex Tab?
+<!-- Why Section -->
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Star-Struck.png" width="35" height="35"/> Why Ionex Tab?
 
-Ionex Tab transforms your browser's new tab into a personalized productivity workspace. With beautiful themes, powerful AI, and customizable widgets, every new tab becomes a moment of inspiration.
+<div align="center">
+  <i>Transform your browser's new tab into a personalized productivity workspace.<br/>
+  With beautiful themes, powerful AI, and customizable widgets, every new tab becomes a moment of inspiration.</i>
+</div>
 
-**🌟 Key Highlights:**
-- 🎨 8 stunning themes with 40+ curated wallpapers
-- 🤖 AI assistant powered by Groq LLaMA 3.3 70B
-- 🎭 3D geometric animations unique to each theme
-- 🔍 12 search engines including Google, DuckDuckGo, Wikipedia
-- 🌤️ Free weather widget (no API key required!)
-- 📅 Complete productivity suite: Focus Mode, Calendar, Todo List
-- 🎪 Drag & drop widgets - position them anywhere you want
-- 💎 Glassmorphism design with beautiful blur effects
+<br/>
 
----
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      
+### 🎨 Beautiful Design
+• **8 stunning themes** with unique personalities  
+• **40+ curated wallpapers** from Unsplash  
+• **3D geometric animations** for each theme  
+• **Glassmorphism UI** with blur effects  
+      
+### � Smart & Productive
+• **AI assistant** powered by LLaMA 3.3 70B  
+• **12 search engines** with instant switching  
+• **Focus Mode** with Pomodoro timer  
+• **Drag & drop widgets** - customize your layout  
+      
+    </td>
+    <td width="50%" valign="top">
+      
+### 🌤️ No Setup Needed
+• **Free weather API** - no key required  
+• **Auto-location detection** via GPS  
+• **Instant install** - works right away  
+• **No registration** - completely free  
+      
+### 🎯 Complete Productivity Suite
+• **Calendar** with month navigation  
+• **Todo List** with local storage  
+• **Notes Widget** with 6 colors  
+• **Music Player** with ambient tracks  
+      
+    </td>
+  </tr>
+</table>
 
-## ✨ Complete Feature List
+<br/>
 
-### 🎨 Themes & Customization
+<!-- Divider -->
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%"/>
 
-**8 Stunning Themes** with unique personalities:
-- 🌈 **Aurora** - Purple and blue Northern Lights (sphere animations)
-- 🌊 **Ocean** - Cyan and teal depths (hexagon animations, bubble particles)
-- 🌲 **Forest** - Green and emerald nature (triangle animations, falling leaves)
-- 🌅 **Sunset** - Orange and warm golden hour (circle animations, sparkles)
-- 🌙 **Midnight** - Deep purple starry night (star animations, twinkling stars)
-- ⚡ **Neon** - Pink and cyan cyberpunk (diamond animations, electric particles)
-- 🌸 **Cherry** - Pink blossom romance (petal animations, falling petals)
-- 🌿 **Mint** - Teal and fresh green (leaf animations, floating gems)
+<br/>
+
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Sparkles.png" width="35" height="35"/> Complete Feature List
+
+### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Artist%20Palette.png" width="30" height="30"/> Themes & Customization
+
+<div align="center">
+
+**8 Stunning Themes** with unique personalities and animations
+
+</div>
+
+<table>
+  <tr>
+    <td align="center" width="25%">
+      <img src="https://img.shields.io/badge/🌈_Aurora-8B5CF6?style=for-the-badge" alt="Aurora"/>
+      <br/><b>Aurora</b>
+      <br/><sub>Purple & Blue Northern Lights</sub>
+      <br/><sub>⚫ Sphere animations</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="https://img.shields.io/badge/🌊_Ocean-06B6D4?style=for-the-badge" alt="Ocean"/>
+      <br/><b>Ocean</b>
+      <br/><sub>Cyan & Teal depths</sub>
+      <br/><sub>⬡ Hexagon + Bubbles</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="https://img.shields.io/badge/🌲_Forest-10B981?style=for-the-badge" alt="Forest"/>
+      <br/><b>Forest</b>
+      <br/><sub>Green & Emerald nature</sub>
+      <br/><sub>▲ Triangle + Leaves</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="https://img.shields.io/badge/🌅_Sunset-F97316?style=for-the-badge" alt="Sunset"/>
+      <br/><b>Sunset</b>
+      <br/><sub>Orange & Golden hour</sub>
+      <br/><sub>● Circle + Sparkles</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="25%">
+      <img src="https://img.shields.io/badge/🌙_Midnight-6366F1?style=for-the-badge" alt="Midnight"/>
+      <br/><b>Midnight</b>
+      <br/><sub>Deep Purple starry night</sub>
+      <br/><sub>★ Star + Twinkling</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="https://img.shields.io/badge/⚡_Neon-EC4899?style=for-the-badge" alt="Neon"/>
+      <br/><b>Neon</b>
+      <br/><sub>Pink & Cyan cyberpunk</sub>
+      <br/><sub>◆ Diamond + Electric</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="https://img.shields.io/badge/🌸_Cherry-F472B6?style=for-the-badge" alt="Cherry"/>
+      <br/><b>Cherry</b>
+      <br/><sub>Pink blossom romance</sub>
+      <br/><sub>✿ Petal animations</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="https://img.shields.io/badge/🌿_Mint-14B8A6?style=for-the-badge" alt="Mint"/>
+      <br/><b>Mint</b>
+      <br/><sub>Teal & Fresh green</sub>
+      <br/><sub>🍃 Leaf + Gems</sub>
+    </td>
+  </tr>
+</table>
 
 **40+ Wallpaper Bundle:**
 - Each theme includes 5 high-quality wallpapers from Unsplash
@@ -137,117 +224,161 @@ Ionex Tab transforms your browser's new tab into a personalized productivity wor
 - 🎚️ Adjustable widget sizes (small, medium, large)
 - 🎨 Custom color picker (manual theme colors)
 
-### 🤖 AI Assistant
+### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Robot.png" width="30" height="30"/> AI Assistant
+
+<div align="center">
 
 **Powered by Groq LLaMA 3.3 70B** - One of the fastest AI models available!
 
-**Features:**
-- 📝 **Full Markdown Support** - Beautiful formatted responses
-- 💻 **Syntax Highlighting** - Color-coded code blocks
-- 📊 **Tables, Lists, Headings** - Professional formatting
-- 🔗 **Working Links** - Clickable URLs with hover effects
-- 📋 **One-Click Copy** - Copy any AI response
-- 🗑️ **Clear Chat** - Start fresh conversations
-- ✨ **Theme Particles** - Animated backgrounds matching your theme
-- 🎨 **Glassmorphism Chat UI** - Beautiful message bubbles
+<img src="https://img.shields.io/badge/Model-LLaMA_3.3_70B-00D4AA?style=for-the-badge&logo=meta&logoColor=white" alt="LLaMA Model"/>
+<img src="https://img.shields.io/badge/Provider-Groq-FF6B6B?style=for-the-badge" alt="Groq"/>
+<img src="https://img.shields.io/badge/Markdown-Supported-2ea44f?style=for-the-badge&logo=markdown&logoColor=white" alt="Markdown"/>
 
-**Markdown Elements Supported:**
-- Headings (H1-H6) with hover effects
-- Inline and block code with syntax colors
-- Bullet and numbered lists
+</div>
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      
+#### ✨ Core Features
+- 📝 **Full Markdown Support**
+- 💻 **Syntax Highlighting**
+- 📊 **Tables & Lists**
+- 🔗 **Clickable Links**
+- 📋 **One-Click Copy**
+- 🗑️ **Clear Chat History**
+- ✨ **Theme Particles**
+- 🎨 **Glassmorphism UI**
+      
+    </td>
+    <td width="50%" valign="top">
+      
+#### 📝 Markdown Elements
+- Headings (H1-H6) with hover
+- Inline & block code
+- Bullet & numbered lists
 - Tables with row hover
-- Blockquotes with theme styling
-- Bold, italic, strikethrough text
+- Blockquotes with styling
+- Bold, italic, strikethrough
 - Task lists with checkboxes
-- Horizontal rules
-- Images with rounded corners
+- Horizontal rules & images
+      
+    </td>
+  </tr>
+</table>
 
-### ⏰ Time & Productivity Widgets
+<div align="center">
+  <sub>💡 <i>Ask anything - get beautifully formatted responses instantly!</i></sub>
+</div>
 
-**Digital Clock**
+### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Alarm%20Clock.png" width="30" height="30"/> Time & Productivity Widgets
+
+<table>
+  <tr>
+    <td width="33%" valign="top">
+      
+**⏰ Digital Clock**
 - Clean time display
-- 12-hour or 24-hour format
+- 12/24-hour format
 - Date display
 - Theme-colored accents
 
-**Analog Clock**
-- 3D rotating clock face
-- Hour, minute, second hands
+**🕰️ Analog Clock**
+- 3D rotating face
+- Hour/minute/second hands
 - Smooth animations
-- Optional digital display below
-- Show both clocks simultaneously
-
-**Focus Mode** (Pomodoro Timer)
-- ⏱️ Customizable duration (5-60 minutes)
-- ▶️ Play/Pause/Reset controls
-- 📊 Circular progress indicator
-- 🎵 Built-in ambient music player
+- Digital display below
+- Show both clocks
+      
+    </td>
+    <td width="33%" valign="top">
+      
+**🎯 Focus Mode**
+- ⏱️ 5-60 minute timer
+- ▶️ Play/Pause/Reset
+- 📊 Progress indicator
+- 🎵 **Ambient Music:**
   - Lofi Beats
   - Rain Sounds
   - Ocean Waves
   - Forest Ambience
 - 🔊 Volume control
-- 🌌 Immersive deep space background
-- ⏭️ Skip to next track
-- 🔔 Desktop notifications on completion
-- 📈 Session statistics
+- 🌌 Deep space BG
+- 🔔 Notifications
+      
+    </td>
+    <td width="33%" valign="top">
+      
+**📅 Calendar**
+- Month view
+- Current date highlight
+- "Today" button
+- Theme styling
+- Week numbers
+- Month navigation
 
-**Calendar**
-- Month view with full navigation
-- 📅 Current date highlighted
-- ⚡ "Today" button for quick navigation
-- 🎨 Theme-based styling
-- 📍 Week numbers
-- 🗓️ Previous/Next month navigation
+**✅ Todo List**
+- Add/Edit/Delete tasks
+- Check off items
+- Local storage
+- Clear completed
+- Persistent data
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="3" align="center">
+      
+**📝 Notes Widget** • Create multiple notes • 6 color codes • Rich text editing • Auto-save • Sticky design
+      
+    </td>
+  </tr>
+</table>
 
-**Todo List**
-- ✅ Add/Edit/Delete tasks
-- ✔️ Check off completed items
-- 💾 Automatic local storage
-- 🗑️ Remove all completed tasks
-- 📝 Task persistence across sessions
-- 🎨 Theme-colored checkboxes
+### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Globe%20Showing%20Americas.png" width="30" height="30"/> Information & Search
 
-**Notes Widget**
-- 📝 Create multiple notes
-- 🎨 Color-coded notes (6 colors)
-- ✏️ Rich text editing
-- 🗑️ Delete notes
-- 💾 Auto-save functionality
-- 📌 Sticky note design
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      
+**🌤️ Weather Widget**
 
-### 🌐 Information & Search
+<img src="https://img.shields.io/badge/API-Open--Meteo-00A3E0?style=flat-square&logo=weather&logoColor=white" alt="Weather API"/>
+<img src="https://img.shields.io/badge/FREE-No_Key_Required-00D084?style=flat-square" alt="Free"/>
 
-**Weather Widget**
-- 🌤️ Current weather conditions
-- 📍 **Auto-location detection** via geolocation
-- 🆓 **No API key needed** - Uses free Open-Meteo API
-- 🌡️ Temperature display
+- 🌤️ Current conditions
+- 📍 **Auto-location** (GPS)
+- 🌡️ Temperature
 - 💨 Wind speed
-- 💧 Humidity percentage
+- 💧 Humidity %
 - 🌫️ Visibility range
-- ⏰ Pressure measurement
-- 🏙️ City name from coordinates
-- 🎨 Weather-appropriate icons
+- ⏰ Pressure
+- 🏙️ City name
+- 🎨 Weather icons
+      
+    </td>
+    <td width="50%" valign="top">
+      
+**🔍 Smart Search Bar**
 
-**Search Bar**
-- 🔍 **12 Search Engines:**
-  - Google 🔎
-  - DuckDuckGo 🦆
-  - Bing 🅱️
-  - Yahoo 🟣
-  - Wikipedia 📖
-  - Brave 🦁
-  - YouTube ▶️
-  - Ecosia 🌱
-  - Startpage 🏠
-  - Qwant 🔵
-  - Yandex 🔴
-  - Baidu 🇨🇳
-- 💡 Search suggestions as you type
-- ⚡ Quick engine switching
-- 🎨 Material Design icons
-- 🎯 One-click search
+**12 Search Engines:**
+
+<img src="https://img.shields.io/badge/Google-4285F4?style=flat-square&logo=google&logoColor=white" alt="Google"/>
+<img src="https://img.shields.io/badge/DuckDuckGo-DE5833?style=flat-square&logo=duckduckgo&logoColor=white" alt="DuckDuckGo"/>
+<img src="https://img.shields.io/badge/Bing-008373?style=flat-square&logo=microsoft&logoColor=white" alt="Bing"/>
+<img src="https://img.shields.io/badge/Wikipedia-000000?style=flat-square&logo=wikipedia&logoColor=white" alt="Wikipedia"/>
+<img src="https://img.shields.io/badge/YouTube-FF0000?style=flat-square&logo=youtube&logoColor=white" alt="YouTube"/>
+<img src="https://img.shields.io/badge/Brave-FB542B?style=flat-square&logo=brave&logoColor=white" alt="Brave"/>
+
+*+ Yahoo, Ecosia, Startpage, Qwant, Yandex, Baidu*
+
+- 💡 Live suggestions
+- ⚡ Instant switching
+- 🎨 Material icons
+      
+    </td>
+  </tr>
+</table>
 
 **Quick Links Bar**
 - 🔗 8 default shortcuts (Gmail, YouTube, GitHub, Discord, Spotify, Reddit, Twitter, Figma)
@@ -344,9 +475,14 @@ Ionex Tab transforms your browser's new tab into a personalized productivity wor
 - Pulsing focus mode button
 - Widget drag & drop with physics
 
----
+<br/>
 
-## 🚀 Installation
+<!-- Divider -->
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%"/>
+
+<br/>
+
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" width="35" height="35"/> Installation
 
 ### 📦 From Browser Stores (Recommended)
 
@@ -476,58 +612,279 @@ Uses free [Open-Meteo API](https://open-meteo.com/) with auto-location detection
 - Up to 1,024 tokens per response
 - No credit card required
 
----
+<br/>
 
-## 🛠️ Tech Stack
+<!-- Divider -->
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%"/>
 
-| Category | Technology | Version |
-|----------|-----------|---------|
-| **Framework** | React | 18.2 |
-| **Language** | TypeScript | 5.3 |
-| **Build Tool** | Vite | 5.0 |
-| **Styling** | Tailwind CSS | 4.1 |
-| **Animations** | Framer Motion | 11.0 |
-| **Icons** | Lucide React | 0.344 |
-| **Markdown** | react-markdown | 10.1 |
-| **Markdown Plugin** | remark-gfm | 4.0 |
-| **APIs** | Open-Meteo, Groq, Quotable, ipify | - |
-| **Browser APIs** | Storage, Geolocation | Native |
+<br/>
 
----
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Hammer%20and%20Wrench.png" width="35" height="35"/> Tech Stack
 
-## 📖 Documentation
+<div align="center">
 
-- 📋 **[Manifest Guide](MANIFEST_GUIDE.md)** - Browser compatibility, permissions, publishing
-- 🎨 **[Markdown Features](AI_MARKDOWN_FEATURES.md)** - AI response formatting guide
-- 🔧 **[Testing Guide](TESTING.md)** - Development and testing instructions
+### Frontend & Build
 
----
+<p>
+  <img src="https://skillicons.dev/icons?i=react,typescript,vite,tailwind&theme=dark" alt="Tech Stack"/>
+</p>
 
-## 📝 Browser Compatibility
+### Libraries & APIs
 
-| Browser | Minimum Version | Status | Notes |
-|---------|----------------|--------|-------|
-| 🦊 **Firefox** | 109+ | ✅ Available | [Download Now](https://addons.mozilla.org/en-US/firefox/addon/ionex-tab-enhanced-new-tab/) |
-| 🌐 **Chrome** | 88+ | 🔄 Coming Soon | Manifest V3 ready |
-| 🔷 **Edge** | 88+ | 🔄 Coming Soon | Chrome build compatible |
-| 🦁 **Brave** | 88+ | ✅ Manual Install | Use Chrome build |
-| 🌍 **Opera** | 74+ | ⚠️ Untested | Should work with Chrome build |
+<img src="https://img.shields.io/badge/Framer_Motion-11.0-FF0055?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion"/>
+<img src="https://img.shields.io/badge/React_Markdown-10.1-00BFFF?style=for-the-badge&logo=markdown&logoColor=white" alt="React Markdown"/>
+<img src="https://img.shields.io/badge/Lucide_Icons-0.344-F56565?style=for-the-badge" alt="Lucide Icons"/>
 
----
+### APIs
 
-## 🤝 Contributing
+<img src="https://img.shields.io/badge/Open--Meteo-Weather-00A3E0?style=for-the-badge" alt="Open-Meteo"/>
+<img src="https://img.shields.io/badge/Groq-LLaMA_3.3-FF6B6B?style=for-the-badge" alt="Groq"/>
+<img src="https://img.shields.io/badge/Quotable-Quotes-FFA500?style=for-the-badge" alt="Quotable"/>
+<img src="https://img.shields.io/badge/ipify-IP_Address-6366F1?style=for-the-badge" alt="ipify"/>
 
-Contributions are welcome! Help make Ionex Tab even better.
+</div>
 
-### Ways to Contribute
+<br/>
 
-1. 🐛 **Report Bugs** - [Open an issue](https://github.com/OminduD/Ionex-Tab/issues)
-2. 💡 **Request Features** - Share your ideas in [discussions](https://github.com/OminduD/Ionex-Tab/discussions)
-3. 🔧 **Submit Pull Requests** - Fix bugs or add features
-4. ⭐ **Star the Repository** - Show your support
-5. 📣 **Spread the Word** - Tell others about Ionex Tab
-6. 📝 **Improve Documentation** - Help others understand the project
-7. 🎨 **Design Contributions** - New themes, wallpapers, icons
+<table>
+  <tr>
+    <th width="25%">Category</th>
+    <th width="50%">Technology</th>
+    <th width="25%">Version</th>
+  </tr>
+  <tr>
+    <td><b>Framework</b></td>
+    <td>React</td>
+    <td>18.2</td>
+  </tr>
+  <tr>
+    <td><b>Language</b></td>
+    <td>TypeScript</td>
+    <td>5.3</td>
+  </tr>
+  <tr>
+    <td><b>Build Tool</b></td>
+    <td>Vite</td>
+    <td>5.0</td>
+  </tr>
+  <tr>
+    <td><b>Styling</b></td>
+    <td>Tailwind CSS</td>
+    <td>4.1</td>
+  </tr>
+  <tr>
+    <td><b>Animations</b></td>
+    <td>Framer Motion</td>
+    <td>11.0</td>
+  </tr>
+  <tr>
+    <td><b>Icons</b></td>
+    <td>Lucide React</td>
+    <td>0.344</td>
+  </tr>
+  <tr>
+    <td><b>Markdown</b></td>
+    <td>react-markdown + remark-gfm</td>
+    <td>10.1 + 4.0</td>
+  </tr>
+  <tr>
+    <td><b>APIs</b></td>
+    <td>Open-Meteo, Groq, Quotable, ipify</td>
+    <td>-</td>
+  </tr>
+  <tr>
+    <td><b>Browser APIs</b></td>
+    <td>Storage, Geolocation</td>
+    <td>Native</td>
+  </tr>
+</table>
+
+<br/>
+
+<!-- Divider -->
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%"/>
+
+<br/>
+
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Books.png" width="35" height="35"/> Documentation
+
+<div align="center">
+
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Clipboard.png" width="60" height="60" alt="Manifest"/>
+      <br/><br/>
+      <b>Manifest Guide</b>
+      <br/><sub>Browser compatibility & permissions</sub>
+      <br/><br/>
+      <a href="MANIFEST_GUIDE.md">
+        <img src="https://img.shields.io/badge/Read-Guide-8B5CF6?style=for-the-badge" alt="Read"/>
+      </a>
+    </td>
+    <td align="center" width="33%">
+      <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Artist%20Palette.png" width="60" height="60" alt="Markdown"/>
+      <br/><br/>
+      <b>Markdown Features</b>
+      <br/><sub>AI response formatting</sub>
+      <br/><br/>
+      <a href="AI_MARKDOWN_FEATURES.md">
+        <img src="https://img.shields.io/badge/Read-Guide-06B6D4?style=for-the-badge" alt="Read"/>
+      </a>
+    </td>
+    <td align="center" width="33%">
+      <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Wrench.png" width="60" height="60" alt="Testing"/>
+      <br/><br/>
+      <b>Testing Guide</b>
+      <br/><sub>Development & testing</sub>
+      <br/><br/>
+      <a href="TESTING.md">
+        <img src="https://img.shields.io/badge/Read-Guide-10B981?style=for-the-badge" alt="Read"/>
+      </a>
+    </td>
+  </tr>
+</table>
+
+</div>
+
+<br/>
+
+<!-- Divider -->
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%"/>
+
+<br/>
+
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Memo.png" width="35" height="35"/> Browser Compatibility
+
+<div align="center">
+
+<table>
+  <tr>
+    <th width="20%">Browser</th>
+    <th width="20%">Min Version</th>
+    <th width="20%">Status</th>
+    <th width="40%">Notes</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/firefox/firefox_48x48.png" width="24" height="24" alt="Firefox"/>
+      <br/><b>Firefox</b>
+    </td>
+    <td align="center">109+</td>
+    <td align="center">
+      <img src="https://img.shields.io/badge/✅-Available-00D084?style=flat-square" alt="Available"/>
+    </td>
+    <td>
+      <a href="https://addons.mozilla.org/en-US/firefox/addon/ionex-tab-enhanced-new-tab/">
+        <img src="https://img.shields.io/badge/Download_Now-FF7139?style=flat-square&logo=firefox&logoColor=white" alt="Download"/>
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome_48x48.png" width="24" height="24" alt="Chrome"/>
+      <br/><b>Chrome</b>
+    </td>
+    <td align="center">88+</td>
+    <td align="center">
+      <img src="https://img.shields.io/badge/🔄-Coming_Soon-FFA500?style=flat-square" alt="Coming Soon"/>
+    </td>
+    <td>Manifest V3 ready</td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge_48x48.png" width="24" height="24" alt="Edge"/>
+      <br/><b>Edge</b>
+    </td>
+    <td align="center">88+</td>
+    <td align="center">
+      <img src="https://img.shields.io/badge/🔄-Coming_Soon-FFA500?style=flat-square" alt="Coming Soon"/>
+    </td>
+    <td>Chrome build compatible</td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/brave/brave_48x48.png" width="24" height="24" alt="Brave"/>
+      <br/><b>Brave</b>
+    </td>
+    <td align="center">88+</td>
+    <td align="center">
+      <img src="https://img.shields.io/badge/✅-Manual_Install-00D084?style=flat-square" alt="Manual Install"/>
+    </td>
+    <td>Use Chrome build</td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/opera/opera_48x48.png" width="24" height="24" alt="Opera"/>
+      <br/><b>Opera</b>
+    </td>
+    <td align="center">74+</td>
+    <td align="center">
+      <img src="https://img.shields.io/badge/⚠️-Untested-808080?style=flat-square" alt="Untested"/>
+    </td>
+    <td>Should work with Chrome build</td>
+  </tr>
+</table>
+
+</div>
+
+<br/>
+
+<!-- Divider -->
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%"/>
+
+<br/>
+
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Handshake.png" width="35" height="35"/> Contributing
+
+<div align="center">
+
+**Contributions are welcome! Help make Ionex Tab even better.**
+
+<img src="https://img.shields.io/badge/PRs-Welcome-00D084?style=for-the-badge" alt="PRs Welcome"/>
+<img src="https://img.shields.io/badge/Issues-Welcome-FF6B6B?style=for-the-badge" alt="Issues Welcome"/>
+<img src="https://img.shields.io/badge/Ideas-Welcome-8B5CF6?style=for-the-badge" alt="Ideas Welcome"/>
+
+</div>
+
+<br/>
+
+### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Waving%20Hand.png" width="25" height="25"/> Ways to Contribute
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      
+**🐛 Report & Fix**
+- Report bugs via [Issues](https://github.com/OminduD/Ionex-Tab/issues)
+- Submit Pull Requests
+- Help with bug fixes
+- Test new features
+
+**🎨 Design & Create**
+- Design new themes
+- Create wallpaper bundles
+- Design custom icons
+- Improve UI/UX
+      
+    </td>
+    <td width="50%" valign="top">
+      
+**💡 Suggest & Share**
+- Request features in [Discussions](https://github.com/OminduD/Ionex-Tab/discussions)
+- ⭐ Star the repository
+- 📣 Spread the word
+- Write blog posts/reviews
+
+**📝 Document & Help**
+- Improve documentation
+- Write tutorials
+- Help other users
+- Translate to other languages
+      
+    </td>
+  </tr>
+</table>
 
 ### Development Workflow
 
@@ -560,15 +917,33 @@ git push origin feature/your-feature-name
 # Open a Pull Request
 ```
 
----
+<br/>
 
-## 📄 License
+<!-- Divider -->
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%"/>
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+<br/>
 
-**TL;DR:** You can use, modify, and distribute this project freely, even commercially. Just include the original license.
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Page%20with%20Curl.png" width="35" height="35"/> License
 
----
+<div align="center">
+
+**This project is licensed under the MIT License**
+
+<img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge&logo=open-source-initiative&logoColor=white" alt="MIT License"/>
+
+See the [LICENSE](LICENSE) file for details.
+
+**TL;DR:** ✅ Use freely • ✅ Modify • ✅ Distribute • ✅ Commercial use • ⚠️ Include original license
+
+</div>
+
+<br/>
+
+<!-- Divider -->
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%"/>
+
+<br/>
 
 ## 🙏 Acknowledgments
 
@@ -599,47 +974,90 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ---
 
-## 🗺️ Roadmap
-
-### Upcoming Features
-
-- 🌐 **Chrome Web Store Release** - Q1 2025
-- 📱 **Mobile Responsive Widgets** - Better mobile browser support
-- 🎨 **Theme Creator** - Build custom themes
-- 🔄 **Widget Sync** - Sync settings across devices
-- 📊 **Analytics Widget** - Personal productivity stats
-- 🌍 **Multi-Language Support** - Internationalization
-- 🎵 **Spotify Integration** - Native music player connection
-- 📰 **RSS Feed Reader** - Custom news sources
-- 🔐 **Password Manager Integration** - Quick access to passwords
-- ⌨️ **Keyboard Shortcuts** - Power user features
-- 🎯 **Goal Tracker Widget** - Long-term goal management
-- 🌓 **System Theme Detection** - Auto dark/light mode
-
-### Long-term Vision
-
-- 🤖 **Advanced AI Features** - Voice commands, image generation
-- 🔗 **Browser History Integration** - Frequently visited sites
-- 📚 **Bookmark Manager** - Visual bookmark organization
-- 🎮 **Mini Games** - Quick brain breaks
-- 💼 **Workspace Profiles** - Different layouts for work/personal
-
----
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/World%20Map.png" width="35" height="35"/> Roadmap
 
 <div align="center">
 
-## ⭐ Star History
+**Building the future of new tab experiences**
+
+</div>
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      
+### 🎯 Upcoming Features (2025)
+
+- 🌐 **Chrome Web Store** - Q1 2025
+- 📱 **Mobile Responsive** - Better mobile browsers
+- 🎨 **Theme Creator** - Build custom themes
+- 🔄 **Widget Sync** - Cross-device settings
+- 📊 **Analytics Widget** - Productivity stats
+- 🌍 **Multi-Language** - Internationalization
+- 🎵 **Spotify Integration** - Native music player
+- 📰 **RSS Feed Reader** - Custom news sources
+- 🔐 **Password Manager** - Quick access
+- ⌨️ **Keyboard Shortcuts** - Power user mode
+- 🎯 **Goal Tracker** - Long-term goals
+- 🌓 **System Theme** - Auto dark/light
+      
+    </td>
+    <td width="50%" valign="top">
+      
+### 🚀 Long-term Vision
+
+- 🤖 **Advanced AI** - Voice commands, image gen
+- 🔗 **History Integration** - Frequent sites
+- 📚 **Bookmark Manager** - Visual organization
+- 🎮 **Mini Games** - Quick brain breaks
+- 💼 **Workspace Profiles** - Work/personal layouts
+- 🌈 **More Themes** - Community submissions
+- 🔌 **Plugin System** - Third-party extensions
+- 📈 **Advanced Analytics** - Deep insights
+- 🎨 **Animation Editor** - Custom animations
+- 🌐 **Cloud Sync** - Backup & restore
+- 📱 **Mobile App** - Companion app
+- 🤝 **Collaboration** - Shared workspaces
+      
+    </td>
+  </tr>
+</table>
+
+<br/>
+
+<!-- Divider -->
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%"/>
+
+<br/>
+
+<div align="center">
+
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Star.png" width="35" height="35"/> Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=OminduD/Ionex-Tab&type=Date)](https://star-history.com/#OminduD/Ionex-Tab&Date)
 
----
+<br/>
 
-### Made with ❤️ for a better browsing experience
+<!-- Footer Section -->
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%"/>
 
-[![Get for Firefox](https://img.shields.io/badge/🦊_Get_for_Firefox-FF7139?style=for-the-badge&logo=firefox&logoColor=white)](https://addons.mozilla.org/en-US/firefox/addon/ionex-tab-enhanced-new-tab/)
-[![Star on GitHub](https://img.shields.io/badge/⭐_Star_on_GitHub-181717?style=for-the-badge&logo=github)](https://github.com/OminduD/Ionex-Tab)
-[![Follow on GitHub](https://img.shields.io/badge/👤_Follow_@OminduD-181717?style=for-the-badge&logo=github)](https://github.com/OminduD)
+<br/>
 
-**Transform your new tab. Transform your productivity. 🚀**
+### Made with <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Red%20Heart.png" width="20" height="20"/> for a better browsing experience
+
+<br/>
+
+[![Get for Firefox](https://img.shields.io/badge/🦊_Get_for_Firefox-Download_Now-FF7139?style=for-the-badge&logo=firefox&logoColor=white)](https://addons.mozilla.org/en-US/firefox/addon/ionex-tab-enhanced-new-tab/)
+[![Star on GitHub](https://img.shields.io/badge/⭐_Star_on_GitHub-Show_Support-181717?style=for-the-badge&logo=github)](https://github.com/OminduD/Ionex-Tab)
+[![Follow on GitHub](https://img.shields.io/badge/👤_Follow_@OminduD-Stay_Updated-181717?style=for-the-badge&logo=github)](https://github.com/OminduD)
+
+<br/>
+
+<img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=16&duration=3000&pause=1000&color=8B5CF6&center=true&vCenter=true&width=435&lines=Transform+your+new+tab+%E2%9C%A8;Transform+your+productivity+%F0%9F%9A%80;Join+us+on+this+journey+%F0%9F%8C%9F" alt="Typing SVG" />
+
+<br/>
+
+<!-- Waving Footer -->
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,14,16,18,20&height=120&section=footer" width="100%"/>
 
 </div>
