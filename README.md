@@ -72,7 +72,7 @@
 <!-- Action Buttons -->
 <p>
   <a href="https://addons.mozilla.org/en-US/firefox/addon/ionex-tab-enhanced-new-tab/">
-    <img src="https://img.shields.io/badge/🦊_Get_for_Firefox-Insta ll_Now-FF7139?style=for-the-badge&logo=firefox&logoColor=white" alt="Get for Firefox"/>
+    <img src="https://img.shields.io/badge/🦊_Get_for_Firefox-Install_Now-FF7139?style=for-the-badge&logo=firefox&logoColor=white" alt="Get for Firefox"/>
   </a>
   &nbsp;&nbsp;
   <a href="https://github.com/OminduD/Ionex-Tab">
@@ -113,7 +113,7 @@
 • **3D geometric animations** for each theme  
 • **Glassmorphism UI** with blur effects  
       
-### � Smart & Productive
+### 🧠 Smart & Productive
 • **AI assistant** powered by LLaMA 3.3 70B  
 • **12 search engines** with instant switching  
 • **Focus Mode** with Pomodoro timer  
@@ -964,7 +964,7 @@ See the [LICENSE](LICENSE) file for details.
 
 - 🐛 **Bug Reports** - [GitHub Issues](https://github.com/OminduD/Ionex-Tab/issues)
 - 💬 **Discussions** - [GitHub Discussions](https://github.com/OminduD/Ionex-Tab/discussions)
-- 📧 **Email** - ionex-tab@omindu.dev
+- 📧 **Email** - [ionex-tab@omindu.dev](mailto:ionex-tab@omindu.dev)
 - ⭐ **Star** - [GitHub Repository](https://github.com/OminduD/Ionex-Tab)
 
 ### Social
