@@ -324,7 +324,7 @@
 - Clear completed
 - Persistent data
       
-    </td>
+</td>
   </tr>
   <tr>
     <td colspan="3" align="center">
