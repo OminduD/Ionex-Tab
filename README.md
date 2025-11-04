@@ -1,25 +1,93 @@
 <div align="center">
 
-# ✨ Ionex Tab - Enhanced New Tab Experience
+<!-- Animated Header -->
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,14,16,18,20&height=250&section=header&text=Ionex%20Tab&fontSize=80&fontAlignY=35&animation=twinkling&fontColor=fff&desc=Enhanced%20New%20Tab%20Experience&descAlignY=55&descSize=25" width="100%"/>
 
-### Transform your browser's new tab into a beautiful, productive workspace
+<br/>
 
-[![Firefox Add-on](https://img.shields.io/badge/Firefox-Download%20Now-FF7139?style=for-the-badge&logo=firefox&logoColor=white)](https://addons.mozilla.org/en-US/firefox/addon/ionex-tab-enhanced-new-tab/)
-[![Chrome Extension](https://img.shields.io/badge/Chrome-Coming%20Soon-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](#)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue?style=for-the-badge)](https://github.com/OminduD/Ionex-Tab/releases)
-[![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE)
+<!-- Badges Row 1: Main Stats -->
+<p>
+  <a href="https://addons.mozilla.org/en-US/firefox/addon/ionex-tab-enhanced-new-tab/">
+    <img src="https://img.shields.io/badge/🦊_Firefox-Available_Now-FF7139?style=for-the-badge&logo=firefox&logoColor=white&labelColor=1a1a1a" alt="Firefox Add-on"/>
+  </a>
+  <a href="#">
+    <img src="https://img.shields.io/badge/Chrome-Coming_Soon-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white&labelColor=1a1a1a" alt="Chrome Extension"/>
+  </a>
+  <img src="https://img.shields.io/badge/version-1.0.0-blue?style=for-the-badge&logo=semantic-release&logoColor=white&labelColor=1a1a1a" alt="Version"/>
+  <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge&logo=open-source-initiative&logoColor=white&labelColor=1a1a1a" alt="License"/>
+</p>
 
-[![React](https://img.shields.io/badge/React-18.2-61DAFB?style=flat-square&logo=react&logoColor=black)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-5.0-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![Framer Motion](https://img.shields.io/badge/Framer%20Motion-11.0-FF0055?style=flat-square&logo=framer&logoColor=white)](https://www.framer.com/motion/)
+<!-- Badges Row 2: Tech Stack -->
+<p>
+  <img src="https://img.shields.io/badge/React-18.2-61DAFB?style=flat-square&logo=react&logoColor=61DAFB&labelColor=282c34" alt="React"/>
+  <img src="https://img.shields.io/badge/TypeScript-5.3-3178C6?style=flat-square&logo=typescript&logoColor=3178C6&labelColor=282c34" alt="TypeScript"/>
+  <img src="https://img.shields.io/badge/Vite-5.0-646CFF?style=flat-square&logo=vite&logoColor=646CFF&labelColor=282c34" alt="Vite"/>
+  <img src="https://img.shields.io/badge/Tailwind-4.1-06B6D4?style=flat-square&logo=tailwindcss&logoColor=06B6D4&labelColor=282c34" alt="Tailwind"/>
+  <img src="https://img.shields.io/badge/Framer_Motion-11.0-FF0055?style=flat-square&logo=framer&logoColor=FF0055&labelColor=282c34" alt="Framer Motion"/>
+</p>
 
-![Ionex Tab Preview](https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2070&h=400&fit=crop)
+<!-- Typing Animation -->
+<img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=22&duration=3000&pause=1000&color=8B5CF6&center=true&vCenter=true&multiline=true&width=800&height=100&lines=Transform+your+browser's+new+tab;8+Beautiful+Themes+%7C+40%2B+Wallpapers+%7C+AI+Assistant;Drag+%26+Drop+Widgets+%7C+Focus+Mode+%7C+Weather+%26+More!" alt="Typing SVG" />
 
-**A stunning new tab extension with 8 themes, 40+ wallpapers, AI assistant, and fully customizable widgets**
+<br/>
 
-[🦊 Get for Firefox](https://addons.mozilla.org/en-US/firefox/addon/ionex-tab-enhanced-new-tab/) • [⭐ Star on GitHub](https://github.com/OminduD/Ionex-Tab) • [🐛 Report Issue](https://github.com/OminduD/Ionex-Tab/issues)
+<!-- Preview Banner -->
+<img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2070&h=400&fit=crop" alt="Ionex Tab Preview" style="border-radius: 15px; box-shadow: 0 20px 60px rgba(139, 92, 246, 0.4);"/>
+
+<br/><br/>
+
+<!-- Feature Highlights with Emojis -->
+<table>
+  <tr>
+    <td align="center" width="140">
+      <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Artist%20Palette.png" width="60" height="60" alt="Themes"/>
+      <br/><b>8 Themes</b>
+      <br/><sub>40+ Wallpapers</sub>
+    </td>
+    <td align="center" width="140">
+      <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Robot.png" width="60" height="60" alt="AI"/>
+      <br/><b>AI Assistant</b>
+      <br/><sub>LLaMA 3.3 70B</sub>
+    </td>
+    <td align="center" width="140">
+      <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Magnifying%20Glass%20Tilted%20Right.png" width="60" height="60" alt="Search"/>
+      <br/><b>12 Engines</b>
+      <br/><sub>Smart Search</sub>
+    </td>
+    <td align="center" width="140">
+      <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Sun%20Behind%20Rain%20Cloud.png" width="60" height="60" alt="Weather"/>
+      <br/><b>Weather</b>
+      <br/><sub>Free API</sub>
+    </td>
+    <td align="center" width="140">
+      <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Alarm%20Clock.png" width="60" height="60" alt="Focus"/>
+      <br/><b>Focus Mode</b>
+      <br/><sub>Pomodoro</sub>
+    </td>
+  </tr>
+</table>
+
+<br/>
+
+<!-- Action Buttons -->
+<p>
+  <a href="https://addons.mozilla.org/en-US/firefox/addon/ionex-tab-enhanced-new-tab/">
+    <img src="https://img.shields.io/badge/🦊_Get_for_Firefox-Insta ll_Now-FF7139?style=for-the-badge&logo=firefox&logoColor=white" alt="Get for Firefox"/>
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://github.com/OminduD/Ionex-Tab">
+    <img src="https://img.shields.io/badge/⭐_Star_on_GitHub-View_Code-181717?style=for-the-badge&logo=github&logoColor=white" alt="Star on GitHub"/>
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://github.com/OminduD/Ionex-Tab/issues">
+    <img src="https://img.shields.io/badge/🐛_Report_Issue-Get_Help-red?style=for-the-badge&logo=github&logoColor=white" alt="Report Issue"/>
+  </a>
+</p>
+
+<br/>
+
+<!-- Divider -->
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%"/>
 
 </div>
 
