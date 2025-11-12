@@ -327,11 +327,15 @@
 </td>
   </tr>
   <tr>
-    <td colspan="3" align="center">
+    <td>
       
-**📝 Notes Widget** • Create multiple notes • 6 color codes • Rich text editing • Auto-save • Sticky design
+**📝 Notes Widget** 
+- Create multiple notes
+- 6 color codes
+- Rich text editing
+- Auto-save
+- Sticky design
       
-    </td>
   </tr>
 </table>
 
