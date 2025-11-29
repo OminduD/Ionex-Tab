@@ -16,6 +16,7 @@ import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { Zap } from 'lucide-react';
 import { extractColorsFromImage, applyCustomColors } from './utils/colorExtractorImproved';
 import { getRandomWallpaper } from './utils/themeWallpapers';
+import VirtualPet from './components/VirtualPet';
 
 // Dynamically import widgets
 const Clock = React.lazy(() => import('./components/widgets/Clock'));
@@ -42,8 +43,9 @@ const LogoButton = ({ onClick }: { onClick: () => void }) => {
   const mouseX = useSpring(x, { stiffness: 500, damping: 100 });
   const mouseY = useSpring(y, { stiffness: 500, damping: 100 });
 
-  const rotateX = useTransform(mouseY, [-0.5, 0.5], ["15deg", "-15deg"]);
-  const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-15deg", "15deg"]);
+  const rotateX = useTransform(mouseY, [-0.5, 0.5], ["25deg", "-25deg"]);
+  const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-25deg", "25deg"]);
+  const brightness = useTransform(mouseY, [-0.5, 0.5], [1.2, 0.8]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -68,34 +70,61 @@ const LogoButton = ({ onClick }: { onClick: () => void }) => {
       style={{
         rotateX,
         rotateY,
+        filter: `brightness(${brightness})`,
         transformStyle: "preserve-3d",
       }}
       initial={{ scale: 1 }}
-      whileHover={{ scale: 1.1 }}
+      whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      className="relative group cursor-pointer"
+      className="relative group cursor-pointer perspective-1000"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
-      <div className="relative flex items-center gap-3 px-5 py-3 bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-        
+      {/* Holographic Glow Behind */}
+      <div className="absolute -inset-4 bg-gradient-to-r from-primary/40 via-accent/40 to-secondary/40 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-500 animate-pulse" />
+
+      {/* Main Glass Container */}
+      <div className="relative flex items-center gap-4 px-6 py-4 bg-black/60 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)] overflow-hidden group-hover:border-primary/50 transition-colors duration-500">
+
+        {/* Scanning Light Effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite]" />
+
+        {/* Tech Grid Overlay */}
+        <div className="absolute inset-0 opacity-10 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:10px_10px]" />
+
         {/* 3D Logo Container */}
         <motion.div
-          className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center relative shadow-lg"
-          style={{ transformStyle: "preserve-3d", transform: "translateZ(20px)" }}
+          className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center relative shadow-lg overflow-hidden"
+          style={{ transformStyle: "preserve-3d", transform: "translateZ(30px)" }}
         >
-          <motion.div 
-            className="absolute inset-0 rounded-xl bg-white/20"
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 2, repeat: Infinity }}
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+          <motion.div
+            className="absolute inset-0 bg-white/30"
+            animate={{
+              rotate: [0, 360],
+              scale: [1, 1.5, 1]
+            }}
+            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
           />
-          <span className="text-white font-black text-xl relative z-10 drop-shadow-md">I</span>
+          <span className="text-white font-black text-2xl relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">I</span>
         </motion.div>
 
-        <div style={{ transform: "translateZ(10px)" }}>
-          <div className="text-lg font-bold text-white tracking-tight group-hover:text-primary transition-colors">Ionex</div>
-          <div className="text-[10px] font-medium text-white/50 uppercase tracking-widest group-hover:text-white/80 transition-colors">New Tab</div>
+        {/* Text Content */}
+        <div style={{ transform: "translateZ(20px)" }} className="flex flex-col items-start">
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70 group-hover:from-primary group-hover:to-accent transition-all duration-300">
+              Ionex
+            </span>
+            <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-white/10 text-white/60 border border-white/5 uppercase tracking-wider">
+              Beta
+            </span>
+          </div>
+          <div className="text-[10px] font-medium text-white/40 uppercase tracking-[0.2em] group-hover:text-white/80 transition-colors flex items-center gap-1">
+            New Tab
+          </div>
         </div>
+
+        {/* Corner Accents */}
+        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/30 rounded-tl-lg" />
+        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/30 rounded-br-lg" />
       </div>
     </motion.button>
   );
@@ -112,8 +141,9 @@ const App: React.FC = () => {
     showQuotesAndIP: true, // Legacy support
     showQuotes: true, // Separate toggle for quotes
     showIP: true, // Separate toggle for IP
-    widgets: { clock: true, weather: true, calendar: true, todoList: true, aiAssistant: true, notes: true, appShortcuts: false, musicPlayer: false, newsFeed: true },
-    widgetSizes: { clock: 'small', weather: 'medium', calendar: 'small', todoList: 'medium', aiAssistant: 'large', notes: 'medium', appShortcuts: 'medium', musicPlayer: 'medium', newsFeed: 'medium' },
+    showVirtualPet: true, // Default to true for new users
+    widgets: { clock: true, weather: true, calendar: true, todoList: true, aiAssistant: true, notes: true, appShortcuts: false, musicPlayer: false, newsFeed: true, analogClock: false },
+    widgetSizes: { clock: 'small', weather: 'medium', calendar: 'small', todoList: 'medium', aiAssistant: 'large', notes: 'medium', appShortcuts: 'medium', musicPlayer: 'medium', newsFeed: 'medium', analogClock: 'medium' },
     widgetPositions: {
       clock: { x: 50, y: 100 },
       weather: { x: 400, y: 80 },
@@ -124,6 +154,7 @@ const App: React.FC = () => {
       notes: { x: 600, y: 400 },
       appShortcuts: { x: 500, y: 500 },
       musicPlayer: { x: 800, y: 500 },
+      analogClock: { x: 200, y: 200 },
     },
     shortcuts: [
       { id: '1', name: 'Gmail', url: 'https://mail.google.com', icon: 'gmail' },
@@ -194,25 +225,37 @@ const App: React.FC = () => {
     clock: (
       <>
         {(settings.clockType === 'digital' || settings.clockType === 'both') && (
-          <Clock 
-            timeFormat={settings.timeFormat} 
-            theme={settings.theme} 
+          <Clock
+            timeFormat={settings.timeFormat}
+            theme={settings.theme}
             size={settings.widgetSizes.clock}
           />
         )}
         {(settings.clockType === 'analog' || settings.clockType === 'both') && (
-          <AnalogClock showDigital={settings.clockType === 'both'} timeFormat={settings.timeFormat} theme={settings.theme} />
+          <AnalogClock
+            showDigital={settings.clockType === 'both'}
+            timeFormat={settings.timeFormat}
+            size={settings.widgetSizes.clock}
+            theme={settings.theme}
+          />
         )}
       </>
     ),
-    analogClock: null, // Deprecated - now controlled by clockType setting
+    analogClock: (
+      <AnalogClock
+        showDigital={false}
+        timeFormat={settings.timeFormat}
+        size={settings.widgetSizes.analogClock || 'medium'}
+        theme={settings.theme}
+      />
+    ),
     weather: <Weather apiKey={settings.apiKeys.weather} theme={settings.theme} size={settings.widgetSizes.weather} />,
     calendar: <Calendar theme={settings.theme} size={settings.widgetSizes.calendar} />,
     todoList: <TodoList theme={settings.theme} size={settings.widgetSizes.todoList} />,
-    aiAssistant: <AIWidget groqKey={settings.apiKeys.groq || ''} theme={settings.theme} />,
+    aiAssistant: <AIWidget groqKey={settings.apiKeys.groq || ''} size={settings.widgetSizes.aiAssistant} theme={settings.theme} />,
     notes: <NotesWidget theme={settings.theme} size={settings.widgetSizes.notes} />,
     appShortcuts: <AppShortcuts shortcuts={settings.shortcuts} theme={settings.theme} size={settings.widgetSizes.appShortcuts} />,
-    musicPlayer: <MusicPlayer theme={settings.theme} />,
+    musicPlayer: <MusicPlayer size={settings.widgetSizes.musicPlayer} theme={settings.theme} />,
     newsFeed: <NewsFeed apiKey={settings.apiKeys.news} theme={settings.theme} size={settings.widgetSizes.newsFeed} />,
   };
 
@@ -347,6 +390,12 @@ const App: React.FC = () => {
           setSettings={setSettings}
           isVisible={isSettingsOpen}
           onClose={() => setIsSettingsOpen(false)}
+        />
+
+        {/* Virtual Pet */}
+        <VirtualPet
+          theme={settings.theme}
+          enabled={settings.showVirtualPet ?? false}
         />
 
         {/* Fullscreen Animation */}
