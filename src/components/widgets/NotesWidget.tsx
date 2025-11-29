@@ -14,6 +14,7 @@ interface Note {
 
 interface NotesWidgetProps {
   theme?: string;
+  size?: 'small' | 'medium' | 'large';
 }
 
 const noteColors = [
@@ -25,7 +26,7 @@ const noteColors = [
   { name: 'Orange', bg: 'from-orange-200 to-orange-300', text: 'text-orange-900' },
 ];
 
-const NotesWidget: React.FC<NotesWidgetProps> = ({ theme = 'aurora' }) => {
+const NotesWidget: React.FC<NotesWidgetProps> = ({ theme = 'aurora', size = 'medium' }) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [isAddingNote, setIsAddingNote] = useState(false);
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
@@ -85,28 +86,30 @@ const NotesWidget: React.FC<NotesWidgetProps> = ({ theme = 'aurora' }) => {
     setEditingNoteId(null);
   };
 
+  const isSmall = size === 'small';
+
   return (
     <div className="h-full flex flex-col bg-white/5 backdrop-blur-md rounded-lg overflow-hidden border border-white/10 relative">
       {/* Theme Particles */}
       <ThemeParticles theme={theme} density="low" />
       
       {/* Header */}
-      <div className="relative z-10 flex items-center justify-between p-4 bg-white/10 backdrop-blur-md border-b border-white/10">
+      <div className={`relative z-10 flex items-center justify-between ${isSmall ? 'p-2' : 'p-4'} bg-white/10 backdrop-blur-md border-b border-white/10`}>
         <div className="flex items-center gap-2">
-          <StickyNote className="w-5 h-5 icon-color" />
-          <h3 className="text-lg font-bold text-white">Quick Notes</h3>
+          <StickyNote className={`${isSmall ? 'w-4 h-4' : 'w-5 h-5'} icon-color`} />
+          <h3 className={`${isSmall ? 'text-base' : 'text-lg'} font-bold text-white`}>Quick Notes</h3>
         </div>
         <button
           onClick={() => setIsAddingNote(true)}
-          className="p-2 bg-theme-primary rounded-lg transition-colors group hover:opacity-80"
+          className={`p-2 bg-theme-primary rounded-lg transition-colors group hover:opacity-80`}
           title="Add note"
         >
-          <Plus className="w-5 h-5 text-white group-hover:rotate-90 transition-transform duration-300" />
+          <Plus className={`${isSmall ? 'w-4 h-4' : 'w-5 h-5'} text-white group-hover:rotate-90 transition-transform duration-300`} />
         </button>
       </div>
 
       {/* Notes Grid */}
-      <div className="flex-1 overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
+      <div className={`flex-1 overflow-y-auto ${isSmall ? 'p-2' : 'p-4'} scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent`}>
         <AnimatePresence>
           {/* New Note Form */}
           {isAddingNote && (
@@ -174,7 +177,7 @@ const NotesWidget: React.FC<NotesWidgetProps> = ({ theme = 'aurora' }) => {
               animate={{ opacity: 1 }}
               className="flex flex-col items-center justify-center h-full text-center"
             >
-              <StickyNote className="w-16 h-16 text-white/20 mb-4" />
+              <StickyNote className={`${isSmall ? 'w-12 h-12' : 'w-16 h-16'} text-white/20 mb-4`} />
               <p className="text-white/50 text-lg">No notes yet</p>
               <p className="text-white/30 text-sm mt-2">Click the + button to create your first note</p>
             </motion.div>
@@ -187,7 +190,7 @@ const NotesWidget: React.FC<NotesWidgetProps> = ({ theme = 'aurora' }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   layout
-                  className={`bg-gradient-to-br ${note.color} rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow`}
+                  className={`bg-gradient-to-br ${note.color} rounded-xl ${isSmall ? 'p-2' : 'p-4'} shadow-lg hover:shadow-xl transition-shadow`}
                 >
                   {editingNoteId === note.id ? (
                     <EditNoteForm
@@ -198,7 +201,7 @@ const NotesWidget: React.FC<NotesWidgetProps> = ({ theme = 'aurora' }) => {
                   ) : (
                     <>
                       <div className="flex items-start justify-between gap-2 mb-2">
-                        <h4 className="font-semibold text-lg flex-1">{note.title}</h4>
+                        <h4 className={`font-semibold ${isSmall ? 'text-base' : 'text-lg'} flex-1`}>{note.title}</h4>
                         <div className="flex gap-1">
                           <button
                             onClick={() => setEditingNoteId(note.id)}
