@@ -28,7 +28,7 @@ const AnalogClock: React.FC<AnalogClockProps> = ({ showDigital = false, timeForm
       {/* Theme Particles */}
       <ThemeParticles theme={theme} density="low" />
       
-      <div className="relative w-40 h-40 z-10">
+      <div className="relative w-full max-w-[220px] aspect-square z-10 flex items-center justify-center">
         {/* Glow effect */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent opacity-10 rounded-full blur-xl" />
         
