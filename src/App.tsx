@@ -12,7 +12,7 @@ import { AIToolsButton } from './components/AIToolsButton';
 import { Greeting } from './components/Greeting';
 import { QuoteAndIP } from './components/QuoteAndIP';
 import AIChatSidebar from './components/AIChatSidebar';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { Zap } from 'lucide-react';
 import { extractColorsFromImage, applyCustomColors } from './utils/colorExtractorImproved';
 import { getRandomWallpaper } from './utils/themeWallpapers';
@@ -34,6 +34,72 @@ const FullscreenAnimation = React.lazy(() => import('./components/FullscreenAnim
 
 // Default API key for weather (free tier OpenWeatherMap)
 const DEFAULT_WEATHER_API_KEY = 'bd5e378503939ddaee76f12ad7a97608';
+
+const LogoButton = ({ onClick }: { onClick: () => void }) => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseX = useSpring(x, { stiffness: 500, damping: 100 });
+  const mouseY = useSpring(y, { stiffness: 500, damping: 100 });
+
+  const rotateX = useTransform(mouseY, [-0.5, 0.5], ["15deg", "-15deg"]);
+  const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-15deg", "15deg"]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseXFromCenter = e.clientX - rect.left - width / 2;
+    const mouseYFromCenter = e.clientY - rect.top - height / 2;
+    x.set(mouseXFromCenter / width);
+    y.set(mouseYFromCenter / height);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.button
+      onClick={onClick}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        rotateX,
+        rotateY,
+        transformStyle: "preserve-3d",
+      }}
+      initial={{ scale: 1 }}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.95 }}
+      className="relative group cursor-pointer"
+    >
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
+      <div className="relative flex items-center gap-3 px-5 py-3 bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        
+        {/* 3D Logo Container */}
+        <motion.div
+          className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center relative shadow-lg"
+          style={{ transformStyle: "preserve-3d", transform: "translateZ(20px)" }}
+        >
+          <motion.div 
+            className="absolute inset-0 rounded-xl bg-white/20"
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          />
+          <span className="text-white font-black text-xl relative z-10 drop-shadow-md">I</span>
+        </motion.div>
+
+        <div style={{ transform: "translateZ(10px)" }}>
+          <div className="text-lg font-bold text-white tracking-tight group-hover:text-primary transition-colors">Ionex</div>
+          <div className="text-[10px] font-medium text-white/50 uppercase tracking-widest group-hover:text-white/80 transition-colors">New Tab</div>
+        </div>
+      </div>
+    </motion.button>
+  );
+};
 
 const App: React.FC = () => {
   const [settings, setSettings] = useLocalStorage<Settings>('homeTabSettings-v7', {
@@ -128,7 +194,11 @@ const App: React.FC = () => {
     clock: (
       <>
         {(settings.clockType === 'digital' || settings.clockType === 'both') && (
-          <Clock timeFormat={settings.timeFormat} theme={settings.theme} />
+          <Clock 
+            timeFormat={settings.timeFormat} 
+            theme={settings.theme} 
+            size={settings.widgetSizes.clock}
+          />
         )}
         {(settings.clockType === 'analog' || settings.clockType === 'both') && (
           <AnalogClock showDigital={settings.clockType === 'both'} timeFormat={settings.timeFormat} theme={settings.theme} />
@@ -136,7 +206,7 @@ const App: React.FC = () => {
       </>
     ),
     analogClock: null, // Deprecated - now controlled by clockType setting
-    weather: <Weather apiKey={settings.apiKeys.weather} theme={settings.theme} />,
+    weather: <Weather apiKey={settings.apiKeys.weather} theme={settings.theme} size={settings.widgetSizes.weather} />,
     calendar: <Calendar theme={settings.theme} />,
     todoList: <TodoList theme={settings.theme} />,
     aiAssistant: <AIWidget groqKey={settings.apiKeys.groq || ''} theme={settings.theme} />,
@@ -157,74 +227,9 @@ const App: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
             style={{ perspective: 1000 }}
           >
-            <motion.button
-              onClick={() => {
-                setShowFullscreenAnimation(true);
-              }}
-              whileHover={{
-                rotateY: settings.theme === 'neon' ? [0, 180, 360] :
-                  settings.theme === 'aurora' ? [0, 360] :
-                    settings.theme === 'midnight' ? [0, -360] : 0,
-                rotateX: settings.theme === 'ocean' ? [0, 360] : 0,
-                scale: 1.1,
-              }}
-              transition={{
-                duration: settings.theme === 'neon' ? 0.8 :
-                  settings.theme === 'aurora' ? 1.2 :
-                    settings.theme === 'midnight' ? 1 : 0.3,
-                type: "spring",
-                stiffness: 200,
-              }}
-              className="flex items-center gap-3 px-4 py-3 bg-black/30 backdrop-blur-md rounded-2xl border border-white/10 hover:bg-black/40 transition-colors cursor-pointer"
-              style={{ transformStyle: 'preserve-3d' }}
-            >
-              <motion.div
-                className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center relative"
-                animate={{
-                  boxShadow: settings.theme === 'neon' ?
-                    [
-                      '0 0 20px rgba(236, 72, 153, 0.5)',
-                      '0 0 40px rgba(59, 130, 246, 0.8)',
-                      '0 0 20px rgba(236, 72, 153, 0.5)',
-                    ] :
-                    settings.theme === 'aurora' ?
-                      [
-                        '0 0 20px rgba(139, 92, 246, 0.5)',
-                        '0 0 40px rgba(59, 130, 246, 0.8)',
-                        '0 0 20px rgba(139, 92, 246, 0.5)',
-                      ] :
-                      settings.theme === 'midnight' ?
-                        [
-                          '0 0 20px rgba(167, 139, 250, 0.5)',
-                          '0 0 40px rgba(139, 92, 246, 0.8)',
-                          '0 0 20px rgba(167, 139, 250, 0.5)',
-                        ] : 'none'
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <motion.span
-                  className="text-white font-bold text-lg"
-                  animate={{
-                    rotateZ: settings.theme === 'neon' ? [0, 360] : 0,
-                  }}
-                  transition={{
-                    duration: 20,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
-                >
-                  I
-                </motion.span>
-              </motion.div>
-              <div>
-                <div className="text-sm font-bold text-white">Ionex</div>
-                <div className="text-xs text-white/70">New Tab</div>
-              </div>
-            </motion.button>
+            <LogoButton onClick={() => setShowFullscreenAnimation(true)} />
           </motion.div>
 
           {/* Focus Mode Button */}
