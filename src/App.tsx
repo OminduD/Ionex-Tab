@@ -211,9 +211,9 @@ const App: React.FC = () => {
     todoList: <TodoList theme={settings.theme} size={settings.widgetSizes.todoList} />,
     aiAssistant: <AIWidget groqKey={settings.apiKeys.groq || ''} theme={settings.theme} />,
     notes: <NotesWidget theme={settings.theme} size={settings.widgetSizes.notes} />,
-    appShortcuts: <AppShortcuts shortcuts={settings.shortcuts} theme={settings.theme} />,
+    appShortcuts: <AppShortcuts shortcuts={settings.shortcuts} theme={settings.theme} size={settings.widgetSizes.appShortcuts} />,
     musicPlayer: <MusicPlayer theme={settings.theme} />,
-    newsFeed: <NewsFeed apiKey={settings.apiKeys.news} theme={settings.theme} />,
+    newsFeed: <NewsFeed apiKey={settings.apiKeys.news} theme={settings.theme} size={settings.widgetSizes.newsFeed} />,
   };
 
   return (

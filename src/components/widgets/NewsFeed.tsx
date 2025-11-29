@@ -14,12 +14,15 @@ interface NewsItem {
 interface NewsFeedProps {
   apiKey?: string;
   theme?: string;
+  size?: 'small' | 'medium' | 'large';
 }
 
-const NewsFeed: React.FC<NewsFeedProps> = ({ apiKey, theme = 'aurora' }) => {
+const NewsFeed: React.FC<NewsFeedProps> = ({ apiKey, theme = 'aurora', size = 'medium' }) => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  const isSmall = size === 'small';
 
   const fallbackNews: NewsItem[] = [
     { 
@@ -181,7 +184,7 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ apiKey, theme = 'aurora' }) => {
   }, [apiKey]);
 
   return (
-    <div className="p-4 h-full flex flex-col relative overflow-hidden">
+    <div className={`${isSmall ? 'p-2' : 'p-4'} h-full flex flex-col relative overflow-hidden`}>
       {/* Theme Particles */}
       <ThemeParticles theme={theme} density="low" />
       
@@ -199,15 +202,15 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ apiKey, theme = 'aurora' }) => {
       />
       
       {/* Header */}
-      <div className="relative z-10 flex items-center justify-between mb-4">
+      <div className={`relative z-10 flex items-center justify-between ${isSmall ? 'mb-2' : 'mb-4'}`}>
         <div className="flex items-center gap-2">
           <motion.div
             animate={{ rotate: [0, 5, -5, 0] }}
             transition={{ duration: 3, repeat: Infinity }}
           >
-            <Newspaper className="w-6 h-6 text-primary" />
+            <Newspaper className={`${isSmall ? 'w-4 h-4' : 'w-6 h-6'} text-primary`} />
           </motion.div>
-          <h3 className="text-lg font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <h3 className={`${isSmall ? 'text-sm' : 'text-lg'} font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
             Latest News
           </h3>
         </div>
@@ -217,7 +220,7 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ apiKey, theme = 'aurora' }) => {
           whileTap={{ scale: 0.9 }}
           onClick={fetchNews}
           disabled={loading}
-          className="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+          className={`${isSmall ? 'p-1' : 'p-2'} rounded-lg bg-white/5 hover:bg-white/10 transition-colors`}
         >
           <RefreshCw className={`w-4 h-4 text-accent ${loading ? 'animate-spin' : ''}`} />
         </motion.button>
@@ -265,11 +268,11 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ apiKey, theme = 'aurora' }) => {
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity blur-sm" />
               
               <div 
-                className="relative p-3 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer"
+                className={`relative ${isSmall ? 'p-2' : 'p-3'} bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer`}
                 onClick={() => item.url && window.open(item.url, '_blank')}
               >
                 <div className="flex items-start justify-between gap-2 mb-2">
-                  <h4 className="font-semibold text-sm leading-tight text-white/95 group-hover:text-white transition-colors flex-1">
+                  <h4 className={`font-semibold ${isSmall ? 'text-xs' : 'text-sm'} leading-tight text-white/95 group-hover:text-white transition-colors flex-1`}>
                     {item.title}
                   </h4>
                   {item.url && (
@@ -277,7 +280,7 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ apiKey, theme = 'aurora' }) => {
                   )}
                 </div>
                 
-                {item.description && (
+                {item.description && !isSmall && (
                   <p className="text-xs text-white/60 mb-2 line-clamp-2">
                     {item.description}
                   </p>

@@ -8,75 +8,114 @@ interface ThemeParticlesProps {
   className?: string;
 }
 
-interface ParticleConfig {
-  emoji: string;
+type ParticleType = 'bubble' | 'firefly' | 'haze' | 'star' | 'cyber' | 'aurora' | 'petal' | 'crystal';
+
+interface ThemeConfig {
+  type: ParticleType;
   count: number;
-  animation: 'rise' | 'fall' | 'float' | 'twinkle' | 'electric';
+  colors: string[];
 }
 
-const themeParticleConfig: Record<string, ParticleConfig> = {
-  ocean: { emoji: '🫧', count: 15, animation: 'rise' },
-  forest: { emoji: '🍃', count: 12, animation: 'fall' },
-  sunset: { emoji: '✨', count: 18, animation: 'float' },
-  midnight: { emoji: '⭐', count: 25, animation: 'twinkle' },
-  neon: { emoji: '⚡', count: 18, animation: 'electric' },
-  aurora: { emoji: '💫', count: 15, animation: 'float' },  // Changed to shooting star
-  cherry: { emoji: '🌸', count: 15, animation: 'fall' },
-  mint: { emoji: '💎', count: 12, animation: 'float' },
+const themeConfigs: Record<string, ThemeConfig> = {
+  ocean: { type: 'bubble', count: 15, colors: ['blue-400', 'cyan-300', 'sky-200'] },
+  forest: { type: 'firefly', count: 20, colors: ['green-400', 'emerald-300', 'lime-200'] },
+  sunset: { type: 'haze', count: 8, colors: ['orange-400', 'rose-400', 'amber-200'] },
+  midnight: { type: 'star', count: 30, colors: ['white', 'indigo-200', 'blue-100'] },
+  neon: { type: 'cyber', count: 12, colors: ['fuchsia-500', 'cyan-400', 'violet-500'] },
+  aurora: { type: 'aurora', count: 10, colors: ['purple-400', 'teal-300', 'indigo-400'] },
+  cherry: { type: 'petal', count: 15, colors: ['pink-300', 'rose-200', 'red-100'] },
+  mint: { type: 'crystal', count: 12, colors: ['teal-300', 'emerald-200', 'cyan-100'] },
 };
 
-const getAnimationProps = (animation: string, particle: { id: number; x: number; y: number }, theme?: string) => {
-  switch (animation) {
-    case 'rise': // Bubbles rising
+const getParticleStyle = (type: ParticleType, colorName: string) => {
+  const baseStyle = "absolute mix-blend-screen";
+  
+  switch (type) {
+    case 'bubble':
+      return `${baseStyle} bg-${colorName} rounded-full opacity-40 shadow-[0_0_10px_rgba(255,255,255,0.3)]`;
+    case 'firefly':
+      return `${baseStyle} bg-${colorName} rounded-full shadow-[0_0_8px_currentColor] text-${colorName}`;
+    case 'haze':
+      return `${baseStyle} bg-${colorName} rounded-full blur-2xl opacity-20`;
+    case 'star':
+      return `${baseStyle} bg-${colorName} rounded-full shadow-[0_0_4px_currentColor] text-${colorName}`;
+    case 'cyber':
+      return `${baseStyle} border-2 border-${colorName} bg-${colorName}/10 box-border opacity-60 shadow-[0_0_5px_currentColor] text-${colorName}`;
+    case 'aurora':
+      return `${baseStyle} bg-${colorName} rounded-full blur-xl opacity-30`;
+    case 'petal':
+      return `${baseStyle} bg-${colorName} rounded-tl-xl rounded-br-xl opacity-80 shadow-sm`;
+    case 'crystal':
+      return `${baseStyle} bg-${colorName} rotate-45 opacity-50 shadow-[0_0_5px_rgba(255,255,255,0.4)]`;
+    default:
+      return `${baseStyle} bg-${colorName} rounded-full`;
+  }
+};
+
+const getAnimation = (type: ParticleType, seed: number) => {
+  const random = (min: number, max: number) => Math.random() * (max - min) + min;
+  
+  switch (type) {
+    case 'bubble': // Rising bubbles
       return {
-        y: [0, -400],
-        x: [0, Math.sin(particle.id) * 30],
-        opacity: [0.1, 0.4, 0.1],
+        y: [0, -120],
+        x: [0, Math.sin(seed) * 20],
+        scale: [1, 1.2, 0.8],
+        opacity: [0, 0.5, 0],
       };
-    case 'fall': // Leaves/petals falling
+    case 'firefly': // Wandering dots
       return {
-        y: [0, 400],
-        x: [0, Math.sin(particle.id) * 50],
-        rotate: [0, 360],
-        opacity: [0.2, 0.4, 0.2],
+        x: [0, random(-50, 50), random(-50, 50), 0],
+        y: [0, random(-50, 50), random(-50, 50), 0],
+        opacity: [0.2, 1, 0.2],
+        scale: [1, 1.5, 1],
       };
-    case 'float': // Gentle floating with special aurora effects
-      if (theme === 'aurora') {
-        // Aurora: Wave-like flowing motion with color shifts
-        return {
-          y: [0, -30, 30, 0],
-          x: [0, 50, -50, 0],
-          rotate: [0, 180, 360],
-          opacity: [0.2, 0.6, 0.2],
-          scale: [1, 1.5, 1],
-        };
-      }
+    case 'haze': // Slow floating blobs
       return {
-        y: [0, -20, 0],
-        x: [0, 15, 0],
+        x: [0, 30, -30, 0],
+        y: [0, -30, 30, 0],
+        scale: [1, 1.2, 1],
         opacity: [0.1, 0.3, 0.1],
       };
-    case 'twinkle': // Enhanced midnight stars - more dramatic
+    case 'star': // Twinkling
       return {
-        scale: [0.5, 2, 0.5],
-        opacity: [0.1, 0.9, 0.1],
-        rotate: [0, 180, 360],
-        y: [0, -20, 20, 0],
-        x: [0, 10, -10, 0],
+        scale: [0.5, 1.5, 0.5],
+        opacity: [0.2, 1, 0.2],
       };
-    case 'electric': // Enhanced neon - more energetic
+    case 'cyber': // Glitchy/Tech movement
       return {
-        x: [0, 40, -40, 20, -20, 0],
-        y: [0, -30, 30, -20, 20, 0],
-        opacity: [0.2, 0.9, 0.2, 0.8, 0.2],
-        scale: [1, 1.5, 1, 1.3, 1],
+        x: [0, 10, -10, 0],
+        y: [0, -10, 10, 0],
+        rotate: [0, 90, 180, 270, 360],
+        opacity: [0.2, 0.8, 0.2],
+        scale: [1, 1.1, 0.9, 1],
+      };
+    case 'aurora': // Flowing waves
+      return {
+        y: [0, -40, 0],
+        x: [0, Math.sin(seed) * 30],
+        scale: [1, 1.5, 1],
+        opacity: [0.1, 0.4, 0.1],
+        rotate: [0, 45, 0],
+      };
+    case 'petal': // Falling swaying petals
+      return {
+        y: [0, 200],
+        x: [0, Math.sin(seed) * 40],
         rotate: [0, 360],
+        rotateX: [0, 180],
+        rotateY: [0, 180],
+        opacity: [0, 0.8, 0],
+      };
+    case 'crystal': // Floating rotating diamonds
+      return {
+        y: [0, -30, 0],
+        rotate: [45, 225],
+        scale: [1, 1.2, 1],
+        opacity: [0.2, 0.6, 0.2],
       };
     default:
-      return {
-        y: [0, -20, 0],
-        opacity: [0.1, 0.3, 0.1],
-      };
+      return {};
   }
 };
 
@@ -85,46 +124,52 @@ export const ThemeParticles: React.FC<ThemeParticlesProps> = ({
   density = 'medium',
   className = '' 
 }) => {
-  const config = themeParticleConfig[theme] || themeParticleConfig.aurora;
+  const config = themeConfigs[theme] || themeConfigs.aurora;
   
   // Adjust particle count based on density
   const densityMultiplier = density === 'low' ? 0.5 : density === 'high' ? 1.5 : 1;
   const particleCount = Math.floor(config.count * densityMultiplier);
   
-  const particles = Array.from({ length: particleCount }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: Math.random() * 15 + 10,
-    duration: Math.random() * 10 + 10,
-    delay: Math.random() * 5,
-  }));
+  const particles = Array.from({ length: particleCount }, (_, i) => {
+    const size = config.type === 'firefly' || config.type === 'star' 
+      ? Math.random() * 4 + 2 
+      : config.type === 'haze' 
+        ? Math.random() * 100 + 50 
+        : Math.random() * 20 + 10;
+        
+    return {
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size,
+      color: config.colors[Math.floor(Math.random() * config.colors.length)],
+      duration: Math.random() * 10 + 10,
+      delay: Math.random() * 5,
+    };
+  });
 
   return (
     <div className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}>
       {particles.map((particle) => (
         <motion.div
           key={particle.id}
-          className="absolute"
+          className={getParticleStyle(config.type, particle.color)}
           style={{
             left: `${particle.x}%`,
             top: `${particle.y}%`,
-            fontSize: `${particle.size}px`,
-            filter: theme === 'neon' ? 'drop-shadow(0 0 8px currentColor)' : 
-                    theme === 'aurora' ? 'drop-shadow(0 0 10px rgba(138, 43, 226, 0.8))' :
-                    theme === 'midnight' ? 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.6))' : 'none',
+            width: `${particle.size}px`,
+            height: `${particle.size}px`,
           }}
-          animate={getAnimationProps(config.animation, particle, theme)}
+          animate={getAnimation(config.type, particle.id)}
           transition={{
             duration: particle.duration,
             delay: particle.delay,
             repeat: Infinity,
-            ease: theme === 'neon' ? "easeInOut" : theme === 'aurora' ? "easeInOut" : "linear",
+            ease: config.type === 'cyber' ? "steps(4)" : "easeInOut",
           }}
-        >
-          {config.emoji}
-        </motion.div>
+        />
       ))}
     </div>
   );
 };
+

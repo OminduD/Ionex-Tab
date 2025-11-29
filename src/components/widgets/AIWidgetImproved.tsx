@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Send, Trash2, Copy, Check } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { ThemeParticles } from '../ThemeParticles';
 
 interface AIWidgetProps {
   groqKey: string;
@@ -16,21 +17,6 @@ interface Message {
   timestamp: Date;
 }
 
-// Theme-based particle configurations
-const getThemeParticles = (theme: string = 'aurora'): { emoji: string; count: number; animation: string } => {
-  const configs: Record<string, { emoji: string; count: number; animation: string }> = {
-    ocean: { emoji: '🫧', count: 15, animation: 'bubbles' },
-    forest: { emoji: '🍃', count: 12, animation: 'leaves' },
-    sunset: { emoji: '✨', count: 20, animation: 'sparkles' },
-    midnight: { emoji: '⭐', count: 25, animation: 'stars' },
-    neon: { emoji: '⚡', count: 18, animation: 'electric' },
-    aurora: { emoji: '🌈', count: 10, animation: 'waves' },
-    cherry: { emoji: '🌸', count: 15, animation: 'petals' },
-    mint: { emoji: '💎', count: 12, animation: 'sparkles' },
-  };
-  return configs[theme] || configs.aurora;
-};
-
 const AIWidgetImproved: React.FC<AIWidgetProps> = ({ groqKey, theme = 'aurora' }) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -38,7 +24,6 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ groqKey, theme = 'aurora' }
   const [copied, setCopied] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const themeConfig = getThemeParticles(theme);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -170,56 +155,13 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ groqKey, theme = 'aurora' }
     setMessages([]);
   };
 
-  // Generate particles for background animation
-  const particles = Array.from({ length: themeConfig.count }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: Math.random() * 20 + 10,
-    duration: Math.random() * 10 + 15,
-    delay: Math.random() * 5,
-  }));
-
   return (
     <div className="h-full flex flex-col relative overflow-hidden rounded-2xl border border-white/20 shadow-2xl">
       {/* Animated Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-white/10 to-white/5 backdrop-blur-xl" />
       
       {/* Theme-based Particle Animation */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {particles.map((particle) => (
-          <motion.div
-            key={particle.id}
-            className="absolute text-2xl opacity-30"
-            style={{
-              left: `${particle.x}%`,
-              top: `${particle.y}%`,
-              fontSize: `${particle.size}px`,
-            }}
-            animate={{
-              y: themeConfig.animation === 'bubbles' ? [0, -400] : 
-                 themeConfig.animation === 'leaves' ? [0, 400] :
-                 themeConfig.animation === 'petals' ? [0, 400] :
-                 [0, -20, 0],
-              x: themeConfig.animation === 'leaves' || themeConfig.animation === 'petals' 
-                 ? [0, Math.random() * 100 - 50] 
-                 : [0, Math.random() * 20 - 10, 0],
-              rotate: themeConfig.animation === 'leaves' || themeConfig.animation === 'petals'
-                     ? [0, 360] : 0,
-              opacity: [0.1, 0.3, 0.1],
-              scale: themeConfig.animation === 'stars' ? [1, 1.5, 1] : 1,
-            }}
-            transition={{
-              duration: particle.duration,
-              delay: particle.delay,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          >
-            {themeConfig.emoji}
-          </motion.div>
-        ))}
-      </div>
+      <ThemeParticles theme={theme} density="medium" />
 
       {/* Glowing Border Effect */}
       <motion.div
