@@ -459,7 +459,8 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                         )}
 
                                         {activeTab === 'themes' && (
-                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                            <div className="space-y-8">
+                                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                                 {Object.entries(themes).map(([key, theme], index) => (
                                                     <motion.button
                                                         key={key}
@@ -479,8 +480,12 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                                                 : 'border-transparent hover:border-white/30 hover:scale-105'
                                                         }`}
                                                     >
-                                                        <div className={`absolute inset-0 ${theme.class} opacity-80 group-hover:opacity-100 transition-opacity`} />
-                                                        <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
+                                                        <div 
+                                                            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                                                            style={{ backgroundImage: `url(${theme.wallpaper})` }}
+                                                        />
+                                                        <div className={`absolute inset-0 ${theme.class} opacity-60 group-hover:opacity-40 transition-opacity mix-blend-overlay`} />
+                                                        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors" />
                                                         
                                                         {/* Theme Preview Circles */}
                                                         <div className="absolute bottom-3 right-3 flex -space-x-2">
@@ -510,6 +515,58 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                                         )}
                                                     </motion.button>
                                                 ))}
+                                            </div>
+
+                                            {/* Custom Colors Section */}
+                                            <div className="mt-8 pt-6 border-t border-white/10">
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <h3 className="text-lg font-bold text-white">Custom Colors</h3>
+                                                    {localSettings.customColors && (
+                                                        <button 
+                                                            onClick={() => setLocalSettings({ ...localSettings, customColors: undefined })}
+                                                            className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                                                        >
+                                                            Reset to Theme
+                                                        </button>
+                                                    )}
+                                                </div>
+                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                    {[
+                                                        { label: 'Primary', key: 'primary' },
+                                                        { label: 'Secondary', key: 'secondary' },
+                                                        { label: 'Accent', key: 'accent' }
+                                                    ].map((color) => (
+                                                        <div key={color.key} className="bg-white/5 rounded-xl p-4 border border-white/10 hover:border-primary/30 transition-colors">
+                                                            <label className="block text-sm text-white/60 mb-2">{color.label}</label>
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="relative w-10 h-10 rounded-lg overflow-hidden shadow-lg ring-1 ring-white/10">
+                                                                    <input 
+                                                                        type="color" 
+                                                                        value={localSettings.customColors?.[color.key as keyof typeof localSettings.customColors] as string || '#3b82f6'}
+                                                                        onChange={(e) => setLocalSettings({
+                                                                            ...localSettings,
+                                                                            customColors: {
+                                                                                primary: '#3b82f6',
+                                                                                secondary: '#6366f1',
+                                                                                accent: '#8b5cf6',
+                                                                                bgGradientStart: '#1e1b4b',
+                                                                                bgGradientEnd: '#312e81',
+                                                                                ...(localSettings.customColors || {}),
+                                                                                [color.key]: e.target.value
+                                                                            },
+                                                                            autoThemeFromWallpaper: false
+                                                                        })}
+                                                                        className="absolute -top-2 -left-2 w-16 h-16 cursor-pointer p-0 border-0"
+                                                                    />
+                                                                </div>
+                                                                <span className="text-white font-mono text-sm uppercase">
+                                                                    {localSettings.customColors?.[color.key as keyof typeof localSettings.customColors] as string || 'Default'}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
                                             </div>
                                         )}
 
