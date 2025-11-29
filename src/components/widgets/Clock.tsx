@@ -5,9 +5,10 @@ import { ThemeParticles } from '../ThemeParticles';
 interface ClockProps {
   timeFormat?: '12h' | '24h';
   theme?: string;
+  size?: 'small' | 'medium' | 'large';
 }
 
-const Clock: React.FC<ClockProps> = ({ timeFormat = '24h', theme = 'aurora' }) => {
+const Clock: React.FC<ClockProps> = ({ timeFormat = '24h', theme = 'aurora', size = 'medium' }) => {
   const [time, setTime] = useState(new Date());
   const [prevMinute, setPrevMinute] = useState(time.getMinutes());
 
@@ -26,8 +27,11 @@ const Clock: React.FC<ClockProps> = ({ timeFormat = '24h', theme = 'aurora' }) =
   const minutes = time.getMinutes();
   const seconds = time.getSeconds();
 
+  const isSmall = size === 'small';
+  const isLarge = size === 'large';
+
   return (
-    <div className="flex flex-col items-center justify-center h-full p-4 relative overflow-hidden">
+    <div className={`flex flex-col items-center justify-center h-full relative overflow-hidden ${isSmall ? 'p-2' : 'p-4'}`}>
       {/* Theme Particles Background */}
       <ThemeParticles theme={theme} density="low" />
       
@@ -38,8 +42,8 @@ const Clock: React.FC<ClockProps> = ({ timeFormat = '24h', theme = 'aurora' }) =
             key={i}
             className="absolute rounded-full border-2 border-white/5"
             style={{
-              width: `${(i + 1) * 150}px`,
-              height: `${(i + 1) * 150}px`,
+              width: `${(i + 1) * (isSmall ? 100 : 150)}px`,
+              height: `${(i + 1) * (isSmall ? 100 : 150)}px`,
             }}
             animate={{
               rotate: 360,
@@ -81,7 +85,9 @@ const Clock: React.FC<ClockProps> = ({ timeFormat = '24h', theme = 'aurora' }) =
             stiffness: 200,
             damping: 15
           }}
-          className="relative text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent"
+          className={`relative font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent ${
+            isSmall ? 'text-4xl' : isLarge ? 'text-7xl' : 'text-5xl md:text-6xl'
+          }`}
           style={{ perspective: '1000px' }}
         >
           <span>
@@ -102,7 +108,9 @@ const Clock: React.FC<ClockProps> = ({ timeFormat = '24h', theme = 'aurora' }) =
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 0.8, y: 0 }}
         transition={{ delay: 0.3, type: "spring" }}
-        className="relative z-10 text-sm text-white/70 mt-4 font-medium px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm"
+        className={`relative z-10 text-white/70 font-medium rounded-full bg-white/5 backdrop-blur-sm ${
+          isSmall ? 'text-xs mt-2 px-3 py-1' : 'text-sm mt-4 px-4 py-2'
+        }`}
       >
         {time.toLocaleDateString('en-US', { 
           weekday: 'long', 
@@ -112,27 +120,27 @@ const Clock: React.FC<ClockProps> = ({ timeFormat = '24h', theme = 'aurora' }) =
       </motion.div>
 
       {/* Animated circular progress for seconds */}
-      <div className="relative z-10 mt-4 w-32 h-32">
+      <div className={`relative z-10 ${isSmall ? 'mt-2 w-20 h-20' : 'mt-4 w-32 h-32'}`}>
         <svg className="w-full h-full transform -rotate-90">
           <circle
-            cx="64"
-            cy="64"
-            r="60"
+            cx="50%"
+            cy="50%"
+            r="45%"
             stroke="rgba(255,255,255,0.1)"
             strokeWidth="4"
             fill="none"
           />
           <motion.circle
-            cx="64"
-            cy="64"
-            r="60"
+            cx="50%"
+            cy="50%"
+            r="45%"
             stroke="url(#gradient)"
             strokeWidth="4"
             fill="none"
             strokeLinecap="round"
-            strokeDasharray={377}
+            pathLength={1}
             animate={{
-              strokeDashoffset: 377 - (377 * seconds) / 60,
+              pathLength: seconds / 60,
             }}
             transition={{ 
               duration: 0.5,
@@ -146,7 +154,7 @@ const Clock: React.FC<ClockProps> = ({ timeFormat = '24h', theme = 'aurora' }) =
             </linearGradient>
           </defs>
         </svg>
-        <div className="absolute inset-0 flex items-center justify-center text-2xl font-bold text-white/50">
+        <div className={`absolute inset-0 flex items-center justify-center font-bold text-white/50 ${isSmall ? 'text-lg' : 'text-2xl'}`}>
           {seconds}
         </div>
       </div>
