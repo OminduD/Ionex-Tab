@@ -207,10 +207,10 @@ const App: React.FC = () => {
     ),
     analogClock: null, // Deprecated - now controlled by clockType setting
     weather: <Weather apiKey={settings.apiKeys.weather} theme={settings.theme} size={settings.widgetSizes.weather} />,
-    calendar: <Calendar theme={settings.theme} />,
-    todoList: <TodoList theme={settings.theme} />,
+    calendar: <Calendar theme={settings.theme} size={settings.widgetSizes.calendar} />,
+    todoList: <TodoList theme={settings.theme} size={settings.widgetSizes.todoList} />,
     aiAssistant: <AIWidget groqKey={settings.apiKeys.groq || ''} theme={settings.theme} />,
-    notes: <NotesWidget theme={settings.theme} />,
+    notes: <NotesWidget theme={settings.theme} size={settings.widgetSizes.notes} />,
     appShortcuts: <AppShortcuts shortcuts={settings.shortcuts} theme={settings.theme} />,
     musicPlayer: <MusicPlayer theme={settings.theme} />,
     newsFeed: <NewsFeed apiKey={settings.apiKeys.news} theme={settings.theme} />,
