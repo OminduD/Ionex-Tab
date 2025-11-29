@@ -41,75 +41,131 @@ export const Greeting: React.FC<GreetingProps> = ({ userName }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -30 }}
+      initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.1, duration: 0.8, type: 'spring' }}
+      transition={{ delay: 0.2, duration: 1.2, ease: "easeOut" }}
       className="text-center mb-8 relative z-10"
     >
-      {/* Dynamic Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-24 bg-primary/20 blur-[60px] rounded-full animate-pulse" />
+      {/* Dynamic Background Glow - Softer and slower */}
+      <motion.div 
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-32 bg-primary/10 blur-[80px] rounded-full"
+        animate={{
+          scale: [1, 1.15, 1],
+          opacity: [0.2, 0.4, 0.2],
+        }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div 
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2/3 h-24 bg-secondary/8 blur-[100px] rounded-full"
+        animate={{
+          scale: [1.15, 1, 1.15],
+          opacity: [0.15, 0.35, 0.15],
+        }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+      />
 
       <div className="flex flex-col items-center justify-center gap-2">
 
-        {/* Holographic Icon Container */}
+        {/* Holographic Icon Container - More comfortable */}
         <motion.div
-          className="relative w-16 h-16 mb-2 flex items-center justify-center"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 260, damping: 20 }}
+          className="relative w-16 h-16 mb-3 flex items-center justify-center"
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
         >
-          <div className="absolute inset-0 bg-gradient-to-tr from-primary via-secondary to-accent opacity-20 rounded-full blur-md animate-spin-slow" />
-          <div className="absolute inset-0 border border-white/20 rounded-full" />
+          {/* Gentle rotating ring */}
+          <motion.div 
+            className="absolute inset-0 bg-gradient-to-tr from-primary via-secondary to-accent opacity-10 rounded-full blur-lg"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          />
+          <motion.div 
+            className="absolute inset-0 border rounded-full"
+            style={{ borderColor: 'rgba(255,255,255,0.15)' }}
+            animate={{ 
+              scale: [1, 1.05, 1],
+              opacity: [0.2, 0.4, 0.2]
+            }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          />
           <motion.span
-            className="material-icons text-3xl text-transparent bg-clip-text bg-gradient-to-br from-white to-white/70"
+            className="material-icons text-3xl text-white/90 relative z-10"
             animate={{
               textShadow: [
-                "0 0 10px var(--primary-color)",
+                "0 0 15px var(--primary-color)",
                 "0 0 20px var(--secondary-color)",
-                "0 0 10px var(--primary-color)"
+                "0 0 15px var(--primary-color)"
               ]
             }}
-            transition={{ duration: 2, repeat: Infinity }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))' }}
           >
             {iconName}
           </motion.span>
         </motion.div>
 
-        {/* Main Greeting Text with Glitch/Tech Effect */}
+        {/* Main Greeting Text - Comfortable and readable */}
         <div className="relative">
+          {/* Subtle glow layer */}
           <motion.h1
-            className="text-5xl md:text-7xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-white/90 to-white/70"
-            initial={{ clipPath: 'polygon(0 0, 0 0, 0 100%, 0% 100%)' }}
-            animate={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0% 100%)' }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="absolute text-5xl md:text-7xl font-black tracking-tight text-primary/8 blur-xl"
+            animate={{ 
+              scale: [1, 1.02, 1],
+              opacity: [0.4, 0.6, 0.4]
+            }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          >
+            {greeting}
+          </motion.h1>
+          
+          {/* Main text with gentle fade-in */}
+          <motion.h1
+            className="relative text-5xl md:text-7xl font-black tracking-tight text-white"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: "easeOut", delay: 0.4 }}
+            style={{
+              filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.3))',
+              textShadow: '0 2px 10px rgba(255,255,255,0.1)'
+            }}
           >
             {greeting}
           </motion.h1>
 
-          {/* Decorative Tech Lines */}
+          {/* Single decorative line */}
           <motion.div
-            className="absolute -bottom-2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent"
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
+            className="absolute -bottom-2 left-1/2 -translate-x-1/2 h-[1px] bg-gradient-to-r from-transparent via-primary/40 to-transparent"
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ 
+              width: '80%',
+              opacity: [0, 0.6, 0.4]
+            }}
+            transition={{ delay: 1, duration: 1.5, ease: "easeOut" }}
           />
         </div>
 
-        {/* Username with Typing Effect */}
+        {/* Username - Clean and comfortable */}
         {userName && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="flex items-center gap-2 mt-2"
+            transition={{ delay: 1.4, duration: 0.8 }}
+            className="flex items-center justify-center gap-2 mt-3"
           >
-            <span className="text-xl md:text-3xl font-bold text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]">
+            <motion.span 
+              className="text-xl md:text-2xl font-semibold text-white/90"
+              style={{
+                filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))'
+              }}
+            >
               {userName}
-            </span>
+            </motion.span>
             <motion.span
-              animate={{ opacity: [0, 1, 0] }}
-              transition={{ duration: 0.8, repeat: Infinity }}
-              className="w-2 h-6 bg-accent rounded-full"
+              animate={{ 
+                opacity: [0.3, 1, 0.3]
+              }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              className="w-1.5 h-6 bg-primary/60 rounded-full"
             />
           </motion.div>
         )}

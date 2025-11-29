@@ -15,16 +15,24 @@ interface Props {
 }
 
 // Futuristic Toggle Component
-const Toggle = ({ checked, onChange, label }: { checked: boolean; onChange: (checked: boolean) => void; label?: string }) => (
+const Toggle = ({ checked, onChange, label, themeColor }: { checked: boolean; onChange: (checked: boolean) => void; label?: string; themeColor?: string }) => (
     <div className="flex items-center justify-between group cursor-pointer" onClick={() => onChange(!checked)}>
-        {label && <span className="font-medium text-blue-100/80 group-hover:text-cyan-400 transition-colors tracking-wide">{label}</span>}
+        {label && <span className="font-medium text-blue-100/80 group-hover:opacity-80 transition-colors tracking-wide" style={{ color: themeColor ? `${themeColor}CC` : undefined }}>{label}</span>}
         <div className="relative w-12 h-6">
             {/* Track */}
-            <div className={`absolute inset-0 rounded-sm skew-x-[-10deg] transition-all duration-300 border ${checked ? 'bg-cyan-500/20 border-cyan-400/50 shadow-[0_0_10px_rgba(34,211,238,0.3)]' : 'bg-slate-800/50 border-slate-600/50'}`} />
+            <div 
+                className={`absolute inset-0 rounded-sm skew-x-[-10deg] transition-all duration-300 border ${!checked ? 'bg-slate-800/50 border-slate-600/50' : ''}`}
+                style={checked ? {
+                    backgroundColor: `${themeColor}33`,
+                    borderColor: `${themeColor}80`,
+                    boxShadow: `0 0 10px ${themeColor}4D`
+                } : undefined}
+            />
 
             {/* Thumb */}
             <motion.div
-                className={`absolute top-1 bottom-1 w-4 rounded-sm skew-x-[-10deg] shadow-md transition-all duration-300 flex items-center justify-center ${checked ? 'bg-cyan-400' : 'bg-slate-400'}`}
+                className={`absolute top-1 bottom-1 w-4 rounded-sm skew-x-[-10deg] shadow-md transition-all duration-300 flex items-center justify-center ${!checked ? 'bg-slate-400' : ''}`}
+                style={checked ? { backgroundColor: themeColor } : undefined}
                 animate={{ left: checked ? 'calc(100% - 1.25rem)' : '0.25rem' }}
             >
                 <div className={`w-0.5 h-2 ${checked ? 'bg-black/50' : 'bg-black/30'}`} />
@@ -54,6 +62,12 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
     const [newShortcutUrl, setNewShortcutUrl] = useState('');
 
     useEffect(() => { setLocalSettings(settings); }, [settings, isVisible]);
+
+    // Get theme colors dynamically
+    const currentTheme = themes[localSettings.theme] || themes.aurora;
+    const themeColor = currentTheme.colors[0];
+    const themeColorSecondary = currentTheme.colors[1];
+    const themeColorAccent = currentTheme.colors[2];
 
     if (!isVisible) return null;
 
@@ -133,21 +147,54 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                         onClick={e => e.stopPropagation()}
                     >
                         {/* Decorative Corner Accents */}
-                        <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-cyan-500/50 rounded-tl-lg pointer-events-none" />
-                        <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-cyan-500/50 rounded-br-lg pointer-events-none" />
-                        <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-cyan-500/30 rounded-tr-lg pointer-events-none" />
-                        <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-cyan-500/30 rounded-bl-lg pointer-events-none" />
+                        <motion.div 
+                            className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 rounded-tl-lg pointer-events-none"
+                            style={{ borderColor: `${themeColor}80` }}
+                            animate={{ opacity: [0.5, 1, 0.5] }}
+                            transition={{ duration: 3, repeat: Infinity }}
+                        />
+                        <motion.div 
+                            className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 rounded-br-lg pointer-events-none"
+                            style={{ borderColor: `${themeColorSecondary}80` }}
+                            animate={{ opacity: [0.5, 1, 0.5] }}
+                            transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
+                        />
+                        <motion.div 
+                            className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 rounded-tr-lg pointer-events-none"
+                            style={{ borderColor: `${themeColorAccent}50` }}
+                        />
+                        <motion.div 
+                            className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 rounded-bl-lg pointer-events-none"
+                            style={{ borderColor: `${themeColorAccent}50` }}
+                        />
 
                         {/* Sidebar */}
-                        <div className="w-full md:w-64 bg-black/20 border-b md:border-b-0 md:border-r border-cyan-500/10 flex flex-col relative">
-                            <div className="p-6 border-b border-cyan-500/10 bg-gradient-to-r from-cyan-900/10 to-transparent">
+                        <div className="w-full md:w-64 bg-black/20 border-b md:border-b-0 md:border-r flex flex-col relative" style={{ borderColor: `${themeColor}1A` }}>
+                            <div className="p-6 border-b bg-gradient-to-r to-transparent" style={{ 
+                                borderColor: `${themeColor}1A`,
+                                background: `linear-gradient(to right, ${themeColor}1A, transparent)`
+                            }}>
                                 <div className="flex items-center gap-3">
-                                    <div className="relative w-10 h-10 flex items-center justify-center bg-cyan-500/10 rounded-lg border border-cyan-500/30">
-                                        <Cpu className="w-6 h-6 text-cyan-400 animate-pulse" />
-                                    </div>
+                                    <motion.div 
+                                        className="relative w-10 h-10 flex items-center justify-center rounded-lg border"
+                                        style={{ 
+                                            backgroundColor: `${themeColor}1A`,
+                                            borderColor: `${themeColor}50`
+                                        }}
+                                        animate={{ 
+                                            boxShadow: [
+                                                `0 0 0px ${themeColor}00`,
+                                                `0 0 20px ${themeColor}80`,
+                                                `0 0 0px ${themeColor}00`
+                                            ]
+                                        }}
+                                        transition={{ duration: 2, repeat: Infinity }}
+                                    >
+                                        <Cpu className="w-6 h-6" style={{ color: themeColor }} />
+                                    </motion.div>
                                     <div>
-                                        <h2 className="text-lg font-bold text-cyan-100 tracking-wider">SYSTEM</h2>
-                                        <p className="text-[10px] text-cyan-500/60 uppercase tracking-[0.2em]">Configuration</p>
+                                        <h2 className="text-lg font-bold tracking-wider" style={{ color: `${themeColor}E6` }}>SYSTEM</h2>
+                                        <p className="text-[10px] uppercase tracking-[0.2em]" style={{ color: `${themeColor}99` }}>Configuration</p>
                                     </div>
                                 </div>
                             </div>
@@ -160,23 +207,35 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                         <button
                                             key={tab.id}
                                             onClick={() => setActiveTab(tab.id as TabId)}
-                                            className={`w-full flex items-center gap-3 px-6 py-3 relative group transition-all duration-300 ${isActive ? 'text-cyan-400' : 'text-slate-400 hover:text-cyan-200'}`}
+                                            className={`w-full flex items-center gap-3 px-6 py-3 relative group transition-all duration-300 ${isActive ? '' : 'text-slate-400'}`}
+                                            style={{ color: isActive ? themeColor : undefined }}
+                                            onMouseEnter={(e) => !isActive && (e.currentTarget.style.color = `${themeColor}CC`)}
+                                            onMouseLeave={(e) => !isActive && (e.currentTarget.style.color = '')}
                                         >
                                             {isActive && (
                                                 <motion.div
                                                     layoutId="activeTab"
-                                                    className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-transparent border-l-2 border-cyan-400"
+                                                    className="absolute inset-0 bg-gradient-to-r to-transparent border-l-2"
+                                                    style={{ 
+                                                        background: `linear-gradient(to right, ${themeColor}1A, transparent)`,
+                                                        borderColor: themeColor
+                                                    }}
                                                     transition={{ duration: 0.3 }}
                                                 />
                                             )}
-                                            <Icon className={`w-5 h-5 relative z-10 ${isActive ? 'drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]' : ''}`} />
+                                            <Icon 
+                                                className={`w-5 h-5 relative z-10`} 
+                                                style={{ 
+                                                    filter: isActive ? `drop-shadow(0 0 5px ${themeColor}80)` : undefined
+                                                }}
+                                            />
                                             <span className="text-sm font-medium tracking-wide relative z-10">{tab.label}</span>
                                         </button>
                                     );
                                 })}
                             </div>
 
-                            <div className="p-4 border-t border-cyan-500/10 text-center">
+                            <div className="p-4 border-t text-center" style={{ borderColor: `${themeColor}1A` }}>
                                 <div className="text-[10px] text-slate-500 uppercase tracking-widest">Ionex OS v2.0</div>
                             </div>
                         </div>
@@ -184,12 +243,20 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                         {/* Main Content */}
                         <div className="flex-1 flex flex-col min-w-0 bg-gradient-to-br from-transparent to-cyan-900/5 relative">
                             {/* Header */}
-                            <div className="p-6 border-b border-cyan-500/10 flex items-center justify-between bg-black/20">
+                            <div className="p-6 border-b flex items-center justify-between bg-black/20" style={{ borderColor: `${themeColor}1A` }}>
                                 <div>
                                     <h3 className="text-xl font-bold text-white tracking-wide flex items-center gap-2">
-                                        <span className="text-cyan-500">/</span>
+                                        <motion.span 
+                                            style={{ color: themeColor }}
+                                            animate={{ opacity: [0.5, 1, 0.5] }}
+                                            transition={{ duration: 2, repeat: Infinity }}
+                                        >/</motion.span>
                                         {tabs.find(t => t.id === activeTab)?.label.toUpperCase()}
-                                        <span className="text-cyan-500">/</span>
+                                        <motion.span 
+                                            style={{ color: themeColor }}
+                                            animate={{ opacity: [0.5, 1, 0.5] }}
+                                            transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+                                        >/</motion.span>
                                     </h3>
                                 </div>
                                 <button onClick={onClose} className="p-2 hover:bg-red-500/10 rounded-lg text-slate-400 hover:text-red-400 transition-colors group">
@@ -210,9 +277,9 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                     >
                                         {activeTab === 'personal' && (
                                             <div className="grid gap-6">
-                                                <div className="bg-slate-900/50 border border-slate-700/50 rounded-lg p-6 relative overflow-hidden group hover:border-cyan-500/30 transition-colors">
+                                                <div className="bg-slate-900/50 border border-slate-700/50 rounded-lg p-6 relative overflow-hidden group transition-colors" style={{ borderColor: `${themeColor}00` }} onMouseEnter={(e) => e.currentTarget.style.borderColor = `${themeColor}4D`} onMouseLeave={(e) => e.currentTarget.style.borderColor = `${themeColor}00`}>
                                                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><User className="w-24 h-24" /></div>
-                                                    <h4 className="text-cyan-400 text-sm font-bold uppercase tracking-wider mb-4">User Profile</h4>
+                                                    <h4 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: themeColor }}>User Profile</h4>
                                                     <div className="space-y-4 relative z-10">
                                                         <div>
                                                             <label className="text-xs text-slate-400 uppercase tracking-wide block mb-2">Designation</label>
@@ -221,7 +288,9 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                                                 value={localSettings.userName || ''}
                                                                 onChange={(e) => setLocalSettings({ ...localSettings, userName: e.target.value })}
                                                                 placeholder="ENTER NAME"
-                                                                className="w-full bg-black/40 border border-slate-700 rounded p-3 text-white focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 outline-none transition-all font-mono"
+                                                                className="w-full bg-black/40 border border-slate-700 rounded p-3 text-white outline-none transition-all font-mono"
+                                                                onFocus={(e) => { e.target.style.borderColor = `${themeColor}80`; e.target.style.boxShadow = `0 0 0 1px ${themeColor}33`; }}
+                                                                onBlur={(e) => { e.target.style.borderColor = ''; e.target.style.boxShadow = ''; }}
                                                             />
                                                         </div>
                                                     </div>
@@ -232,15 +301,15 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                                         { label: 'Show IP', sub: 'Network Identity', key: 'showIP', icon: Shield },
                                                         { label: 'Virtual Pet', sub: 'Digital Companion', key: 'showVirtualPet', icon: PawPrint },
                                                     ].map((item) => (
-                                                        <div key={item.key} className="bg-slate-900/50 border border-slate-700/50 rounded-lg p-5 flex items-center justify-between hover:border-cyan-500/30 transition-colors">
+                                                        <div key={item.key} className="bg-slate-900/50 border border-slate-700/50 rounded-lg p-5 flex items-center justify-between transition-colors" onMouseEnter={(e) => e.currentTarget.style.borderColor = `${themeColor}4D`} onMouseLeave={(e) => e.currentTarget.style.borderColor = ''}>
                                                             <div className="flex items-center gap-3">
-                                                                <div className="p-2 bg-cyan-500/10 rounded text-cyan-400"><item.icon className="w-5 h-5" /></div>
+                                                                <div className="p-2 rounded" style={{ backgroundColor: `${themeColor}1A`, color: themeColor }}><item.icon className="w-5 h-5" /></div>
                                                                 <div>
                                                                     <div className="font-bold text-slate-200 text-sm">{item.label}</div>
                                                                     <div className="text-[10px] text-slate-500 uppercase tracking-wide">{item.sub}</div>
                                                                 </div>
                                                             </div>
-                                                            <Toggle checked={Boolean(localSettings[item.key as keyof Settings])} onChange={(c) => setLocalSettings({ ...localSettings, [item.key]: c })} />
+                                                            <Toggle checked={Boolean(localSettings[item.key as keyof Settings])} onChange={(c) => setLocalSettings({ ...localSettings, [item.key]: c })} themeColor={themeColor} />
                                                         </div>
                                                     ))}
                                                 </div>
@@ -253,7 +322,11 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                                     <button
                                                         key={key}
                                                         onClick={() => setLocalSettings({ ...localSettings, theme: key, customColors: undefined, wallpaperUrl: theme.wallpaper, wallpaperFile: undefined })}
-                                                        className={`relative group h-32 rounded-lg overflow-hidden border-2 transition-all ${localSettings.theme === key ? 'border-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.2)]' : 'border-slate-800 hover:border-slate-600'}`}
+                                                        className={`relative group h-32 rounded-lg overflow-hidden border-2 transition-all ${localSettings.theme === key ? '' : 'border-slate-800 hover:border-slate-600'}`}
+                                                        style={localSettings.theme === key ? {
+                                                            borderColor: theme.colors[0],
+                                                            boxShadow: `0 0 20px ${theme.colors[0]}33`
+                                                        } : undefined}
                                                     >
                                                         <div className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style={{ backgroundImage: `url(${theme.wallpaper})` }} />
                                                         <div className="absolute inset-0 bg-black/50 group-hover:bg-black/30 transition-colors" />
@@ -263,7 +336,7 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                                                 {theme.colors.map(c => <div key={c} className="w-2 h-2 rounded-full" style={{ backgroundColor: c }} />)}
                                                             </div>
                                                         </div>
-                                                        {localSettings.theme === key && <div className="absolute top-2 right-2 bg-cyan-500 text-black p-1 rounded-full"><Check className="w-3 h-3" /></div>}
+                                                        {localSettings.theme === key && <div className="absolute top-2 right-2 text-black p-1 rounded-full" style={{ backgroundColor: theme.colors[0] }}><Check className="w-3 h-3" /></div>}
                                                     </button>
                                                 ))}
                                             </div>
@@ -273,17 +346,19 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                             <div className="bg-slate-900/50 border border-slate-700/50 rounded-lg p-6 space-y-6">
                                                 <div className="flex items-center justify-between pb-4 border-b border-white/5">
                                                     <div>
-                                                        <h4 className="text-cyan-400 font-bold uppercase text-sm tracking-wider">Auto-Theme</h4>
+                                                        <h4 className="font-bold uppercase text-sm tracking-wider" style={{ color: themeColor }}>Auto-Theme</h4>
                                                         <p className="text-xs text-slate-500">Extract colors from wallpaper</p>
                                                     </div>
-                                                    <Toggle checked={localSettings.autoThemeFromWallpaper || false} onChange={(c) => setLocalSettings({ ...localSettings, autoThemeFromWallpaper: c })} />
+                                                    <Toggle checked={localSettings.autoThemeFromWallpaper || false} onChange={(c) => setLocalSettings({ ...localSettings, autoThemeFromWallpaper: c })} themeColor={themeColor} />
                                                 </div>
                                                 <div className="grid md:grid-cols-2 gap-6">
                                                     <div>
                                                         <label className="text-xs text-slate-400 uppercase tracking-wide block mb-2">Upload File</label>
-                                                        <label className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-slate-700 rounded-lg hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all cursor-pointer group">
-                                                            <UploadIcon className="w-6 h-6 text-slate-500 group-hover:text-cyan-400 mb-2" />
-                                                            <span className="text-xs text-slate-500 group-hover:text-cyan-300">Select Image</span>
+                                                        <label className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-slate-700 rounded-lg transition-all cursor-pointer group" onMouseEnter={(e) => { e.currentTarget.style.borderColor = `${themeColor}80`; e.currentTarget.style.backgroundColor = `${themeColor}0D`; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = ''; e.currentTarget.style.backgroundColor = ''; }}>
+                                                            <div className="text-slate-500 group-hover:opacity-80 mb-2 transition-opacity" style={{ color: themeColor }}>
+                                                                <UploadIcon className="w-6 h-6" />
+                                                            </div>
+                                                            <span className="text-xs text-slate-500 group-hover:opacity-80 transition-opacity" style={{ color: themeColor }}>Select Image</span>
                                                             <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
                                                         </label>
                                                     </div>
@@ -295,7 +370,9 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                                                 value={localSettings.wallpaperUrl}
                                                                 onChange={(e) => setLocalSettings({ ...localSettings, wallpaperUrl: e.target.value, wallpaperFile: undefined })}
                                                                 placeholder="HTTPS://"
-                                                                className="flex-1 bg-black/40 border border-slate-700 rounded p-3 text-white text-xs font-mono focus:border-cyan-500/50 outline-none"
+                                                                className="flex-1 bg-black/40 border border-slate-700 rounded p-3 text-white text-xs font-mono outline-none"
+                                                                onFocus={(e) => e.target.style.borderColor = `${themeColor}80`}
+                                                                onBlur={(e) => e.target.style.borderColor = ''}
                                                             />
                                                         </div>
                                                         {(localSettings.wallpaperUrl || localSettings.wallpaperFile) && (
@@ -316,14 +393,14 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                                         <h4 className="text-white font-bold">24-Hour Format</h4>
                                                         <p className="text-xs text-slate-500">Military time display</p>
                                                     </div>
-                                                    <Toggle checked={localSettings.timeFormat === '24h'} onChange={(c) => setLocalSettings({ ...localSettings, timeFormat: c ? '24h' : '12h' })} />
+                                                    <Toggle checked={localSettings.timeFormat === '24h'} onChange={(c) => setLocalSettings({ ...localSettings, timeFormat: c ? '24h' : '12h' })} themeColor={themeColor} />
                                                 </div>
                                                 <div className="flex items-center justify-between">
                                                     <div>
                                                         <h4 className="text-white font-bold">Show Seconds</h4>
                                                         <p className="text-xs text-slate-500">Precision timing</p>
                                                     </div>
-                                                    <Toggle checked={localSettings.showSeconds || false} onChange={(c) => setLocalSettings({ ...localSettings, showSeconds: c })} />
+                                                    <Toggle checked={localSettings.showSeconds || false} onChange={(c) => setLocalSettings({ ...localSettings, showSeconds: c })} themeColor={themeColor} />
                                                 </div>
                                             </div>
                                         )}
@@ -331,15 +408,15 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                         {activeTab === 'widgets' && (
                                             <div className="grid gap-4">
                                                 {Object.entries(localSettings.widgets).map(([key, enabled]) => (
-                                                    <div key={key} className={`border rounded-lg p-4 transition-all ${enabled ? 'bg-cyan-900/10 border-cyan-500/30' : 'bg-slate-900/30 border-slate-800'}`}>
+                                                    <div key={key} className={`border rounded-lg p-4 transition-all ${enabled ? '' : 'bg-slate-900/30 border-slate-800'}`} style={enabled ? { backgroundColor: `${themeColor}1A`, borderColor: `${themeColor}4D` } : undefined}>
                                                         <div className="flex items-center justify-between mb-3">
                                                             <div className="flex items-center gap-3">
-                                                                <div className={`p-2 rounded ${enabled ? 'bg-cyan-500/20 text-cyan-400' : 'bg-slate-800 text-slate-500'}`}>
+                                                                <div className={`p-2 rounded ${enabled ? '' : 'bg-slate-800 text-slate-500'}`} style={enabled ? { backgroundColor: `${themeColor}33`, color: themeColor } : undefined}>
                                                                     <LayoutGrid className="w-4 h-4" />
                                                                 </div>
                                                                 <span className="font-bold text-slate-200 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
                                                             </div>
-                                                            <Toggle checked={Boolean(enabled)} onChange={(c) => setLocalSettings({ ...localSettings, widgets: { ...localSettings.widgets, [key]: c } })} />
+                                                            <Toggle checked={Boolean(enabled)} onChange={(c) => setLocalSettings({ ...localSettings, widgets: { ...localSettings.widgets, [key]: c } })} themeColor={themeColor} />
                                                         </div>
                                                         {enabled && key !== 'aiAssistant' && (
                                                             <div className="flex gap-2 pl-11">
@@ -347,7 +424,12 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                                                     <button
                                                                         key={size}
                                                                         onClick={() => setLocalSettings({ ...localSettings, widgetSizes: { ...localSettings.widgetSizes, [key]: size } })}
-                                                                        className={`text-[10px] uppercase px-3 py-1 rounded border transition-all ${localSettings.widgetSizes[key] === size ? 'bg-cyan-500/20 border-cyan-500 text-cyan-300' : 'border-slate-700 text-slate-500 hover:border-slate-500'}`}
+                                                                        className={`text-[10px] uppercase px-3 py-1 rounded border transition-all ${localSettings.widgetSizes[key] === size ? '' : 'border-slate-700 text-slate-500 hover:border-slate-500'}`}
+                                                                        style={localSettings.widgetSizes[key] === size ? {
+                                                                            backgroundColor: `${themeColor}33`,
+                                                                            borderColor: themeColor,
+                                                                            color: themeColor
+                                                                        } : undefined}
                                                                     >
                                                                         {size}
                                                                     </button>
@@ -363,15 +445,15 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                             <div className="bg-slate-900/50 border border-slate-700/50 rounded-lg p-6 space-y-6">
                                                 <div className="flex gap-2">
                                                     <input type="text" value={newShortcutName} onChange={(e) => setNewShortcutName(e.target.value)} placeholder="NAME" className="flex-1 bg-black/40 border border-slate-700 rounded p-2 text-white text-xs font-mono focus:border-cyan-500/50 outline-none" />
-                                                    <input type="text" value={newShortcutUrl} onChange={(e) => setNewShortcutUrl(e.target.value)} placeholder="URL" className="flex-[2] bg-black/40 border border-slate-700 rounded p-2 text-white text-xs font-mono focus:border-cyan-500/50 outline-none" />
-                                                    <button onClick={addShortcut} className="bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 border border-cyan-500/50 rounded px-4 transition-colors"><PlusIcon className="w-4 h-4" /></button>
+                                                    <input type="text" value={newShortcutUrl} onChange={(e) => setNewShortcutUrl(e.target.value)} placeholder="URL" className="flex-[2] bg-black/40 border border-slate-700 rounded p-2 text-white text-xs font-mono outline-none" onFocus={(e) => e.target.style.borderColor = `${themeColor}80`} onBlur={(e) => e.target.style.borderColor = ''} />
+                                                    <button onClick={addShortcut} className="border rounded px-4 transition-colors" style={{ backgroundColor: `${themeColor}33`, color: themeColor, borderColor: `${themeColor}80` }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${themeColor}4D`} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${themeColor}33`}><PlusIcon className="w-4 h-4" /></button>
                                                 </div>
                                                 <div className="space-y-2 max-h-[300px] overflow-y-auto">
                                                     {localSettings.shortcuts.map((s) => (
-                                                        <div key={s.id} className="flex items-center gap-3 p-3 bg-black/20 border border-white/5 rounded hover:border-cyan-500/30 transition-colors group">
+                                                        <div key={s.id} className="flex items-center gap-3 p-3 bg-black/20 border border-white/5 rounded transition-colors group" onMouseEnter={(e) => e.currentTarget.style.borderColor = `${themeColor}4D`} onMouseLeave={(e) => e.currentTarget.style.borderColor = ''}>
                                                             {s.icon ? <img src={s.icon} className="w-6 h-6 rounded-sm" /> : <LinkIcon className="w-4 h-4 text-slate-500" />}
                                                             <div className="flex-1 min-w-0">
-                                                                <div className="text-sm font-bold text-slate-300 group-hover:text-cyan-300 truncate">{s.name}</div>
+                                                                <div className="text-sm font-bold text-slate-300 truncate transition-colors" onMouseEnter={(e) => e.currentTarget.style.color = themeColor} onMouseLeave={(e) => e.currentTarget.style.color = ''}>{s.name}</div>
                                                                 <div className="text-[10px] text-slate-600 font-mono truncate">{s.url}</div>
                                                             </div>
                                                             <button onClick={() => deleteShortcut(s.id)} className="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2Icon className="w-4 h-4" /></button>
@@ -413,11 +495,24 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                             </div>
 
                             {/* Footer */}
-                            <div className="p-6 border-t border-cyan-500/10 bg-black/40 flex justify-end gap-3">
+                            <div className="p-6 border-t bg-black/40 flex justify-end gap-3" style={{ borderColor: `${themeColor}1A` }}>
                                 <button onClick={onClose} className="px-6 py-2 rounded text-slate-400 hover:text-white hover:bg-white/5 transition-colors text-sm font-medium">CANCEL</button>
-                                <button onClick={handleSave} className="px-8 py-2 rounded bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 border border-cyan-500/50 shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all text-sm font-bold tracking-wide flex items-center gap-2">
+                                <motion.button 
+                                    onClick={handleSave} 
+                                    className="px-8 py-2 rounded border transition-all text-sm font-bold tracking-wide flex items-center gap-2"
+                                    style={{ 
+                                        backgroundColor: `${themeColor}33`,
+                                        color: themeColor,
+                                        borderColor: `${themeColor}80`
+                                    }}
+                                    whileHover={{ 
+                                        backgroundColor: `${themeColor}4D`,
+                                        boxShadow: `0 0 20px ${themeColor}33`
+                                    }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
                                     <Save className="w-4 h-4" /> SAVE CHANGES
-                                </button>
+                                </motion.button>
                             </div>
                         </div>
                     </motion.div>
