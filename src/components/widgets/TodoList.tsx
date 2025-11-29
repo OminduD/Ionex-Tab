@@ -7,9 +7,10 @@ import { ThemeParticles } from '../ThemeParticles';
 
 interface TodoListProps {
   theme?: string;
+  size?: 'small' | 'medium' | 'large';
 }
 
-const TodoList: React.FC<TodoListProps> = ({ theme = 'aurora' }) => {
+const TodoList: React.FC<TodoListProps> = ({ theme = 'aurora', size = 'medium' }) => {
   const [todos, setTodos] = useLocalStorage<Todo[]>('homeTabTodos', []);
   const [newTodo, setNewTodo] = useState('');
 
@@ -55,13 +56,15 @@ const TodoList: React.FC<TodoListProps> = ({ theme = 'aurora' }) => {
     }
   };
 
+  const isSmall = size === 'small';
+
   return (
-    <div className="p-4 h-full flex flex-col relative overflow-hidden">
+    <div className={`${isSmall ? 'p-2' : 'p-4'} h-full flex flex-col relative overflow-hidden`}>
       {/* Theme Particles */}
       <ThemeParticles theme={theme} density="low" />
       
-      <div className="relative z-10 flex items-center justify-between mb-3">
-        <h3 className="text-lg font-bold">To-Do List</h3>
+      <div className={`relative z-10 flex items-center justify-between ${isSmall ? 'mb-2' : 'mb-3'}`}>
+        <h3 className={`${isSmall ? 'text-base' : 'text-lg'} font-bold`}>To-Do List</h3>
         <div className="flex gap-2">
           <button
             onClick={exportTodos}
@@ -84,19 +87,19 @@ const TodoList: React.FC<TodoListProps> = ({ theme = 'aurora' }) => {
         </div>
       </div>
       
-      <div className="flex gap-2 mb-3">
+      <div className={`flex gap-2 ${isSmall ? 'mb-2' : 'mb-3'}`}>
         <input
           type="text"
           value={newTodo}
           onChange={(e) => setNewTodo(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && addTodo()}
           placeholder="Add a new task..."
-          className="flex-1 bg-white/10 rounded px-3 py-2 text-sm outline-none focus:bg-white/20"
+          className={`flex-1 bg-white/10 rounded px-3 ${isSmall ? 'py-1' : 'py-2'} text-sm outline-none focus:bg-white/20`}
         />
         <button
           onClick={addTodo}
           title="Add todo"
-          className="bg-white/20 hover:bg-white/30 rounded px-3 py-2 transition-colors"
+          className={`bg-white/20 hover:bg-white/30 rounded px-3 ${isSmall ? 'py-1' : 'py-2'} transition-colors`}
         >
           <PlusIcon className="w-5 h-5" />
         </button>
@@ -109,13 +112,13 @@ const TodoList: React.FC<TodoListProps> = ({ theme = 'aurora' }) => {
           todos.map((todo: Todo) => (
             <div
               key={todo.id}
-              className="flex items-center gap-2 bg-white/5 rounded p-2 hover:bg-white/10 transition-colors"
+              className={`flex items-center gap-2 bg-white/5 rounded ${isSmall ? 'p-1.5' : 'p-2'} hover:bg-white/10 transition-colors`}
             >
               <button onClick={() => toggleTodo(todo.id)} className="flex-shrink-0">
                 {todo.completed ? (
-                  <CheckSquareIcon className="w-5 h-5 icon-color" />
+                  <CheckSquareIcon className={`w-5 h-5 icon-color`} />
                 ) : (
-                  <SquareIcon className="w-5 h-5" />
+                  <SquareIcon className={`w-5 h-5`} />
                 )}
               </button>
               <span className={`flex-1 text-sm ${todo.completed ? 'line-through opacity-50' : ''}`}>
