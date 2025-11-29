@@ -14,7 +14,7 @@ const FullscreenAnimation: React.FC<FullscreenAnimationProps> = ({
 }) => {
   useEffect(() => {
     if (isVisible) {
-      const timer = setTimeout(onComplete, 3500);
+      const timer = setTimeout(onComplete, 4000);
       return () => clearTimeout(timer);
     }
   }, [isVisible, onComplete]);
@@ -24,322 +24,157 @@ const FullscreenAnimation: React.FC<FullscreenAnimationProps> = ({
       case 'neon':
         return {
           colors: ['#ec4899', '#3b82f6', '#8b5cf6'],
-          shape: 'diamond', // Lightning diamond
-          size: 300,
+          type: 'cyberpunk',
+          accent: '#00ff9d'
         };
       case 'aurora':
         return {
           colors: ['#8b5cf6', '#3b82f6', '#06b6d4'],
-          shape: 'sphere', // Glowing sphere
-          size: 280,
+          type: 'ethereal',
+          accent: '#ffffff'
         };
       case 'midnight':
         return {
           colors: ['#a78bfa', '#8b5cf6', '#1e1b4b'],
-          shape: 'star', // Star burst
-          size: 320,
+          type: 'cosmic',
+          accent: '#fbbf24'
         };
       case 'ocean':
         return {
           colors: ['#06b6d4', '#0284c7', '#0369a1'],
-          shape: 'hexagon', // Water crystal
-          size: 290,
+          type: 'aquatic',
+          accent: '#e0f2fe'
         };
       case 'forest':
         return {
           colors: ['#10b981', '#059669', '#047857'],
-          shape: 'triangle', // Tree shape
-          size: 310,
+          type: 'nature',
+          accent: '#bef264'
         };
       case 'sunset':
         return {
           colors: ['#f59e0b', '#ef4444', '#ec4899'],
-          shape: 'circle', // Sun
-          size: 300,
+          type: 'solar',
+          accent: '#fef3c7'
         };
       case 'cherry':
         return {
           colors: ['#ec4899', '#f472b6', '#fda4af'],
-          shape: 'petal', // Flower petal
-          size: 280,
+          type: 'floral',
+          accent: '#fff1f2'
         };
       case 'mint':
         return {
           colors: ['#10b981', '#34d399', '#6ee7b7'],
-          shape: 'leaf', // Leaf shape
-          size: 270,
+          type: 'fresh',
+          accent: '#f0fdf4'
         };
       default:
         return {
           colors: ['#8b5cf6', '#3b82f6', '#06b6d4'],
-          shape: 'sphere',
-          size: 290,
+          type: 'default',
+          accent: '#ffffff'
         };
     }
   };
 
   const config = getThemeConfig();
 
-  // Render 3D geometric shape based on theme
-  const render3DShape = () => {
-    const baseStyle = {
-      transformStyle: 'preserve-3d' as const,
-      width: `${config.size}px`,
-      height: `${config.size}px`,
-      position: 'relative' as const,
+  // True 3D Cube Component
+  const Cube3D = ({ size, colors }: { size: number, colors: string[] }) => {
+    const faceStyle: React.CSSProperties = {
+      position: 'absolute',
+      width: size,
+      height: size,
+      border: `2px solid ${colors[1]}`,
+      background: `rgba(0,0,0,0.1)`,
+      boxShadow: `0 0 20px ${colors[0]} inset, 0 0 30px ${colors[0]}`,
+      backfaceVisibility: 'visible',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
     };
 
-    switch (config.shape) {
-      case 'diamond':
-        return (
-          <div style={baseStyle}>
-            {/* Diamond/Crystal shape */}
-            {[...Array(8)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute inset-0"
-                style={{
-                  background: `linear-gradient(135deg, ${config.colors[0]}, ${config.colors[1]})`,
-                  clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
-                  transform: `rotateZ(${i * 45}deg)`,
-                  opacity: 0.8,
-                }}
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: [0.8, 0.4, 0.8],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  delay: i * 0.1,
-                }}
-              />
-            ))}
-          </div>
-        );
-      
-      case 'sphere':
-        return (
-          <div style={baseStyle}>
-            {/* Glowing sphere with layers */}
-            {[...Array(5)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute inset-0 rounded-full"
-                style={{
-                  background: `radial-gradient(circle, ${config.colors[i % 3]}, transparent)`,
-                  transform: `scale(${1 - i * 0.15})`,
-                }}
-                animate={{
-                  scale: [1 - i * 0.15, 1.2 - i * 0.15, 1 - i * 0.15],
-                  opacity: [0.9, 0.3, 0.9],
-                }}
-                transition={{
-                  duration: 2 + i * 0.5,
-                  repeat: Infinity,
-                }}
-              />
-            ))}
-          </div>
-        );
-      
-      case 'star':
-        return (
-          <div style={baseStyle}>
-            {/* Star burst */}
-            {[...Array(12)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute top-1/2 left-1/2 w-4 h-32"
-                style={{
-                  background: `linear-gradient(to bottom, ${config.colors[i % 3]}, transparent)`,
-                  transformOrigin: 'top center',
-                  transform: `rotate(${i * 30}deg) translateY(-50%)`,
-                }}
-                animate={{
-                  scaleY: [0.5, 1.5, 0.5],
-                  opacity: [0.6, 1, 0.6],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  delay: i * 0.05,
-                }}
-              />
-            ))}
-          </div>
-        );
-      
-      case 'hexagon':
-        return (
-          <div style={baseStyle}>
-            {/* Hexagonal crystal */}
-            {[...Array(6)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute inset-0"
-                style={{
-                  background: `linear-gradient(60deg, ${config.colors[0]}, ${config.colors[1]})`,
-                  clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)',
-                  transform: `rotateZ(${i * 60}deg)`,
-                  opacity: 0.7,
-                }}
-                animate={{
-                  scale: [0.9, 1.1, 0.9],
-                  rotate: [i * 60, i * 60 + 360],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  delay: i * 0.2,
-                }}
-              />
-            ))}
-          </div>
-        );
-      
-      case 'triangle':
-        return (
-          <div style={baseStyle}>
-            {/* Triangle/Tree shape */}
-            {[...Array(3)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute inset-0"
-                style={{
-                  background: `linear-gradient(180deg, ${config.colors[0]}, ${config.colors[1]})`,
-                  clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
-                  transform: `scale(${1 - i * 0.25}) translateY(${i * 20}px)`,
-                  opacity: 0.8 - i * 0.2,
-                }}
-                animate={{
-                  scale: [1 - i * 0.25, 1.2 - i * 0.25, 1 - i * 0.25],
-                }}
-                transition={{
-                  duration: 2.5,
-                  repeat: Infinity,
-                  delay: i * 0.3,
-                }}
-              />
-            ))}
-          </div>
-        );
-      
-      case 'circle':
-        return (
-          <div style={baseStyle}>
-            {/* Sun circle with rays */}
-            <motion.div
-              className="absolute inset-0 rounded-full"
-              style={{
-                background: `radial-gradient(circle, ${config.colors[0]}, ${config.colors[1]})`,
-              }}
-              animate={{
-                scale: [1, 1.3, 1],
-                boxShadow: [
-                  `0 0 60px ${config.colors[0]}`,
-                  `0 0 120px ${config.colors[1]}`,
-                  `0 0 60px ${config.colors[0]}`,
-                ],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-              }}
-            />
-            {[...Array(16)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute top-1/2 left-1/2 w-2 h-20"
-                style={{
-                  background: `linear-gradient(to bottom, ${config.colors[0]}, transparent)`,
-                  transformOrigin: 'top center',
-                  transform: `rotate(${i * 22.5}deg) translateY(-50%)`,
-                }}
-                animate={{
-                  scaleY: [1, 1.5, 1],
-                  opacity: [0.8, 0.3, 0.8],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  delay: i * 0.05,
-                }}
-              />
-            ))}
-          </div>
-        );
-      
-      case 'petal':
-        return (
-          <div style={baseStyle}>
-            {/* Flower petal arrangement */}
-            {[...Array(8)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute top-1/2 left-1/2 w-24 h-40"
-                style={{
-                  background: `radial-gradient(ellipse at top, ${config.colors[0]}, ${config.colors[1]})`,
-                  borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
-                  transformOrigin: 'bottom center',
-                  transform: `rotate(${i * 45}deg) translateY(-50%)`,
-                  opacity: 0.7,
-                }}
-                animate={{
-                  scale: [0.9, 1.1, 0.9],
-                  rotate: [i * 45, i * 45 + 15, i * 45],
-                }}
-                transition={{
-                  duration: 2.5,
-                  repeat: Infinity,
-                  delay: i * 0.1,
-                }}
-              />
-            ))}
-          </div>
-        );
-      
-      case 'leaf':
-        return (
-          <div style={baseStyle}>
-            {/* Leaf shapes */}
-            {[...Array(6)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute top-1/2 left-1/2 w-32 h-48"
-                style={{
-                  background: `linear-gradient(135deg, ${config.colors[0]}, ${config.colors[1]})`,
-                  borderRadius: '100% 0%',
-                  transformOrigin: 'bottom center',
-                  transform: `rotate(${i * 60}deg) translateY(-40%)`,
-                  opacity: 0.8,
-                }}
-                animate={{
-                  scale: [0.9, 1.1, 0.9],
-                  rotate: [i * 60, i * 60 + 20, i * 60],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  delay: i * 0.2,
-                }}
-              />
-            ))}
-          </div>
-        );
-      
-      default:
-        return (
-          <div style={baseStyle}>
-            <div
-              className="absolute inset-0 rounded-full"
-              style={{
-                background: `radial-gradient(circle, ${config.colors[0]}, ${config.colors[1]})`,
-              }}
-            />
-          </div>
-        );
-    }
+    return (
+      <motion.div
+        style={{
+          width: size,
+          height: size,
+          position: 'relative',
+          transformStyle: 'preserve-3d',
+        }}
+        animate={{
+          rotateX: [0, 360, 720],
+          rotateY: [0, 360, 720],
+          rotateZ: [0, 180, 360],
+        }}
+        transition={{ duration: 4, ease: "linear", repeat: Infinity }}
+      >
+        <div style={{ ...faceStyle, transform: `translateZ(${size / 2}px)`, background: `linear-gradient(45deg, ${colors[0]}80, ${colors[1]}80)` }} />
+        <div style={{ ...faceStyle, transform: `rotateY(180deg) translateZ(${size / 2}px)`, background: `linear-gradient(45deg, ${colors[1]}80, ${colors[2]}80)` }} />
+        <div style={{ ...faceStyle, transform: `rotateY(90deg) translateZ(${size / 2}px)`, background: `linear-gradient(45deg, ${colors[2]}80, ${colors[0]}80)` }} />
+        <div style={{ ...faceStyle, transform: `rotateY(-90deg) translateZ(${size / 2}px)`, background: `linear-gradient(45deg, ${colors[0]}80, ${colors[1]}80)` }} />
+        <div style={{ ...faceStyle, transform: `rotateX(90deg) translateZ(${size / 2}px)`, background: `linear-gradient(45deg, ${colors[1]}80, ${colors[2]}80)` }} />
+        <div style={{ ...faceStyle, transform: `rotateX(-90deg) translateZ(${size / 2}px)`, background: `linear-gradient(45deg, ${colors[2]}80, ${colors[0]}80)` }} />
+        
+        {/* Inner glowing core */}
+        <div className="absolute inset-0 m-auto rounded-full blur-md" 
+             style={{ 
+               width: size/2, 
+               height: size/2, 
+               background: config.accent,
+               boxShadow: `0 0 50px ${config.accent}, 0 0 100px ${colors[0]}`
+             }} 
+        />
+      </motion.div>
+    );
+  };
+
+  // True 3D Pyramid Component
+  const Pyramid3D = ({ size, colors }: { size: number, colors: string[] }) => {
+    const height = size * 0.866; // Height of equilateral triangle
+    
+    return (
+      <motion.div
+        style={{
+          width: size,
+          height: size,
+          position: 'relative',
+          transformStyle: 'preserve-3d',
+        }}
+        animate={{
+          rotateX: [0, 360],
+          rotateY: [0, 720],
+          rotateZ: [0, 180],
+        }}
+        transition={{ duration: 3, ease: "linear", repeat: Infinity }}
+      >
+        {/* Base */}
+        <div style={{
+          position: 'absolute',
+          width: size,
+          height: size,
+          background: `${colors[0]}80`,
+          transform: 'rotateX(90deg) translateZ(0px)',
+          boxShadow: `0 0 30px ${colors[0]}`,
+        }} />
+        
+        {/* Sides */}
+        {[0, 90, 180, 270].map((deg, i) => (
+          <div key={i} style={{
+            position: 'absolute',
+            width: 0,
+            height: 0,
+            borderLeft: `${size/2}px solid transparent`,
+            borderRight: `${size/2}px solid transparent`,
+            borderBottom: `${height}px solid ${colors[i % 3]}80`,
+            transformOrigin: '50% 100%',
+            transform: `rotateY(${deg}deg) rotateX(30deg) translateZ(${size/4}px) translateY(-${size/2}px)`,
+            filter: `drop-shadow(0 0 10px ${colors[i % 3]})`,
+          }} />
+        ))}
+      </motion.div>
+    );
   };
 
   return (
@@ -349,154 +184,131 @@ const FullscreenAnimation: React.FC<FullscreenAnimationProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-[9999] pointer-events-none overflow-hidden"
+          transition={{ duration: 0.5 }}
+          className="fixed inset-0 z-[9999] pointer-events-none overflow-hidden flex items-center justify-center"
           style={{ 
-            background: `radial-gradient(circle at 50% 50%, ${config.colors[0]}20, transparent)`,
-            perspective: '1000px',
+            background: `radial-gradient(circle at center, ${config.colors[0]}40 0%, #000000 100%)`,
+            perspective: '1500px',
           }}
         >
-          {/* Giant 3D Geometric Shape - Center Stage */}
+          {/* Warp Speed Background Effect */}
+          <div className="absolute inset-0 overflow-hidden">
+            {[...Array(50)].map((_, i) => (
+              <motion.div
+                key={`star-${i}`}
+                className="absolute left-1/2 top-1/2 w-1 h-40 bg-white rounded-full"
+                style={{
+                  background: `linear-gradient(to bottom, transparent, ${config.accent}, transparent)`,
+                  width: Math.random() * 2 + 1 + 'px',
+                  height: Math.random() * 200 + 100 + 'px',
+                }}
+                initial={{ 
+                  x: (Math.random() - 0.5) * window.innerWidth, 
+                  y: (Math.random() - 0.5) * window.innerHeight, 
+                  z: -1000, 
+                  opacity: 0 
+                }}
+                animate={{ 
+                  z: [0, 1000], 
+                  opacity: [0, 1, 0],
+                  scale: [0.1, 1]
+                }}
+                transition={{ 
+                  duration: Math.random() * 1 + 0.5, 
+                  repeat: Infinity,
+                  delay: Math.random() * 2,
+                  ease: "linear"
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Main 3D Object Container */}
           <motion.div
-            initial={{ scale: 0, rotateX: 0, rotateY: 0, rotateZ: 0, z: -1000 }}
+            initial={{ scale: 0, z: -2000 }}
             animate={{ 
-              scale: [0, 1.5, 1.2, 0],
-              rotateX: [0, 360, 720],
-              rotateY: [0, 360, 720],
-              rotateZ: [0, 180, 360],
-              z: [-1000, 200, 100, -1000],
+              scale: [0, 1.5, 50], // Fly through effect at the end
+              z: [-2000, 0, 2000],
+              rotateZ: [0, 180]
             }}
-            transition={{ duration: 3, ease: "easeInOut" }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-            style={{ 
-              transformStyle: 'preserve-3d',
-              filter: `drop-shadow(0 0 60px ${config.colors[0]}) drop-shadow(0 0 120px ${config.colors[1]})`,
+            transition={{ 
+              duration: 3.5, 
+              times: [0, 0.8, 1],
+              ease: "easeInOut" 
             }}
+            style={{ transformStyle: 'preserve-3d' }}
           >
-            {render3DShape()}
+            {config.type === 'cyberpunk' || config.type === 'default' ? (
+              <Cube3D size={200} colors={config.colors} />
+            ) : (
+              <Pyramid3D size={250} colors={config.colors} />
+            )}
           </motion.div>
 
-          {/* Rotating 3D Cubes Around */}
-          {[...Array(12)].map((_, i) => (
+          {/* Shockwave Rings */}
+          {[...Array(3)].map((_, i) => (
             <motion.div
-              key={`cube-${i}`}
-              initial={{ 
-                scale: 0,
-                rotateX: 0,
-                rotateY: 0,
+              key={`shockwave-${i}`}
+              className="absolute rounded-full border-4"
+              style={{
+                borderColor: config.colors[i % 3],
+                boxShadow: `0 0 50px ${config.colors[i % 3]}, inset 0 0 50px ${config.colors[i % 3]}`,
               }}
+              initial={{ width: 0, height: 0, opacity: 1, borderWidth: 20 }}
               animate={{ 
-                scale: [0, 1, 0],
-                rotateX: [0, 360],
-                rotateY: [0, 360],
-                x: [0, Math.cos((i * 30 * Math.PI) / 180) * 400],
-                y: [0, Math.sin((i * 30 * Math.PI) / 180) * 400],
+                width: ['0vw', '150vw'], 
+                height: ['0vw', '150vw'], 
+                opacity: [1, 0],
+                borderWidth: [20, 0]
               }}
               transition={{ 
-                duration: 2.5,
-                delay: i * 0.08,
-                ease: "easeOut",
-              }}
-              className="absolute top-1/2 left-1/2 w-16 h-16 -translate-x-1/2 -translate-y-1/2"
-              style={{ 
-                transformStyle: 'preserve-3d',
-                background: `linear-gradient(135deg, ${config.colors[i % 3]}, ${config.colors[(i + 1) % 3]})`,
-                boxShadow: `0 0 30px ${config.colors[i % 3]}`,
-                borderRadius: '8px',
+                duration: 2, 
+                delay: 0.5 + (i * 0.3),
+                ease: "easeOut" 
               }}
             />
           ))}
 
-          {/* Orbiting Geometric Particles */}
-          {[...Array(24)].map((_, i) => {
-            const angle = (i * 360) / 24;
-            const radius = 300 + (i % 3) * 100;
-            const shapeType = ['square', 'circle', 'triangle'][i % 3];
-            
+          {/* Floating Text/Symbol */}
+          <motion.div
+            className="absolute text-9xl font-bold text-white mix-blend-overlay"
+            initial={{ opacity: 0, scale: 0, filter: 'blur(20px)' }}
+            animate={{ 
+              opacity: [0, 1, 0], 
+              scale: [0.5, 1.5],
+              filter: ['blur(20px)', 'blur(0px)', 'blur(10px)']
+            }}
+            transition={{ duration: 2, delay: 0.5 }}
+          >
+            IONEX
+          </motion.div>
+
+          {/* Particle Explosion */}
+          {[...Array(30)].map((_, i) => {
+            const angle = (i * 360) / 30;
             return (
               <motion.div
-                key={`orbit-${i}`}
-                initial={{ 
-                  scale: 0,
-                  opacity: 0,
+                key={`particle-${i}`}
+                className="absolute w-4 h-4 rounded-full"
+                style={{
+                  background: config.colors[i % 3],
+                  boxShadow: `0 0 20px ${config.colors[i % 3]}`,
                 }}
-                animate={{ 
-                  scale: [0, 1.5, 0],
-                  opacity: [0, 1, 0],
-                  x: [0, Math.cos((angle * Math.PI) / 180) * radius, Math.cos((angle * Math.PI) / 180) * radius * 1.5],
-                  y: [0, Math.sin((angle * Math.PI) / 180) * radius, Math.sin((angle * Math.PI) / 180) * radius * 1.5],
-                  rotate: [0, 720],
+                initial={{ x: 0, y: 0, scale: 0 }}
+                animate={{
+                  x: Math.cos(angle * Math.PI / 180) * 800,
+                  y: Math.sin(angle * Math.PI / 180) * 800,
+                  scale: [0, 1, 0],
+                  opacity: [1, 0]
                 }}
-                transition={{ 
-                  duration: 2,
-                  delay: i * 0.03,
-                  ease: "easeOut",
-                }}
-                className="absolute top-1/2 left-1/2 w-8 h-8"
-                style={{ 
-                  background: `linear-gradient(135deg, ${config.colors[i % 3]}, ${config.colors[(i + 1) % 3]})`,
-                  filter: `drop-shadow(0 0 15px ${config.colors[i % 3]})`,
-                  borderRadius: shapeType === 'circle' ? '50%' : shapeType === 'square' ? '4px' : '0',
-                  clipPath: shapeType === 'triangle' ? 'polygon(50% 0%, 0% 100%, 100% 100%)' : 'none',
+                transition={{
+                  duration: 1.5,
+                  delay: 0.8,
+                  ease: "easeOut"
                 }}
               />
             );
           })}
-
-          {/* Pulsing Energy Rings */}
-          {[...Array(8)].map((_, i) => (
-            <motion.div
-              key={`ring-${i}`}
-              initial={{ scale: 0, opacity: 1 }}
-              animate={{ 
-                scale: [0, 4 + i * 0.5],
-                opacity: [0.8, 0],
-              }}
-              transition={{ 
-                duration: 2.5,
-                delay: i * 0.15,
-                ease: "easeOut",
-              }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-4"
-              style={{ 
-                borderColor: config.colors[i % config.colors.length],
-                width: '100px',
-                height: '100px',
-                boxShadow: `0 0 30px ${config.colors[i % config.colors.length]}`,
-              }}
-            />
-          ))}
-
-          {/* Spiral Trails */}
-          {[...Array(16)].map((_, i) => (
-            <motion.div
-              key={`trail-${i}`}
-              initial={{ 
-                scale: 0,
-                rotate: i * 22.5,
-                x: 0,
-                y: 0,
-              }}
-              animate={{ 
-                scale: [0, 1.5, 0],
-                rotate: i * 22.5 + 720,
-                x: [0, Math.cos((i * 22.5 * Math.PI) / 180) * 500],
-                y: [0, Math.sin((i * 22.5 * Math.PI) / 180) * 500],
-                opacity: [0, 1, 0],
-              }}
-              transition={{ 
-                duration: 2.8,
-                delay: i * 0.05,
-                ease: "easeOut",
-              }}
-              className="absolute left-1/2 top-1/2 w-2 h-40 rounded-full"
-              style={{
-                background: `linear-gradient(to bottom, ${config.colors[i % config.colors.length]}, transparent)`,
-                transformOrigin: 'top center',
-                filter: `blur(2px) drop-shadow(0 0 10px ${config.colors[i % config.colors.length]})`,
-              }}
-            />
-          ))}
         </motion.div>
       )}
     </AnimatePresence>
