@@ -11,6 +11,7 @@ import { QuickLinks } from './components/QuickLinks';
 import { AIToolsButton } from './components/AIToolsButton';
 import { Greeting } from './components/Greeting';
 import { QuoteAndIP } from './components/QuoteAndIP';
+import { AISidePanel } from './components/AISidePanel';
 import { motion } from 'framer-motion';
 import { Zap } from 'lucide-react';
 import { extractColorsFromImage, applyCustomColors } from './utils/colorExtractorImproved';
@@ -22,7 +23,6 @@ const AnalogClock = React.lazy(() => import('./components/widgets/AnalogClock'))
 const Weather = React.lazy(() => import('./components/widgets/Weather'));
 const Calendar = React.lazy(() => import('./components/widgets/Calendar'));
 const TodoList = React.lazy(() => import('./components/widgets/TodoList'));
-const AIWidget = React.lazy(() => import('./components/widgets/AIWidgetImproved'));
 const NotesWidget = React.lazy(() => import('./components/widgets/NotesWidget'));
 const AppShortcuts = React.lazy(() => import('./components/widgets/AppShortcuts'));
 const MusicPlayer = React.lazy(() => import('./components/widgets/MusicPlayer'));
@@ -137,7 +137,7 @@ const App: React.FC = () => {
     weather: <Weather apiKey={settings.apiKeys.weather} theme={settings.theme} />,
     calendar: <Calendar theme={settings.theme} />,
     todoList: <TodoList theme={settings.theme} />,
-    aiAssistant: <AIWidget groqKey={settings.apiKeys.groq || ''} theme={settings.theme} />,
+    aiAssistant: null, // AI Assistant is now a side panel, not a draggable widget
     notes: <NotesWidget theme={settings.theme} />,
     appShortcuts: <AppShortcuts shortcuts={settings.shortcuts} theme={settings.theme} />,
     musicPlayer: <MusicPlayer theme={settings.theme} />,
@@ -302,6 +302,13 @@ const App: React.FC = () => {
                    })}
                </React.Suspense>
             </div>
+
+            {/* AI Assistant Side Panel */}
+            <AISidePanel 
+                isEnabled={settings.widgets.aiAssistant}
+                groqKey={settings.apiKeys.groq || ''}
+                theme={settings.theme}
+            />
 
             {/* Focus Mode Overlay */}
             <React.Suspense fallback={<div>Loading...</div>}>

@@ -518,55 +518,71 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                         <h3 className="text-2xl font-bold text-white">Widgets</h3>
                                     </div>
                                     <div className="grid md:grid-cols-2 gap-3">
-                                        {Object.entries(localSettings.widgets).map(([key, enabled], index) => (
-                                            <motion.div
-                                                key={key}
-                                                initial={{ scale: 0.9, opacity: 0 }}
-                                                animate={{ scale: 1, opacity: 1 }}
-                                                transition={{ delay: 0.7 + index * 0.03 }}
-                                                whileHover={{ scale: 1.02 }}
-                                                className="bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 transition-all"
-                                            >
-                                                <label className="flex items-center justify-between cursor-pointer mb-3">
-                                                    <span className="capitalize font-medium">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={Boolean(enabled)}
-                                                        onChange={(e) => setLocalSettings({
-                                                            ...localSettings,
-                                                            widgets: { ...localSettings.widgets, [key]: e.target.checked }
-                                                        })}
-                                                        className="w-5 h-5 accent-primary rounded"
-                                                    />
-                                                </label>
-                                                {enabled && (
-                                                    <motion.div 
-                                                        initial={{ height: 0, opacity: 0 }}
-                                                        animate={{ height: 'auto', opacity: 1 }}
-                                                        className="flex gap-2"
-                                                    >
-                                                        {(['small', 'medium', 'large'] as WidgetSize[]).map((size) => (
-                                                            <motion.button
-                                                                key={size}
-                                                                whileHover={{ scale: 1.1 }}
-                                                                whileTap={{ scale: 0.95 }}
-                                                                onClick={() => setLocalSettings({
-                                                                    ...localSettings,
-                                                                    widgetSizes: { ...localSettings.widgetSizes, [key]: size }
-                                                                })}
-                                                                className={`flex-1 text-xs px-3 py-2 rounded-lg font-medium transition-all ${
-                                                                    localSettings.widgetSizes[key] === size 
-                                                                        ? 'bg-gradient-to-r from-primary to-accent text-white shadow-lg' 
-                                                                        : 'bg-white/10 text-white/70 hover:bg-white/20'
-                                                                }`}
-                                                            >
-                                                                {size}
-                                                            </motion.button>
-                                                        ))}
-                                                    </motion.div>
-                                                )}
-                                            </motion.div>
-                                        ))}
+                                        {Object.entries(localSettings.widgets).map(([key, enabled], index) => {
+                                            // AI Assistant is now a side panel - only show toggle, no size selector
+                                            const isAIAssistant = key === 'aiAssistant';
+                                            
+                                            return (
+                                                <motion.div
+                                                    key={key}
+                                                    initial={{ scale: 0.9, opacity: 0 }}
+                                                    animate={{ scale: 1, opacity: 1 }}
+                                                    transition={{ delay: 0.7 + index * 0.03 }}
+                                                    whileHover={{ scale: 1.02 }}
+                                                    className={`bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 transition-all ${
+                                                        isAIAssistant ? 'border-primary/30 bg-primary/5' : ''
+                                                    }`}
+                                                >
+                                                    <label className={`flex items-center justify-between cursor-pointer ${!isAIAssistant && enabled ? 'mb-3' : ''}`}>
+                                                        <div className="flex items-center gap-2">
+                                                            {isAIAssistant && (
+                                                                <span className="material-icons text-primary text-lg">smart_toy</span>
+                                                            )}
+                                                            <span className="capitalize font-medium">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                                                            {isAIAssistant && (
+                                                                <span className="text-xs text-white/50 ml-1">(Side Panel)</span>
+                                                            )}
+                                                        </div>
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={Boolean(enabled)}
+                                                            onChange={(e) => setLocalSettings({
+                                                                ...localSettings,
+                                                                widgets: { ...localSettings.widgets, [key]: e.target.checked }
+                                                            })}
+                                                            className="w-5 h-5 accent-primary rounded"
+                                                        />
+                                                    </label>
+                                                    {/* Show size selector for all widgets EXCEPT AI Assistant */}
+                                                    {enabled && !isAIAssistant && (
+                                                        <motion.div 
+                                                            initial={{ height: 0, opacity: 0 }}
+                                                            animate={{ height: 'auto', opacity: 1 }}
+                                                            className="flex gap-2"
+                                                        >
+                                                            {(['small', 'medium', 'large'] as WidgetSize[]).map((size) => (
+                                                                <motion.button
+                                                                    key={size}
+                                                                    whileHover={{ scale: 1.1 }}
+                                                                    whileTap={{ scale: 0.95 }}
+                                                                    onClick={() => setLocalSettings({
+                                                                        ...localSettings,
+                                                                        widgetSizes: { ...localSettings.widgetSizes, [key]: size }
+                                                                    })}
+                                                                    className={`flex-1 text-xs px-3 py-2 rounded-lg font-medium transition-all ${
+                                                                        localSettings.widgetSizes[key] === size 
+                                                                            ? 'bg-gradient-to-r from-primary to-accent text-white shadow-lg' 
+                                                                            : 'bg-white/10 text-white/70 hover:bg-white/20'
+                                                                    }`}
+                                                                >
+                                                                    {size}
+                                                                </motion.button>
+                                                            ))}
+                                                        </motion.div>
+                                                    )}
+                                                </motion.div>
+                                            );
+                                        })}
                                     </div>
                                 </motion.section>
 
