@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface FullscreenAnimationProps {
@@ -7,175 +7,59 @@ interface FullscreenAnimationProps {
   onComplete: () => void;
 }
 
-const FullscreenAnimation: React.FC<FullscreenAnimationProps> = ({ 
-  theme, 
-  isVisible, 
-  onComplete 
+const FullscreenAnimation: React.FC<FullscreenAnimationProps> = ({
+  theme,
+  isVisible,
+  onComplete
 }) => {
+  const [stage, setStage] = useState(0);
+
   useEffect(() => {
     if (isVisible) {
-      const timer = setTimeout(onComplete, 4000);
-      return () => clearTimeout(timer);
+      setStage(1);
+      const timer1 = setTimeout(() => setStage(2), 2000); // Explosion phase
+      const timer2 = setTimeout(onComplete, 4000); // End
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+        setStage(0);
+      };
     }
   }, [isVisible, onComplete]);
 
   const getThemeConfig = () => {
     switch (theme) {
       case 'neon':
-        return {
-          colors: ['#ec4899', '#3b82f6', '#8b5cf6'],
-          type: 'cyberpunk',
-          accent: '#00ff9d'
-        };
+        return { colors: ['#ff00ff', '#00ffff', '#ffff00'], bg: '#000000' };
       case 'aurora':
-        return {
-          colors: ['#8b5cf6', '#3b82f6', '#06b6d4'],
-          type: 'ethereal',
-          accent: '#ffffff'
-        };
+        return { colors: ['#60a5fa', '#34d399', '#a78bfa'], bg: '#0f172a' };
       case 'midnight':
-        return {
-          colors: ['#a78bfa', '#8b5cf6', '#1e1b4b'],
-          type: 'cosmic',
-          accent: '#fbbf24'
-        };
+        return { colors: ['#a78bfa', '#8b5cf6', '#1e1b4b'], bg: '#0f172a' };
       case 'ocean':
-        return {
-          colors: ['#06b6d4', '#0284c7', '#0369a1'],
-          type: 'aquatic',
-          accent: '#e0f2fe'
-        };
+        return { colors: ['#06b6d4', '#0284c7', '#0369a1'], bg: '#0c4a6e' };
       case 'forest':
-        return {
-          colors: ['#10b981', '#059669', '#047857'],
-          type: 'nature',
-          accent: '#bef264'
-        };
+        return { colors: ['#10b981', '#059669', '#047857'], bg: '#064e3b' };
       case 'sunset':
-        return {
-          colors: ['#f59e0b', '#ef4444', '#ec4899'],
-          type: 'solar',
-          accent: '#fef3c7'
-        };
+        return { colors: ['#f59e0b', '#ef4444', '#ec4899'], bg: '#451a03' };
       case 'cherry':
-        return {
-          colors: ['#ec4899', '#f472b6', '#fda4af'],
-          type: 'floral',
-          accent: '#fff1f2'
-        };
+        return { colors: ['#ec4899', '#f472b6', '#fda4af'], bg: '#831843' };
       case 'mint':
-        return {
-          colors: ['#10b981', '#34d399', '#6ee7b7'],
-          type: 'fresh',
-          accent: '#f0fdf4'
-        };
+        return { colors: ['#10b981', '#34d399', '#6ee7b7'], bg: '#064e3b' };
       default:
-        return {
-          colors: ['#8b5cf6', '#3b82f6', '#06b6d4'],
-          type: 'default',
-          accent: '#ffffff'
-        };
+        return { colors: ['#3b82f6', '#8b5cf6', '#ec4899'], bg: '#000000' };
     }
   };
 
   const config = getThemeConfig();
 
-  // True 3D Cube Component
-  const Cube3D = ({ size, colors }: { size: number, colors: string[] }) => {
-    const faceStyle: React.CSSProperties = {
-      position: 'absolute',
-      width: size,
-      height: size,
-      border: `2px solid ${colors[1]}`,
-      background: `rgba(0,0,0,0.1)`,
-      boxShadow: `0 0 20px ${colors[0]} inset, 0 0 30px ${colors[0]}`,
-      backfaceVisibility: 'visible',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    };
-
-    return (
-      <motion.div
-        style={{
-          width: size,
-          height: size,
-          position: 'relative',
-          transformStyle: 'preserve-3d',
-        }}
-        animate={{
-          rotateX: [0, 360, 720],
-          rotateY: [0, 360, 720],
-          rotateZ: [0, 180, 360],
-        }}
-        transition={{ duration: 4, ease: "linear", repeat: Infinity }}
-      >
-        <div style={{ ...faceStyle, transform: `translateZ(${size / 2}px)`, background: `linear-gradient(45deg, ${colors[0]}80, ${colors[1]}80)` }} />
-        <div style={{ ...faceStyle, transform: `rotateY(180deg) translateZ(${size / 2}px)`, background: `linear-gradient(45deg, ${colors[1]}80, ${colors[2]}80)` }} />
-        <div style={{ ...faceStyle, transform: `rotateY(90deg) translateZ(${size / 2}px)`, background: `linear-gradient(45deg, ${colors[2]}80, ${colors[0]}80)` }} />
-        <div style={{ ...faceStyle, transform: `rotateY(-90deg) translateZ(${size / 2}px)`, background: `linear-gradient(45deg, ${colors[0]}80, ${colors[1]}80)` }} />
-        <div style={{ ...faceStyle, transform: `rotateX(90deg) translateZ(${size / 2}px)`, background: `linear-gradient(45deg, ${colors[1]}80, ${colors[2]}80)` }} />
-        <div style={{ ...faceStyle, transform: `rotateX(-90deg) translateZ(${size / 2}px)`, background: `linear-gradient(45deg, ${colors[2]}80, ${colors[0]}80)` }} />
-        
-        {/* Inner glowing core */}
-        <div className="absolute inset-0 m-auto rounded-full blur-md" 
-             style={{ 
-               width: size/2, 
-               height: size/2, 
-               background: config.accent,
-               boxShadow: `0 0 50px ${config.accent}, 0 0 100px ${colors[0]}`
-             }} 
-        />
-      </motion.div>
-    );
-  };
-
-  // True 3D Pyramid Component
-  const Pyramid3D = ({ size, colors }: { size: number, colors: string[] }) => {
-    const height = size * 0.866; // Height of equilateral triangle
-    
-    return (
-      <motion.div
-        style={{
-          width: size,
-          height: size,
-          position: 'relative',
-          transformStyle: 'preserve-3d',
-        }}
-        animate={{
-          rotateX: [0, 360],
-          rotateY: [0, 720],
-          rotateZ: [0, 180],
-        }}
-        transition={{ duration: 3, ease: "linear", repeat: Infinity }}
-      >
-        {/* Base */}
-        <div style={{
-          position: 'absolute',
-          width: size,
-          height: size,
-          background: `${colors[0]}80`,
-          transform: 'rotateX(90deg) translateZ(0px)',
-          boxShadow: `0 0 30px ${colors[0]}`,
-        }} />
-        
-        {/* Sides */}
-        {[0, 90, 180, 270].map((deg, i) => (
-          <div key={i} style={{
-            position: 'absolute',
-            width: 0,
-            height: 0,
-            borderLeft: `${size/2}px solid transparent`,
-            borderRight: `${size/2}px solid transparent`,
-            borderBottom: `${height}px solid ${colors[i % 3]}80`,
-            transformOrigin: '50% 100%',
-            transform: `rotateY(${deg}deg) rotateX(30deg) translateZ(${size/4}px) translateY(-${size/2}px)`,
-            filter: `drop-shadow(0 0 10px ${colors[i % 3]})`,
-          }} />
-        ))}
-      </motion.div>
-    );
-  };
+  // Generate random data streams
+  const dataStreams = React.useMemo(() => Array.from({ length: 20 }).map((_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    delay: Math.random() * 2,
+    duration: Math.random() * 2 + 1,
+    chars: Array.from({ length: 10 }).map(() => Math.random() > 0.5 ? '1' : '0').join(' ')
+  })), []);
 
   return (
     <AnimatePresence>
@@ -184,131 +68,112 @@ const FullscreenAnimation: React.FC<FullscreenAnimationProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className="fixed inset-0 z-[9999] pointer-events-none overflow-hidden flex items-center justify-center"
-          style={{ 
-            background: `radial-gradient(circle at center, ${config.colors[0]}40 0%, #000000 100%)`,
-            perspective: '1500px',
-          }}
+          className="fixed inset-0 z-[9999] overflow-hidden flex items-center justify-center bg-black perspective-1000"
         >
-          {/* Warp Speed Background Effect */}
-          <div className="absolute inset-0 overflow-hidden">
-            {[...Array(50)].map((_, i) => (
+          {/* Background Grid */}
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:40px_40px] [transform:perspective(500px)_rotateX(60deg)_translateY(-100px)_translateZ(-200px)] animate-[grid-flow_20s_linear_infinite]" />
+          </div>
+
+          {/* Data Streams */}
+          {dataStreams.map((stream) => (
+            <motion.div
+              key={stream.id}
+              className="absolute top-0 text-xs font-mono text-green-500/50 writing-vertical-rl"
+              style={{ left: `${stream.x}%` }}
+              initial={{ y: -1000 }}
+              animate={{ y: '100vh' }}
+              transition={{
+                duration: stream.duration,
+                repeat: Infinity,
+                ease: "linear",
+                delay: stream.delay
+              }}
+            >
+              {stream.chars}
+            </motion.div>
+          ))}
+
+          {/* Central Portal System */}
+          <div className="relative w-full h-full flex items-center justify-center" style={{ transformStyle: 'preserve-3d' }}>
+
+            {/* Rotating Rings */}
+            {[...Array(5)].map((_, i) => (
               <motion.div
-                key={`star-${i}`}
-                className="absolute left-1/2 top-1/2 w-1 h-40 bg-white rounded-full"
+                key={`ring-${i}`}
+                className="absolute rounded-full border border-white/30"
                 style={{
-                  background: `linear-gradient(to bottom, transparent, ${config.accent}, transparent)`,
-                  width: Math.random() * 2 + 1 + 'px',
-                  height: Math.random() * 200 + 100 + 'px',
+                  width: 300 + i * 100,
+                  height: 300 + i * 100,
+                  borderWidth: 1,
+                  borderColor: config.colors[i % 3],
+                  boxShadow: `0 0 20px ${config.colors[i % 3]}`,
                 }}
-                initial={{ 
-                  x: (Math.random() - 0.5) * window.innerWidth, 
-                  y: (Math.random() - 0.5) * window.innerHeight, 
-                  z: -1000, 
-                  opacity: 0 
+                animate={{
+                  rotateX: [0, 360],
+                  rotateY: [0, 360],
+                  scale: stage === 2 ? [1, 20] : [1, 1],
+                  opacity: stage === 2 ? [1, 0] : 1,
                 }}
-                animate={{ 
-                  z: [0, 1000], 
-                  opacity: [0, 1, 0],
-                  scale: [0.1, 1]
-                }}
-                transition={{ 
-                  duration: Math.random() * 1 + 0.5, 
+                transition={{
+                  duration: 10 - i,
                   repeat: Infinity,
-                  delay: Math.random() * 2,
-                  ease: "linear"
+                  ease: "linear",
                 }}
               />
             ))}
-          </div>
 
-          {/* Main 3D Object Container */}
-          <motion.div
-            initial={{ scale: 0, z: -2000 }}
-            animate={{ 
-              scale: [0, 1.5, 50], // Fly through effect at the end
-              z: [-2000, 0, 2000],
-              rotateZ: [0, 180]
-            }}
-            transition={{ 
-              duration: 3.5, 
-              times: [0, 0.8, 1],
-              ease: "easeInOut" 
-            }}
-            style={{ transformStyle: 'preserve-3d' }}
-          >
-            {config.type === 'cyberpunk' || config.type === 'default' ? (
-              <Cube3D size={200} colors={config.colors} />
-            ) : (
-              <Pyramid3D size={250} colors={config.colors} />
-            )}
-          </motion.div>
-
-          {/* Shockwave Rings */}
-          {[...Array(3)].map((_, i) => (
+            {/* Core Energy Sphere */}
             <motion.div
-              key={`shockwave-${i}`}
-              className="absolute rounded-full border-4"
+              className="absolute w-32 h-32 rounded-full blur-md"
               style={{
-                borderColor: config.colors[i % 3],
-                boxShadow: `0 0 50px ${config.colors[i % 3]}, inset 0 0 50px ${config.colors[i % 3]}`,
+                background: `radial-gradient(circle, ${config.colors[0]}, ${config.colors[1]})`,
+                boxShadow: `0 0 100px ${config.colors[0]}`,
               }}
-              initial={{ width: 0, height: 0, opacity: 1, borderWidth: 20 }}
-              animate={{ 
-                width: ['0vw', '150vw'], 
-                height: ['0vw', '150vw'], 
-                opacity: [1, 0],
-                borderWidth: [20, 0]
+              animate={{
+                scale: stage === 2 ? [1, 50] : [1, 1.5, 1],
+                opacity: stage === 2 ? [1, 0] : [0.8, 1, 0.8],
               }}
-              transition={{ 
-                duration: 2, 
-                delay: 0.5 + (i * 0.3),
-                ease: "easeOut" 
+              transition={{
+                duration: stage === 2 ? 0.5 : 2,
+                repeat: stage === 2 ? 0 : Infinity,
               }}
             />
-          ))}
 
-          {/* Floating Text/Symbol */}
-          <motion.div
-            className="absolute text-9xl font-bold text-white mix-blend-overlay"
-            initial={{ opacity: 0, scale: 0, filter: 'blur(20px)' }}
-            animate={{ 
-              opacity: [0, 1, 0], 
-              scale: [0.5, 1.5],
-              filter: ['blur(20px)', 'blur(0px)', 'blur(10px)']
-            }}
-            transition={{ duration: 2, delay: 0.5 }}
-          >
-            IONEX
-          </motion.div>
+            {/* Text Reveal */}
+            <motion.div
+              className="absolute z-50 text-8xl font-black text-white tracking-tighter mix-blend-overlay"
+              initial={{ scale: 0, opacity: 0, filter: 'blur(20px)' }}
+              animate={{
+                scale: stage === 2 ? [1, 5] : [0, 1],
+                opacity: stage === 2 ? [1, 0] : [0, 1],
+                filter: stage === 2 ? 'blur(0px)' : ['blur(20px)', 'blur(0px)'],
+              }}
+              transition={{ duration: 1, delay: 0.5 }}
+            >
+              IONEX
+            </motion.div>
+          </div>
 
-          {/* Particle Explosion */}
-          {[...Array(30)].map((_, i) => {
-            const angle = (i * 360) / 30;
-            return (
-              <motion.div
-                key={`particle-${i}`}
-                className="absolute w-4 h-4 rounded-full"
-                style={{
-                  background: config.colors[i % 3],
-                  boxShadow: `0 0 20px ${config.colors[i % 3]}`,
-                }}
-                initial={{ x: 0, y: 0, scale: 0 }}
-                animate={{
-                  x: Math.cos(angle * Math.PI / 180) * 800,
-                  y: Math.sin(angle * Math.PI / 180) * 800,
-                  scale: [0, 1, 0],
-                  opacity: [1, 0]
-                }}
-                transition={{
-                  duration: 1.5,
-                  delay: 0.8,
-                  ease: "easeOut"
-                }}
-              />
-            );
-          })}
+          {/* Hyper-Speed Lines (Stage 2) */}
+          {stage === 2 && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              {[...Array(20)].map((_, i) => (
+                <motion.div
+                  key={`line-${i}`}
+                  className="absolute w-[200vw] h-1 bg-white"
+                  style={{
+                    rotate: i * 18,
+                    transformOrigin: 'center',
+                  }}
+                  initial={{ scaleX: 0, opacity: 0 }}
+                  animate={{ scaleX: 1, opacity: [0, 1, 0] }}
+                  transition={{ duration: 0.5, delay: i * 0.01 }}
+                />
+              ))}
+            </div>
+          )}
+
         </motion.div>
       )}
     </AnimatePresence>

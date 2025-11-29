@@ -16,83 +16,64 @@ export const DeepSpaceBackground: React.FC = () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Star and nebula configuration
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    // Star configuration
     const stars: Array<{
       x: number;
       y: number;
-      size: number;
-      speed: number;
-      opacity: number;
-      twinkle: number;
+      z: number;
+      o: number; // opacity
     }> = [];
 
-    // Create stars
-    for (let i = 0; i < 200; i++) {
+    const numStars = 800;
+    const focalLength = canvas.width * 2;
+    const warpSpeed = 0.5; // Calm speed
+
+    // Initialize stars
+    for (let i = 0; i < numStars; i++) {
       stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 2 + 0.5,
-        speed: Math.random() * 0.05 + 0.01,
-        opacity: Math.random(),
-        twinkle: Math.random() * 0.02 + 0.005
+        x: Math.random() * canvas.width - centerX,
+        y: Math.random() * canvas.height - centerY,
+        z: Math.random() * canvas.width,
+        o: Math.random(),
       });
     }
-
-    // Nebula clouds
-    const nebulaClouds = [
-      { x: canvas.width * 0.2, y: canvas.height * 0.3, size: 400, color: 'rgba(138, 43, 226, 0.15)' },
-      { x: canvas.width * 0.7, y: canvas.height * 0.5, size: 500, color: 'rgba(75, 0, 130, 0.12)' },
-      { x: canvas.width * 0.5, y: canvas.height * 0.7, size: 350, color: 'rgba(138, 43, 226, 0.1)' },
-      { x: canvas.width * 0.1, y: canvas.height * 0.8, size: 300, color: 'rgba(72, 61, 139, 0.13)' },
-    ];
 
     let animationFrame: number;
 
     const animate = () => {
-      // Clear canvas with deep space background
-      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      gradient.addColorStop(0, '#000814');
-      gradient.addColorStop(0.5, '#001233');
-      gradient.addColorStop(1, '#001845');
-      ctx.fillStyle = gradient;
+      // Clear canvas with a trail effect for smoothness
+      ctx.fillStyle = 'rgba(0, 5, 16, 0.2)'; // Dark blue-black with low opacity for trails
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw nebula clouds
-      nebulaClouds.forEach((cloud) => {
-        const nebulaGradient = ctx.createRadialGradient(
-          cloud.x, cloud.y, 0,
-          cloud.x, cloud.y, cloud.size
-        );
-        nebulaGradient.addColorStop(0, cloud.color);
-        nebulaGradient.addColorStop(0.5, cloud.color.replace(/[\d.]+\)$/, '0.05)'));
-        nebulaGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        
-        ctx.fillStyle = nebulaGradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-      });
-
-      // Draw and animate stars
+      // Move and draw stars
       stars.forEach((star) => {
-        // Twinkling effect
-        star.opacity += star.twinkle;
-        if (star.opacity > 1 || star.opacity < 0.2) {
-          star.twinkle = -star.twinkle;
+        // Move star towards viewer
+        star.z -= warpSpeed;
+
+        // Reset star if it passes viewer
+        if (star.z <= 0) {
+          star.z = canvas.width;
+          star.x = Math.random() * canvas.width - centerX;
+          star.y = Math.random() * canvas.height - centerY;
         }
 
-        // Draw star
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
-        ctx.shadowBlur = 4;
-        ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
-        ctx.fill();
-        ctx.shadowBlur = 0;
+        // Project 3D coordinates to 2D
+        const scale = focalLength / star.z;
+        const x2d = centerX + star.x * scale;
+        const y2d = centerY + star.y * scale;
 
-        // Slow drift
-        star.y += star.speed;
-        if (star.y > canvas.height) {
-          star.y = 0;
-          star.x = Math.random() * canvas.width;
+        // Size depends on closeness
+        const size = (1 - star.z / canvas.width) * 2.5;
+        const opacity = (1 - star.z / canvas.width);
+
+        if (x2d >= 0 && x2d <= canvas.width && y2d >= 0 && y2d <= canvas.height) {
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(200, 220, 255, ${opacity})`;
+          ctx.arc(x2d, y2d, size, 0, Math.PI * 2);
+          ctx.fill();
         }
       });
 
@@ -116,67 +97,51 @@ export const DeepSpaceBackground: React.FC = () => {
 
   return (
     <>
-      {/* Canvas for stars and nebula */}
+      {/* Deep gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#000205] via-[#00091B] to-[#011026]" />
+
+      {/* Canvas for 3D starfield */}
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
+        className="absolute inset-0 w-full h-full mix-blend-screen"
       />
-      
-      {/* Additional CSS gradient overlays for depth */}
+
+      {/* Nebula overlays for depth and calmness */}
       <motion.div
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(ellipse at 30% 50%, rgba(138, 43, 226, 0.15) 0%, transparent 50%)',
+          background: 'radial-gradient(circle at 50% 50%, rgba(60, 20, 120, 0.1) 0%, transparent 60%)',
         }}
         animate={{
+          scale: [1, 1.2, 1],
           opacity: [0.3, 0.5, 0.3],
         }}
         transition={{
-          duration: 8,
+          duration: 15,
           repeat: Infinity,
           ease: 'easeInOut'
         }}
       />
-      
+
       <motion.div
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(ellipse at 70% 60%, rgba(75, 0, 130, 0.2) 0%, transparent 50%)',
+          background: 'radial-gradient(circle at 80% 20%, rgba(20, 80, 150, 0.08) 0%, transparent 50%)',
         }}
         animate={{
-          opacity: [0.5, 0.3, 0.5],
+          scale: [1.2, 1, 1.2],
+          opacity: [0.2, 0.4, 0.2],
         }}
         transition={{
-          duration: 10,
+          duration: 20,
           repeat: Infinity,
           ease: 'easeInOut',
-          delay: 1
+          delay: 2
         }}
       />
 
-      {/* Shooting stars */}
-      {[1, 2, 3].map((i) => (
-        <motion.div
-          key={`shoot-${i}`}
-          className="absolute h-0.5 w-24 bg-gradient-to-r from-transparent via-white to-transparent"
-          style={{
-            top: `${20 * i}%`,
-            left: '-100px',
-            filter: 'blur(1px)',
-            opacity: 0.7
-          }}
-          animate={{
-            x: ['0vw', '120vw'],
-            opacity: [0, 1, 0]
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            delay: i * 4,
-            ease: 'easeOut'
-          }}
-        />
-      ))}
+      {/* Vignette */}
+      <div className="absolute inset-0 bg-[radial-gradient(transparent_0%,#000000_90%)] pointer-events-none" />
     </>
   );
 };

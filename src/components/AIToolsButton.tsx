@@ -1,10 +1,10 @@
 // src/components/AIToolsButton.tsx
-// Fixed AI Tools button in bottom-left corner
+// Fixed AI Tools button in bottom-left corner - Futuristic AI Core Design
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SiOpenai, SiGoogle, SiMeta } from 'react-icons/si';
-import { Sparkles, Bot, Lightbulb, MessageSquare, Zap, Brain, Code, Search } from 'lucide-react';
+import { Bot, Lightbulb, MessageSquare, Zap, Brain, Code, Search, Cpu } from 'lucide-react';
 
 interface AITool {
   name: string;
@@ -37,35 +37,40 @@ export const AIToolsButton: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-6 left-6 z-50">
+    <div className="fixed bottom-8 left-8 z-50 flex items-end gap-4">
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.8 }}
-            className="mb-3 grid grid-cols-2 gap-2 max-h-[70vh] overflow-y-auto scrollbar-thin p-2 bg-black/20 backdrop-blur-md rounded-2xl border border-white/10"
+            initial={{ opacity: 0, scale: 0.8, x: -20 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            exit={{ opacity: 0, scale: 0.8, x: -20 }}
+            className="mb-2 grid grid-cols-3 gap-3 p-4 bg-black/60 backdrop-blur-xl rounded-2xl border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] max-h-[60vh] overflow-y-auto scrollbar-thin"
           >
             {aiTools.map((tool, index) => {
               const IconComponent = tool.icon;
               return (
                 <motion.button
                   key={tool.name}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ delay: index * 0.03 }}
-                  whileHover={{ scale: 1.05, y: -2 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => handleToolClick(tool.url)}
-                  className="flex items-center gap-2 px-3 py-2 bg-black/40 backdrop-blur-md rounded-xl border border-white/10 hover:border-white/30 transition-all group"
-                  title={tool.name}
+                  className="flex flex-col items-center justify-center gap-2 p-3 rounded-xl border border-white/5 hover:border-white/20 transition-all group relative overflow-hidden"
                 >
-                  <IconComponent 
-                    className="w-4 h-4 transition-colors flex-shrink-0" 
-                    style={{ color: tool.color }}
-                  />
-                  <span className="text-white text-xs font-medium truncate">{tool.name}</span>
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                  <div
+                    className="p-2 rounded-lg bg-white/5 group-hover:bg-white/10 transition-colors relative z-10"
+                    style={{ boxShadow: `0 0 15px ${tool.color}20` }}
+                  >
+                    <IconComponent
+                      className="w-5 h-5 transition-transform group-hover:rotate-12"
+                      style={{ color: tool.color }}
+                    />
+                  </div>
+                  <span className="text-[10px] font-medium text-white/70 group-hover:text-white transition-colors">{tool.name}</span>
                 </motion.button>
               );
             })}
@@ -73,20 +78,38 @@ export const AIToolsButton: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Main Button */}
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => setIsOpen(!isOpen)}
-        className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all ${
-          isOpen ? 'rotate-180' : ''
-        }`}
-        style={{
-          background: `linear-gradient(to bottom right, var(--primary-color), var(--secondary-color), var(--accent-color))`
-        }}
-      >
-        <Sparkles className="w-6 h-6 text-white" />
-      </motion.button>
+      {/* Main AI Core Button */}
+      <div className="relative group">
+        {/* Pulsing Aura */}
+        <div className="absolute inset-0 bg-primary/30 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500 animate-pulse" />
+
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setIsOpen(!isOpen)}
+          className="relative w-16 h-16 rounded-full flex items-center justify-center bg-black/50 backdrop-blur-xl border border-white/20 shadow-2xl overflow-hidden"
+        >
+          {/* Rotating Reactor Ring */}
+          <motion.div
+            className="absolute inset-0 rounded-full border-2 border-dashed border-primary/50"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+          />
+
+          {/* Inner Core */}
+          <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary shadow-inner">
+            <Cpu className={`w-5 h-5 text-white transition-all duration-300 ${isOpen ? 'rotate-180 scale-110' : ''}`} />
+          </div>
+
+          {/* Scanning Effect */}
+          <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/20 to-transparent -translate-y-full group-hover:animate-[scan_2s_infinite]" />
+        </motion.button>
+
+        {/* Label Tooltip */}
+        <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 px-3 py-1 bg-black/80 backdrop-blur-md rounded-lg border border-white/10 text-xs font-mono text-primary opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+          AI_NEXUS
+        </div>
+      </div>
     </div>
   );
 };

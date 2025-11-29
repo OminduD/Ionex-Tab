@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { SunIcon } from '../icons';
 import { fetchWeatherData } from '../../services/api';
 import { motion } from 'framer-motion';
-import { Cloud, CloudRain, CloudSnow, Wind, Droplets, Eye, Gauge } from 'lucide-react';
-import { ThemeParticles } from '../ThemeParticles';
+import { Cloud, CloudRain, CloudSnow, Wind, Droplets, Gauge, Thermometer } from 'lucide-react';
+import { useThemeAnimation } from '../../hooks/useThemeAnimation';
 
 interface WeatherProps {
   apiKey: string;
@@ -14,6 +14,7 @@ interface WeatherProps {
 const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium', theme = 'aurora' }) => {
   const [weather, setWeather] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { variants, containerStyle } = useThemeAnimation(theme);
 
   useEffect(() => {
     const loadWeather = async () => {
@@ -23,7 +24,6 @@ const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium', theme = 'aur
       setLoading(false);
     };
 
-    // Open-Meteo is FREE and doesn't require API key!
     loadWeather();
     const interval = setInterval(loadWeather, 600000); // Update every 10 minutes
     return () => clearInterval(interval);
@@ -31,202 +31,106 @@ const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium', theme = 'aur
 
   const getWeatherIcon = (condition: string) => {
     const cond = condition?.toLowerCase() || '';
-    if (cond.includes('rain')) return <CloudRain className="w-full h-full" />;
-    if (cond.includes('snow')) return <CloudSnow className="w-full h-full" />;
-    if (cond.includes('cloud')) return <Cloud className="w-full h-full" />;
-    if (cond.includes('wind')) return <Wind className="w-full h-full" />;
-    return <SunIcon className="w-full h-full" />;
+    if (cond.includes('rain')) return <CloudRain className="w-full h-full text-blue-400" />;
+    if (cond.includes('snow')) return <CloudSnow className="w-full h-full text-white" />;
+    if (cond.includes('cloud')) return <Cloud className="w-full h-full text-gray-300" />;
+    if (cond.includes('wind')) return <Wind className="w-full h-full text-teal-300" />;
+    return <SunIcon className="w-full h-full text-yellow-400" />;
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-          className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full"
-        />
+      <div className={`flex items-center justify-center h-full rounded-3xl ${containerStyle}`}>
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   if (weather?.error) {
     return (
-      <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-        <SunIcon className="w-8 h-8 mb-2 opacity-50 icon-color" />
+      <div className={`flex flex-col items-center justify-center h-full p-4 text-center rounded-3xl ${containerStyle}`}>
+        <SunIcon className="w-8 h-8 mb-2 opacity-50" />
         <p className="text-xs opacity-70">{weather.error}</p>
       </div>
     );
   }
 
-  // Small size - compact view
-  if (size === 'small') {
-    return (
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="flex flex-col items-center justify-center h-full relative overflow-hidden"
-      >
-        {/* Theme Particles */}
-        <ThemeParticles theme={theme} density="low" />
-        
-        {/* Gradient glow */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-secondary/10 to-accent/20 blur-2xl" />
-        
-        <div className="relative z-10 flex flex-col items-center">
-          <motion.div 
-            animate={{ rotate: [0, 10, -10, 0] }}
-            transition={{ duration: 3, repeat: Infinity }}
-            className="w-16 h-16 mb-3 icon-color"
-          >
-            {getWeatherIcon(weather?.condition)}
-          </motion.div>
-          <div className="text-4xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-            {weather?.temp}°
-          </div>
-          <div className="text-sm opacity-70 mt-1">{weather?.city}</div>
-        </div>
-      </motion.div>
-    );
-  }
+  const isSmall = size === 'small';
+  const isLarge = size === 'large';
 
-  // Medium size - standard view
-  if (size === 'medium') {
-    return (
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col h-full p-4 relative overflow-hidden rounded-2xl"
-      >
-        {/* Theme Particles */}
-        <ThemeParticles theme={theme} density="medium" />
-        
-        {/* Animated background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20" />
-        <motion.div 
-          animate={{ 
-            backgroundPosition: ['0% 0%', '100% 100%'],
-          }}
-          transition={{ duration: 10, repeat: Infinity, repeatType: 'reverse' }}
-          className="absolute inset-0 opacity-30"
-          style={{
-            background: 'radial-gradient(circle, var(--primary-color) 0%, transparent 70%)',
-            backgroundSize: '200% 200%',
-          }}
-        />
-        
-        <div className="relative z-10 flex flex-col items-center justify-center flex-1">
-          <motion.div 
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 4, repeat: Infinity }}
-            className="w-20 h-20 mb-4 icon-color"
-          >
-            {getWeatherIcon(weather?.condition)}
-          </motion.div>
-          <div className="text-5xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-            {weather?.temp}°C
-          </div>
-          <div className="text-lg font-medium mt-2">{weather?.city}</div>
-          <div className="text-sm opacity-70 mt-1 capitalize">{weather?.condition}</div>
-        </div>
-      </motion.div>
-    );
-  }
-
-  // Large size - detailed view with more info
   return (
-    <motion.div 
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="flex flex-col h-full p-6 relative overflow-hidden rounded-2xl"
+    <motion.div
+      variants={variants}
+      initial="initial"
+      animate="animate"
+      whileHover="hover"
+      className={`relative h-full overflow-hidden flex flex-col ${isSmall ? 'p-3' : 'p-5'} rounded-3xl ${containerStyle}`}
     >
-      {/* Animated gradient background */}
-      <motion.div 
-        animate={{ 
-          background: [
-            'linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--accent-color) 100%)',
-            'linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 50%, var(--secondary-color) 100%)',
-            'linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-color) 50%, var(--primary-color) 100%)',
-          ]
-        }}
-        transition={{ duration: 10, repeat: Infinity }}
-        className="absolute inset-0 opacity-20 blur-3xl"
-      />
-      
+      {/* Content */}
       <div className="relative z-10 flex flex-col h-full">
         {/* Header */}
-        <div className="text-center mb-6">
-          <h3 className="text-2xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-            {weather?.city}
-          </h3>
-          <p className="text-sm opacity-70 capitalize">{weather?.condition}</p>
-        </div>
-
-        {/* Main temp display */}
-        <div className="flex items-center justify-center mb-6">
-          <motion.div 
-            animate={{ rotate: [0, 5, -5, 0], scale: [1, 1.05, 1] }}
-            transition={{ duration: 5, repeat: Infinity }}
-            className="w-24 h-24 mr-6 icon-color"
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className={`font-bold text-white tracking-wide ${isSmall ? 'text-xs' : 'text-lg'}`}>
+              {weather?.city}
+            </h3>
+            <p className={`text-white/60 capitalize ${isSmall ? 'text-[10px]' : 'text-xs'}`}>
+              {weather?.condition}
+            </p>
+          </div>
+          <motion.div
+            animate={{ rotate: [0, 10, -10, 0] }}
+            transition={{ duration: 4, repeat: Infinity }}
+            className={`${isSmall ? 'w-8 h-8' : 'w-12 h-12'}`}
           >
             {getWeatherIcon(weather?.condition)}
           </motion.div>
-          <div className="text-7xl font-bold bg-gradient-to-br from-primary via-secondary to-accent bg-clip-text text-transparent">
-            {weather?.temp}°
+        </div>
+
+        {/* Temperature */}
+        <div className="flex-1 flex items-center justify-center my-2">
+          <div className={`font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60 ${isSmall ? 'text-4xl' : 'text-6xl'}`}>
+            {Math.round(weather?.temp)}°
           </div>
         </div>
 
-        {/* Detailed info grid */}
-        <div className="grid grid-cols-2 gap-4 mt-auto">
-          <motion.div 
-            whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-3 p-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10"
-          >
-            <Droplets className="w-5 h-5 icon-color" />
-            <div>
-              <p className="text-xs opacity-60">Humidity</p>
-              <p className="text-lg font-semibold">{weather?.humidity || 65}%</p>
+        {/* Details Grid (Medium/Large only) */}
+        {!isSmall && (
+          <div className="grid grid-cols-2 gap-2 mt-auto">
+            <div className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5">
+              <Droplets className="w-4 h-4 text-blue-300" />
+              <div className="flex flex-col">
+                <span className="text-[10px] text-white/50">Humidity</span>
+                <span className="text-xs font-bold">{weather?.humidity}%</span>
+              </div>
             </div>
-          </motion.div>
-
-          <motion.div 
-            whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-3 p-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10"
-          >
-            <Wind className="w-5 h-5 icon-color" />
-            <div>
-              <p className="text-xs opacity-60">Wind</p>
-              <p className="text-lg font-semibold">{weather?.windSpeed || 12} km/h</p>
+            <div className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5">
+              <Wind className="w-4 h-4 text-teal-300" />
+              <div className="flex flex-col">
+                <span className="text-[10px] text-white/50">Wind</span>
+                <span className="text-xs font-bold">{weather?.windSpeed}km/h</span>
+              </div>
             </div>
-          </motion.div>
-
-          <motion.div 
-            whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-3 p-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10"
-          >
-            <Eye className="w-5 h-5 icon-color" />
-            <div>
-              <p className="text-xs opacity-60">Visibility</p>
-              <p className="text-lg font-semibold">{weather?.visibility || 10} km</p>
-            </div>
-          </motion.div>
-
-          <motion.div 
-            whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-3 p-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10"
-          >
-            <Gauge className="w-5 h-5 icon-color" />
-            <div>
-              <p className="text-xs opacity-60">Pressure</p>
-              <p className="text-lg font-semibold">{weather?.pressure || 1013} hPa</p>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Feels like */}
-        <div className="mt-4 text-center">
-          <p className="text-sm opacity-60">Feels like <span className="font-semibold text-primary">{weather?.feelsLike || weather?.temp}°C</span></p>
-        </div>
+            {isLarge && (
+              <>
+                <div className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5">
+                  <Thermometer className="w-4 h-4 text-red-300" />
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-white/50">Feels Like</span>
+                    <span className="text-xs font-bold">{weather?.feelsLike}°</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5">
+                  <Gauge className="w-4 h-4 text-purple-300" />
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-white/50">Pressure</span>
+                    <span className="text-xs font-bold">{weather?.pressure}hPa</span>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </motion.div>
   );

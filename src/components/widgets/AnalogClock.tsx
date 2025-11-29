@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { ThemeParticles } from '../ThemeParticles';
+import { motion } from 'framer-motion';
+import { useThemeAnimation } from '../../hooks/useThemeAnimation';
 
 interface AnalogClockProps {
   showDigital?: boolean;
   timeFormat?: '12h' | '24h';
+  size?: 'small' | 'medium' | 'large';
   theme?: string;
 }
 
-const AnalogClock: React.FC<AnalogClockProps> = ({ showDigital = false, timeFormat = '24h', theme = 'aurora' }) => {
+const AnalogClock: React.FC<AnalogClockProps> = ({ showDigital = false, timeFormat = '24h', size = 'medium', theme = 'aurora' }) => {
   const [time, setTime] = useState(new Date());
+  const { variants, containerStyle } = useThemeAnimation(theme);
+
+  const isSmall = size === 'small';
+  const isLarge = size === 'large';
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -19,115 +25,82 @@ const AnalogClock: React.FC<AnalogClockProps> = ({ showDigital = false, timeForm
   const minutes = time.getMinutes();
   const hours = time.getHours() % 12;
 
-  const secondAngle = (seconds * 6) - 90;
-  const minuteAngle = (minutes * 6 + seconds * 0.1) - 90;
-  const hourAngle = (hours * 30 + minutes * 0.5) - 90;
+  const secondAngle = (seconds * 6);
+  const minuteAngle = (minutes * 6 + seconds * 0.1);
+  const hourAngle = (hours * 30 + minutes * 0.5);
 
   return (
-    <div className="flex flex-col items-center justify-center h-full p-4 relative overflow-hidden">
-      {/* Theme Particles */}
-      <ThemeParticles theme={theme} density="low" />
-      
-      <div className="relative w-full max-w-[220px] aspect-square z-10 flex items-center justify-center">
+    <motion.div
+      variants={variants}
+      initial="initial"
+      animate="animate"
+      whileHover="hover"
+      className={`flex flex-col items-center justify-center h-full relative overflow-hidden ${isSmall ? 'p-2' : 'p-4'} rounded-3xl ${containerStyle}`}
+    >
+      <div className={`relative w-full ${isSmall ? 'max-w-[100px]' : isLarge ? 'max-w-[260px]' : 'max-w-[180px]'} aspect-square z-10 flex items-center justify-center transition-all duration-300`}>
         {/* Glow effect */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent opacity-10 rounded-full blur-xl" />
-        
+        <div className={`absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full blur-2xl ${theme === 'neon' ? 'animate-pulse' : ''}`} />
+
         {/* Clock face */}
-        <svg className="w-full h-full relative z-10" viewBox="0 0 200 200">
-          {/* Clock circle with gradient */}
-          <defs>
-            <linearGradient id="clockGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" className="text-primary" style={{ stopColor: 'var(--primary-color)' }} />
-              <stop offset="100%" className="text-accent" style={{ stopColor: 'var(--accent-color)' }} />
-            </linearGradient>
-          </defs>
-          
-          <circle
-            cx="100"
-            cy="100"
-            r="90"
-            fill="rgba(255,255,255,0.05)"
-            stroke="url(#clockGradient)"
-            strokeWidth="4"
-            className="opacity-80"
-          />
-          
+        <div className="relative w-full h-full rounded-full border-2 border-white/10 bg-black/20 backdrop-blur-sm shadow-inner">
           {/* Hour markers */}
-          {[...Array(12)].map((_, i) => {
-            const angle = (i * 30 - 90) * (Math.PI / 180);
-            const x1 = 100 + 75 * Math.cos(angle);
-            const y1 = 100 + 75 * Math.sin(angle);
-            const x2 = 100 + 85 * Math.cos(angle);
-            const y2 = 100 + 85 * Math.sin(angle);
-            return (
-              <line
-                key={i}
-                x1={x1}
-                y1={y1}
-                x2={x2}
-                y2={y2}
-                stroke="currentColor"
-                strokeWidth="3"
-                className="opacity-50"
-              />
-            );
-          })}
+          {[...Array(12)].map((_, i) => (
+            <div
+              key={i}
+              className={`absolute ${isSmall ? 'w-0.5 h-2' : 'w-1 h-3'} bg-white/30 rounded-full left-1/2 top-2 origin-bottom transform -translate-x-1/2`}
+              style={{ transform: `rotate(${i * 30}deg) translateY(${isSmall ? '2px' : '4px'})` }}
+            />
+          ))}
 
-          {/* Hour hand with theme color */}
-          <line
-            x1="100"
-            y1="100"
-            x2={100 + 45 * Math.cos(hourAngle * Math.PI / 180)}
-            y2={100 + 45 * Math.sin(hourAngle * Math.PI / 180)}
-            stroke="var(--primary-color)"
-            strokeWidth="6"
-            strokeLinecap="round"
-            className="drop-shadow-md"
-          />
+          {/* Hands Container */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            {/* Hour Hand */}
+            <motion.div
+              className={`absolute ${isSmall ? 'w-1' : 'w-1.5'} h-[25%] bg-gradient-to-t from-white to-white/50 rounded-full origin-bottom bottom-1/2 shadow-[0_0_10px_rgba(255,255,255,0.5)]`}
+              animate={{ rotate: hourAngle }}
+              transition={{ type: "spring", stiffness: 100, damping: 10 }}
+              style={{ zIndex: 10 }}
+            />
 
-          {/* Minute hand with theme color */}
-          <line
-            x1="100"
-            y1="100"
-            x2={100 + 65 * Math.cos(minuteAngle * Math.PI / 180)}
-            y2={100 + 65 * Math.sin(minuteAngle * Math.PI / 180)}
-            stroke="var(--secondary-color)"
-            strokeWidth="4"
-            strokeLinecap="round"
-            className="drop-shadow-md"
-          />
+            {/* Minute Hand */}
+            <motion.div
+              className={`absolute ${isSmall ? 'w-0.5' : 'w-1'} h-[35%] bg-gradient-to-t from-primary to-primary/50 rounded-full origin-bottom bottom-1/2 shadow-[0_0_10px_rgba(var(--primary-color-rgb),0.5)]`}
+              animate={{ rotate: minuteAngle }}
+              transition={{ type: "spring", stiffness: 100, damping: 10 }}
+              style={{ zIndex: 11 }}
+            />
 
-          {/* Second hand with theme color */}
-          <line
-            x1="100"
-            y1="100"
-            x2={100 + 75 * Math.cos(secondAngle * Math.PI / 180)}
-            y2={100 + 75 * Math.sin(secondAngle * Math.PI / 180)}
-            stroke="var(--accent-color)"
-            strokeWidth="2"
-            strokeLinecap="round"
-            className="drop-shadow-lg"
-          />
+            {/* Second Hand */}
+            <motion.div
+              className="absolute w-0.5 h-[45%] bg-accent rounded-full origin-bottom bottom-1/2 shadow-[0_0_10px_rgba(var(--accent-color-rgb),0.8)]"
+              animate={{ rotate: secondAngle }}
+              transition={{ type: "spring", stiffness: 200, damping: 10 }}
+              style={{ zIndex: 12 }}
+            />
 
-          {/* Center dot */}
-          <circle cx="100" cy="100" r="5" fill="currentColor" />
-        </svg>
+            {/* Center Dot */}
+            <div className={`absolute ${isSmall ? 'w-2 h-2' : 'w-3 h-3'} bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)] z-20`} />
+            <div className={`absolute ${isSmall ? 'w-1 h-1' : 'w-1.5 h-1.5'} bg-accent rounded-full z-21`} />
+          </div>
+        </div>
       </div>
-      
-      {showDigital && (
-        <div className="text-2xl font-bold mt-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-          {time.toLocaleTimeString('en-US', { 
-            hour: '2-digit', 
+
+      {showDigital && !isSmall && (
+        <div className={`font-black tracking-widest mt-4 bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent ${isLarge ? 'text-4xl' : 'text-2xl'}`}>
+          {time.toLocaleTimeString('en-US', {
+            hour: '2-digit',
             minute: '2-digit',
             hour12: timeFormat === '12h'
           })}
         </div>
       )}
-      
-      <div className="text-sm opacity-70 mt-2">
-        {time.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-      </div>
-    </div>
+
+      {!isSmall && (
+        <div className={`font-mono text-accent tracking-widest uppercase mt-2 ${isLarge ? 'text-sm' : 'text-[10px]'}`}>
+          {time.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+        </div>
+      )}
+    </motion.div>
   );
 };
 

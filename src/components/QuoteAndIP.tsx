@@ -1,5 +1,5 @@
 // src/components/QuoteAndIP.tsx
-// Display random inspirational quotes and IP address
+// Display random inspirational quotes and IP address - Futuristic Data Card Design
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -76,131 +76,69 @@ export const QuoteAndIP: React.FC<QuoteAndIPProps> = ({ showQuotes = true, showI
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ delay: 0.3, duration: 0.5 }}
-      className="mt-8 space-y-4 text-center"
+      className="mt-8 space-y-6 text-center flex flex-col items-center"
     >
-      {/* Quote */}
+      {/* Quote Card */}
       {showQuotes && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.4, duration: 0.6, type: "spring" }}
-          className="relative group"
+          transition={{ delay: 0.4, duration: 0.6 }}
+          className="relative group max-w-3xl w-full"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-secondary/20 to-accent/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          <div className="relative px-8 py-4 bg-black/30 backdrop-blur-xl rounded-2xl border border-white/20 max-w-3xl mx-auto shadow-2xl hover:border-white/30 transition-all duration-300">
-            <div className="flex items-start gap-3">
-              <span className="material-icons text-primary mt-1 flex-shrink-0 text-2xl">
-                format_quote
-              </span>
-              <p className="text-white/95 text-sm md:text-base italic font-light leading-relaxed flex-1">
-                {quote}
+          {/* Holographic Border */}
+          <div className="absolute -inset-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent rounded-xl opacity-50 group-hover:opacity-100 transition-opacity" />
+
+          <div className="relative px-8 py-6 bg-black/40 backdrop-blur-xl rounded-xl border border-white/10 overflow-hidden">
+            {/* Scanning Line */}
+            <motion.div
+              className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent"
+              animate={{ top: ['0%', '100%', '0%'] }}
+              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+            />
+
+            <div className="flex flex-col items-center gap-3 relative z-10">
+              <span className="text-[10px] font-mono text-primary/60 uppercase tracking-[0.3em] mb-1">Daily Transmission</span>
+              <p className="text-white/90 text-lg md:text-xl font-light italic leading-relaxed text-center drop-shadow-md">
+                "{quote.split('-')[0].trim()}"
               </p>
-              <span className="material-icons text-accent mt-1 flex-shrink-0 rotate-180 text-2xl">
-                format_quote
+              <div className="w-12 h-[1px] bg-white/20 my-1" />
+              <span className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+                {quote.split('-')[1]?.trim() || 'Unknown'}
               </span>
             </div>
           </div>
         </motion.div>
       )}
 
-      {/* IP Address - Enhanced with Animation */}
+      {/* IP Status Bar */}
       {showIP && ip && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.6, duration: 0.6, type: "spring" }}
-          className="relative group"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="flex items-center gap-4 px-6 py-2 bg-black/60 backdrop-blur-md rounded-full border border-white/10 shadow-lg hover:border-primary/30 transition-colors"
         >
-          {/* Animated gradient glow */}
-          <motion.div 
-            animate={{ 
-              opacity: [0.3, 0.6, 0.3],
-              scale: [1, 1.05, 1]
-            }}
-            transition={{ 
-              duration: 3, 
-              repeat: Infinity,
-              ease: "easeInOut" 
-            }}
-            className="absolute inset-0 bg-gradient-to-r from-primary/30 via-secondary/30 to-accent/30 rounded-full blur-2xl"
-          />
-          
-          <div className="relative flex items-center justify-center gap-5 px-8 py-3 bg-black/40 backdrop-blur-xl rounded-full border border-white/30 max-w-xl mx-auto shadow-2xl hover:border-white/40 hover:shadow-primary/20 transition-all duration-300">
-            <div className="flex items-center gap-3">
-              {/* Animated globe icon */}
-              <motion.span 
-                animate={{ 
-                  rotate: [0, 360],
-                }}
-                transition={{ 
-                  duration: 20, 
-                  repeat: Infinity,
-                  ease: "linear" 
-                }}
-                className="material-icons text-primary text-2xl drop-shadow-lg"
-              >
-                public
-              </motion.span>
-              
-              <span className="text-white/80 text-sm font-medium tracking-wide">IP:</span>
-              
-              {/* IP Address with pulse effect */}
-              <motion.span 
-                animate={{ 
-                  boxShadow: [
-                    '0 0 10px rgba(var(--primary-color-rgb, 167, 139, 250), 0.3)',
-                    '0 0 20px rgba(var(--primary-color-rgb, 167, 139, 250), 0.6)',
-                    '0 0 10px rgba(var(--primary-color-rgb, 167, 139, 250), 0.3)'
-                  ]
-                }}
-                transition={{ 
-                  duration: 2, 
-                  repeat: Infinity,
-                  ease: "easeInOut" 
-                }}
-                className="text-white font-mono text-sm font-bold bg-gradient-to-r from-white/15 to-white/10 px-4 py-1.5 rounded-lg border border-white/20 backdrop-blur-sm"
-              >
-                {ip}
-              </motion.span>
-            </div>
-            
-            {location && (
-              <>
-                {/* Animated divider */}
-                <motion.div 
-                  animate={{ 
-                    opacity: [0.3, 0.6, 0.3],
-                    scaleY: [0.8, 1, 0.8]
-                  }}
-                  transition={{ 
-                    duration: 2, 
-                    repeat: Infinity,
-                    ease: "easeInOut" 
-                  }}
-                  className="w-px h-6 bg-gradient-to-b from-transparent via-white/40 to-transparent"
-                />
-                
-                <div className="flex items-center gap-2">
-                  {/* Animated location pin */}
-                  <motion.span 
-                    animate={{ 
-                      y: [0, -3, 0],
-                    }}
-                    transition={{ 
-                      duration: 2, 
-                      repeat: Infinity,
-                      ease: "easeInOut" 
-                    }}
-                    className="material-icons text-accent text-2xl drop-shadow-lg"
-                  >
-                    location_on
-                  </motion.span>
-                  
-                  <span className="text-white/95 text-sm font-medium">{location}</span>
-                </div>
-              </>
-            )}
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-mono text-white/40 uppercase tracking-wider">IP Address</span>
           </div>
+
+          <div className="w-[1px] h-4 bg-white/10" />
+
+          <div className="flex items-center gap-2">
+            <span className="material-icons text-primary text-sm">public</span>
+            <span className="text-xs font-mono text-white/80">{ip}</span>
+          </div>
+
+          {location && (
+            <>
+              <div className="w-[1px] h-4 bg-white/10" />
+              <div className="flex items-center gap-2">
+                <span className="material-icons text-accent text-sm">place</span>
+                <span className="text-xs font-medium text-white/80">{location}</span>
+              </div>
+            </>
+          )}
         </motion.div>
       )}
     </motion.div>

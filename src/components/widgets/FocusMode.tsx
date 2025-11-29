@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause, RotateCcw, X, Music, Volume2, VolumeX, SkipForward } from 'lucide-react';
+import { Play, Pause, RotateCcw, X, Music, Volume2, VolumeX, Sparkles } from 'lucide-react';
 import { DeepSpaceBackground } from './DeepSpaceBackground';
 import FocusTimeSelector from '../FocusTimeSelector';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
@@ -12,10 +12,11 @@ interface FocusModeProps {
 
 // Ambient music with YouTube video IDs for embedding
 const ambientTracks = [
-  { name: 'Lofi Beats', videoId: 'jfKfPfyJRdk', color: '#a78bfa' },
-  { name: 'Rain Sounds', videoId: 'q76bMs-NwRk', color: '#60a5fa' },
-  { name: 'Ocean Waves', videoId: 'WHPEKLQID4U', color: '#34d399' },
-  { name: 'Forest Ambience', videoId: 'xNN7iTA57jM', color: '#4ade80' },
+  { name: 'Cosmic Drift', videoId: 'jfKfPfyJRdk', color: '#a78bfa' }, // Lofi
+  { name: 'Nebula Rain', videoId: 'q76bMs-NwRk', color: '#60a5fa' }, // Rain
+  { name: 'Deep Ocean', videoId: 'WHPEKLQID4U', color: '#34d399' }, // Ocean
+  { name: 'Alien Forest', videoId: 'xNN7iTA57jM', color: '#4ade80' }, // Forest
+  { name: 'Cyber City', videoId: '8wLwxytrLDc', color: '#f472b6' }, // Cyberpunk
 ];
 
 const FocusMode: React.FC<FocusModeProps> = ({ isActive, onClose }) => {
@@ -32,16 +33,15 @@ const FocusMode: React.FC<FocusModeProps> = ({ isActive, onClose }) => {
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
-    
+
     if (isRunning && totalSeconds > 0) {
       interval = setInterval(() => {
         setTotalSeconds((prev) => {
           if (prev <= 1) {
             setIsRunning(false);
-            // Notification
             if ('Notification' in window && Notification.permission === 'granted') {
-              new Notification('Focus Session Complete!', {
-                body: 'Great job! Time for a break.',
+              new Notification('Mission Complete', {
+                body: 'Focus session successful. Returning to base.',
                 icon: '/icon48.png'
               });
             }
@@ -75,10 +75,6 @@ const FocusMode: React.FC<FocusModeProps> = ({ isActive, onClose }) => {
     setIsMusicPlaying(!isMusicPlaying);
   };
 
-  const nextTrack = () => {
-    setSelectedTrack((prev) => (prev + 1) % ambientTracks.length);
-  };
-
   const handleDurationChange = (durationMinutes: number) => {
     const newDuration = durationMinutes * 60;
     setFocusDuration(durationMinutes);
@@ -95,187 +91,223 @@ const FocusMode: React.FC<FocusModeProps> = ({ isActive, onClose }) => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center"
+          exit={{ opacity: 0, transition: { duration: 0.5 } }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black"
         >
           {/* Animated Deep Space Background */}
           <DeepSpaceBackground />
 
           {/* Focus Controls Overlay */}
-          <div className="relative z-10 flex flex-col items-center">
-            {/* Duration Selector - Only show when not running */}
-            {!isRunning && (
-              <FocusTimeSelector
-                selectedMinutes={focusDuration}
-                onSelect={handleDurationChange}
-              />
-            )}
+          <div className="relative z-10 flex flex-col items-center w-full max-w-5xl px-4 h-screen justify-center">
 
-            {/* Timer Display */}
+            {/* Header */}
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="relative"
+              initial={{ y: -50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+              className="absolute top-10 left-0 right-0 flex justify-between items-center px-10"
             >
-              <svg className="transform -rotate-90" width="300" height="300">
-                {/* Background circle */}
-                <circle
-                  cx="150"
-                  cy="150"
-                  r="140"
-                  fill="none"
-                  stroke="rgba(255, 255, 255, 0.1)"
-                  strokeWidth="8"
-                />
-                {/* Progress circle */}
-                <circle
-                  cx="150"
-                  cy="150"
-                  r="140"
-                  fill="none"
-                  stroke={ambientTracks[selectedTrack].color}
-                  strokeWidth="8"
-                  strokeDasharray={`${2 * Math.PI * 140}`}
-                  strokeDashoffset={`${2 * Math.PI * 140 * (1 - progressPercent / 100)}`}
-                  strokeLinecap="round"
-                  className="transition-all duration-1000"
-                />
-              </svg>
-
-              {/* Timer Text */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <motion.div
-                  className="text-8xl font-bold text-white mb-4"
-                  animate={{ scale: isRunning ? [1, 1.02, 1] : 1 }}
-                  transition={{ duration: 1, repeat: isRunning ? Infinity : 0 }}
-                >
-                  {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
-                </motion.div>
-                <div className="text-white/70 text-lg font-medium">
-                  {isRunning ? 'Focus Mode Active' : 'Paused'}
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-white/5 border border-white/10 backdrop-blur-md">
+                  <Sparkles className="w-5 h-5 text-blue-400" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-white tracking-[0.2em] uppercase">Deep Focus</h2>
+                  <p className="text-[10px] text-blue-300/60 tracking-wider">SYSTEM ONLINE</p>
                 </div>
               </div>
-            </motion.div>
-
-            {/* Control Buttons */}
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="flex gap-4 mt-8"
-            >
-              <button
-                onClick={toggleTimer}
-                className="p-6 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-300 border border-white/20"
-              >
-                {isRunning ? <Pause className="w-8 h-8 text-white" /> : <Play className="w-8 h-8 text-white ml-1" />}
-              </button>
-
-              <button
-                onClick={resetTimer}
-                className="p-6 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-300 border border-white/20"
-              >
-                <RotateCcw className="w-8 h-8 text-white" />
-              </button>
-
-              <button
-                onClick={() => setShowMusicPanel(!showMusicPanel)}
-                className="p-6 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-300 border border-white/20"
-              >
-                <Music className="w-8 h-8 text-white" />
-              </button>
-
               <button
                 onClick={onClose}
-                className="p-6 rounded-full bg-white/10 backdrop-blur-md hover:bg-red-500/20 transition-all duration-300 border border-white/20"
+                className="p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all hover:rotate-90 group"
               >
-                <X className="w-8 h-8 text-white" />
+                <X className="w-5 h-5 text-white/70 group-hover:text-white" />
               </button>
             </motion.div>
 
-            {/* Music Control Panel */}
-            <AnimatePresence>
-              {showMusicPanel && (
-                <motion.div
-                  initial={{ y: 20, opacity: 0, scale: 0.9 }}
-                  animate={{ y: 0, opacity: 1, scale: 1 }}
-                  exit={{ y: 20, opacity: 0, scale: 0.9 }}
-                  className="mt-8 p-6 rounded-2xl bg-white/10 backdrop-blur-lg border border-white/20 min-w-[400px]"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-white font-semibold text-lg">Ambient Sounds</h3>
-                    <button
-                      onClick={toggleMusic}
-                      className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
-                    >
-                      {isMusicPlaying ? (
-                        <Volume2 className="w-5 h-5 text-white" />
-                      ) : (
-                        <VolumeX className="w-5 h-5 text-white" />
-                      )}
-                    </button>
-                  </div>
+            {/* Main Timer Interface */}
+            <div className="relative flex flex-col items-center justify-center">
 
-                  {/* Track Selector */}
-                  <div className="grid grid-cols-2 gap-2 mb-4">
-                    {ambientTracks.map((track, index) => (
-                      <button
-                        key={track.name}
-                        onClick={() => setSelectedTrack(index)}
-                        className={`p-3 rounded-lg text-white transition-all ${
-                          selectedTrack === index
-                            ? 'bg-white/30 border-2 border-white/50'
-                            : 'bg-white/10 border border-white/20 hover:bg-white/20'
-                        }`}
-                        style={{
-                          backgroundColor: selectedTrack === index ? track.color + '40' : undefined,
-                        }}
-                      >
-                        <div className="font-medium text-sm">{track.name}</div>
-                      </button>
-                    ))}
-                  </div>
+              {/* Timer Circle */}
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.3, duration: 0.8, type: "spring" }}
+                className="relative mb-16"
+              >
+                {/* Outer Rotating Ring */}
+                <div className="absolute -inset-12 rounded-full border border-blue-500/10 animate-[spin_20s_linear_infinite]" />
+                <div className="absolute -inset-12 rounded-full border-t border-blue-400/30 animate-[spin_20s_linear_infinite]" />
 
-                  {/* Volume Control */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-white/70 text-sm">
-                      <span>Volume</span>
-                      <span>{volume}%</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={volume}
-                      onChange={(e) => setVolume(Number(e.target.value))}
-                      className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer"
-                      style={{
-                        background: `linear-gradient(to right, ${ambientTracks[selectedTrack].color} 0%, ${ambientTracks[selectedTrack].color} ${volume}%, rgba(255,255,255,0.2) ${volume}%, rgba(255,255,255,0.2) 100%)`,
-                      }}
+                {/* Inner Counter-Rotating Ring */}
+                <div className="absolute -inset-6 rounded-full border border-purple-500/10 animate-[spin_15s_linear_infinite_reverse]" />
+                <div className="absolute -inset-6 rounded-full border-b border-purple-400/30 animate-[spin_15s_linear_infinite_reverse]" />
+
+                {/* Progress SVG */}
+                <div className="relative w-[400px] h-[400px] flex items-center justify-center">
+                  <svg className="transform -rotate-90 drop-shadow-[0_0_30px_rgba(59,130,246,0.3)]" width="400" height="400">
+                    <circle
+                      cx="200"
+                      cy="200"
+                      r="180"
+                      fill="none"
+                      stroke="rgba(255, 255, 255, 0.03)"
+                      strokeWidth="2"
                     />
+                    <circle
+                      cx="200"
+                      cy="200"
+                      r="180"
+                      fill="none"
+                      stroke="url(#gradient)"
+                      strokeWidth="6"
+                      strokeDasharray={`${2 * Math.PI * 180}`}
+                      strokeDashoffset={`${2 * Math.PI * 180 * (1 - progressPercent / 100)}`}
+                      strokeLinecap="round"
+                      className="transition-all duration-1000 ease-linear"
+                    />
+                    <defs>
+                      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#60a5fa" />
+                        <stop offset="100%" stopColor="#a78bfa" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+
+                  {/* Timer Text */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center z-20">
+                    <motion.div
+                      className="text-[120px] font-thin text-white tracking-tighter leading-none tabular-nums drop-shadow-2xl"
+                      animate={{
+                        textShadow: isRunning
+                          ? ["0 0 20px rgba(255,255,255,0.2)", "0 0 40px rgba(255,255,255,0.4)", "0 0 20px rgba(255,255,255,0.2)"]
+                          : "0 0 20px rgba(255,255,255,0.1)"
+                      }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+                    </motion.div>
+                    <motion.div
+                      className="mt-4 px-4 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-200 text-xs font-medium tracking-[0.3em] uppercase"
+                      animate={{ opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      {isRunning ? 'Hyperfocus Active' : 'Ready to Launch'}
+                    </motion.div>
                   </div>
 
-                  {/* Current Track Info */}
-                  <div className="mt-4 p-3 rounded-lg bg-black/20 border border-white/10">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-white font-medium">{ambientTracks[selectedTrack].name}</div>
-                        <div className="text-white/50 text-xs mt-1">
-                          {isMusicPlaying ? 'Now Playing' : 'Paused'}
-                        </div>
-                      </div>
-                      <button
-                        onClick={nextTrack}
-                        className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
-                      >
-                        <SkipForward className="w-4 h-4 text-white" />
-                      </button>
+                  {/* Glass Background behind text */}
+                  <div className="absolute inset-[40px] rounded-full bg-black/20 backdrop-blur-sm border border-white/5 z-10" />
+                </div>
+              </motion.div>
+
+              {/* Controls */}
+              <div className="flex flex-col items-center gap-8 w-full max-w-md z-20">
+                {/* Duration Selector */}
+                <AnimatePresence>
+                  {!isRunning && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <FocusTimeSelector
+                        selectedMinutes={focusDuration}
+                        onSelect={handleDurationChange}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Main Buttons */}
+                <motion.div
+                  initial={{ y: 50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                  className="flex items-center gap-8"
+                >
+                  <button
+                    onClick={resetTimer}
+                    className="p-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white transition-all hover:scale-110"
+                  >
+                    <RotateCcw className="w-6 h-6" />
+                  </button>
+
+                  <button
+                    onClick={toggleTimer}
+                    className={`relative group p-8 rounded-full transition-all hover:scale-105 ${isRunning
+                      ? 'bg-red-500/10 border border-red-500/30 text-red-400'
+                      : 'bg-blue-500/10 border border-blue-500/30 text-blue-400'
+                      }`}
+                  >
+                    <div className={`absolute inset-0 rounded-full blur-xl opacity-40 group-hover:opacity-60 transition-opacity ${isRunning ? 'bg-red-500' : 'bg-blue-500'}`} />
+                    <div className="relative z-10">
+                      {isRunning ? (
+                        <Pause className="w-10 h-10 fill-current" />
+                      ) : (
+                        <Play className="w-10 h-10 fill-current ml-1" />
+                      )}
                     </div>
-                  </div>
+                  </button>
+
+                  <button
+                    onClick={() => setShowMusicPanel(!showMusicPanel)}
+                    className={`p-4 rounded-full transition-all hover:scale-110 border ${showMusicPanel || isMusicPlaying
+                      ? 'bg-purple-500/20 border-purple-500/40 text-purple-300'
+                      : 'bg-white/5 border-white/10 text-white/60 hover:text-white'
+                      }`}
+                  >
+                    <Music className="w-6 h-6" />
+                  </button>
                 </motion.div>
-              )}
-            </AnimatePresence>
+
+                {/* Music Panel */}
+                <AnimatePresence>
+                  {showMusicPanel && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 20 }}
+                      className="w-full bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mt-4"
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-white/80 text-xs font-bold uppercase tracking-widest">Audio Stream</h3>
+                        <button onClick={toggleMusic} className="text-white/60 hover:text-white">
+                          {isMusicPlaying ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 mb-4">
+                        {ambientTracks.map((track, index) => (
+                          <button
+                            key={track.name}
+                            onClick={() => setSelectedTrack(index)}
+                            className={`p-3 rounded-lg text-left transition-all border ${selectedTrack === index
+                              ? 'bg-white/10 border-white/20 text-white'
+                              : 'bg-transparent border-transparent text-white/40 hover:bg-white/5'
+                              }`}
+                          >
+                            <span className="text-xs font-medium">{track.name}</span>
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="flex items-center gap-4">
+                        <Volume2 className="w-3 h-3 text-white/40" />
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={volume}
+                          onChange={(e) => setVolume(Number(e.target.value))}
+                          className="flex-1 h-1 bg-white/10 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white"
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
           </div>
 
           {/* Hidden YouTube iframe for ambient music - audio only */}

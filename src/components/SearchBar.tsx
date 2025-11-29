@@ -1,9 +1,8 @@
 // src/components/SearchBar.tsx
-// Enhanced search bar with autocomplete and multi-row engines
+// Enhanced search bar with futuristic cyberpunk aesthetics
 
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Search } from 'lucide-react';
 import SearchSuggestions from './SearchSuggestions';
 
 interface SearchEngine {
@@ -38,9 +37,8 @@ export const SearchBar: React.FC<Props> = ({ selectedEngine = 'google', onEngine
   const [query, setQuery] = useState('');
   const [activeEngine, setActiveEngine] = useState(selectedEngine);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
-
 
   const handleSearch = (searchQuery?: string) => {
     const finalQuery = searchQuery || query;
@@ -60,57 +58,101 @@ export const SearchBar: React.FC<Props> = ({ selectedEngine = 'google', onEngine
     if (onEngineChange) onEngineChange(engineId);
   };
 
-
-
   return (
-    <div className="w-full">
-      <motion.form 
-        initial={{ opacity: 0, y: -20 }}
+    <div className="w-full relative z-30">
+      <motion.form
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        onSubmit={handleSubmit} 
+        onSubmit={handleSubmit}
         className="relative"
       >
-        {/* Search Input with Gradient Border */}
-        <motion.div 
-          className="relative"
-          whileHover={{ scale: 1.01 }}
-          transition={{ duration: 0.2 }}
+        {/* Futuristic Search Container */}
+        <motion.div
+          className="relative group"
+          animate={{ scale: isFocused ? 1.02 : 1 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-primary via-secondary to-accent rounded-full blur-sm opacity-30" />
-          <div className="relative flex items-center bg-black/40 backdrop-blur-2xl rounded-full px-6 py-4 shadow-2xl border border-white/30 hover:border-white/50 transition-all">
-            <motion.div
-              animate={{ rotate: showSuggestions ? 360 : 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Search className="w-5 h-5 text-theme-primary mr-3" />
-            </motion.div>
-            <input
-              ref={inputRef}
-              type="text"
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                if (e.target.value.trim().length > 0) {
-                  setShowSuggestions(true);
-                }
-              }}
-              onFocus={() => setShowSuggestions(query.trim().length > 0)}
-              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-              placeholder="Search anything..."
-              className="flex-1 bg-transparent text-white placeholder-white/50 outline-none text-lg"
-            />
-            <motion.button
-              type="submit"
-              whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(255,255,255,0.3)' }}
-              whileTap={{ scale: 0.95 }}
-              className="ml-3 px-6 py-2 bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-accent rounded-full text-white font-semibold transition-all shadow-lg"
-            >
-              Search
-            </motion.button>
+          {/* Animated Glow Border */}
+          <div className={`absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary via-accent to-secondary opacity-50 blur-md transition-opacity duration-500 ${isFocused ? 'opacity-100' : 'opacity-30 group-hover:opacity-70'}`} />
+
+          {/* Main Input Area */}
+          <div className="relative flex items-center bg-black/80 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
+
+            {/* Engine Icon Area */}
+            <div className="pl-4 pr-3 py-4 border-r border-white/10 flex items-center justify-center bg-white/5">
+              <motion.div
+                key={activeEngine}
+                initial={{ scale: 0, rotate: -90 }}
+                animate={{ scale: 1, rotate: 0 }}
+                className="text-primary"
+              >
+                <span className="material-icons text-2xl drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
+                  {searchEngines.find(e => e.id === activeEngine)?.icon || 'search'}
+                </span>
+              </motion.div>
+            </div>
+
+            {/* Input Field */}
+            <div className="flex-1 relative">
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  if (e.target.value.trim().length > 0) setShowSuggestions(true);
+                }}
+                onFocus={() => {
+                  setIsFocused(true);
+                  if (query.trim().length > 0) setShowSuggestions(true);
+                }}
+                onBlur={() => {
+                  setIsFocused(false);
+                  setTimeout(() => setShowSuggestions(false), 200);
+                }}
+                placeholder="Initialize Search Protocol..."
+                className="w-full bg-transparent text-white placeholder-white/30 outline-none text-lg px-4 py-4 font-mono tracking-wide"
+              />
+
+              {/* Scanning Cursor Effect */}
+              {isFocused && (
+                <motion.div
+                  layoutId="cursor"
+                  className="absolute bottom-0 left-0 h-[2px] bg-primary shadow-[0_0_10px_var(--primary-color)]"
+                  initial={{ width: 0 }}
+                  animate={{ width: '100%' }}
+                  transition={{ duration: 0.5 }}
+                />
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="pr-2 flex items-center gap-2">
+              {query && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  type="button"
+                  onClick={() => setQuery('')}
+                  className="p-2 hover:bg-white/10 rounded-lg text-white/50 hover:text-white transition-colors"
+                >
+                  <span className="material-icons text-sm">close</span>
+                </motion.button>
+              )}
+
+              <motion.button
+                type="submit"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 py-2 bg-gradient-to-r from-primary to-secondary rounded-xl text-white font-bold text-sm tracking-wider shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all"
+              >
+                SEARCH
+              </motion.button>
+            </div>
           </div>
         </motion.div>
 
-        {/* Autocomplete Suggestions - Using SearchSuggestions Component */}
+        {/* Autocomplete Suggestions */}
         <SearchSuggestions
           query={query}
           onSelect={(suggestion) => {
@@ -121,50 +163,48 @@ export const SearchBar: React.FC<Props> = ({ selectedEngine = 'google', onEngine
           show={showSuggestions && query.trim().length > 0}
         />
 
-        {/* Search Engine Selector - Multi-row */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="mt-4 flex flex-col items-center gap-3"
+        {/* Engine Selector - HUD Style */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mt-6"
         >
-          <div className="px-4 py-2 bg-black/30 backdrop-blur-md rounded-full text-white text-sm font-medium border border-white/10">
-            Search With
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-2 max-w-4xl">
+          <div className="flex flex-wrap items-center justify-center gap-3 max-w-5xl mx-auto">
             {searchEngines.map((engine, index) => {
               const isActive = activeEngine === engine.id;
-              
               return (
                 <motion.button
                   key={engine.id}
                   type="button"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.05 }}
-                  whileHover={{ scale: 1.1, y: -3 }}
+                  transition={{ delay: index * 0.03 }}
+                  whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => handleEngineSelect(engine.id)}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-2 ${
-                    isActive
-                      ? 'bg-gradient-to-r from-primary to-secondary border-2 border-white/50 text-white shadow-lg shadow-accent/30'
-                      : 'bg-black/30 border border-white/10 text-white/70 hover:bg-black/40 hover:border-white/30'
-                  }`}
-                  style={{
-                    boxShadow: isActive && engine.color ? `0 0 20px ${engine.color}40` : undefined
-                  }}
+                  className={`relative group px-3 py-2 rounded-lg border transition-all duration-300 ${isActive
+                    ? 'bg-white/10 border-primary/50 text-white shadow-[0_0_15px_rgba(var(--primary-color-rgb),0.3)]'
+                    : 'bg-black/40 border-white/5 text-white/40 hover:bg-white/5 hover:border-white/20 hover:text-white/80'
+                    }`}
                 >
-                  <span 
-                    className="material-icons" 
-                    style={{ 
-                      fontSize: '18px',
-                      color: isActive ? 'white' : engine.color 
-                    }}
-                  >
-                    {engine.icon}
-                  </span>
-                  <span>{engine.name}</span>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="material-icons text-sm transition-colors duration-300"
+                      style={{ color: isActive ? 'white' : engine.color }}
+                    >
+                      {engine.icon}
+                    </span>
+                    <span className="text-xs font-mono uppercase tracking-wider">{engine.name}</span>
+                  </div>
+
+                  {/* Active Indicator */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeEngine"
+                      className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full shadow-[0_0_5px_var(--primary-color)]"
+                    />
+                  )}
                 </motion.button>
               );
             })}

@@ -37,6 +37,9 @@ export interface Settings {
   showQuotes?: boolean; // Separate toggle for quotes
   showIP?: boolean; // Separate toggle for IP address
   showSeconds?: boolean; // Toggle for seconds in clock
+  showVirtualPet?: boolean; // Toggle for virtual pet
+  petMode?: 'svg' | 'emoji' | 'gif' | 'pixel'; // Visual style of the pet
+  customPetUrl?: string; // URL for custom GIF pet
   apiKeys: {
     weather: string;
     groq: string;
@@ -65,4 +68,4 @@ export interface Note {
 }
 
 // Empty export to ensure this is treated as a module
-export {};
+export { };
