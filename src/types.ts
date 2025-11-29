@@ -36,6 +36,7 @@ export interface Settings {
   showQuotesAndIP?: boolean; // Toggle for quotes and IP display (legacy - keeping for backward compatibility)
   showQuotes?: boolean; // Separate toggle for quotes
   showIP?: boolean; // Separate toggle for IP address
+  showSeconds?: boolean; // Toggle for seconds in clock
   apiKeys: {
     weather: string;
     groq: string;
