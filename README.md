@@ -241,6 +241,7 @@
     <td width="50%" valign="top">
       
 #### ✨ Core Features
+- 📑 **Sidebar Interface**
 - 📝 **Full Markdown Support**
 - 💻 **Syntax Highlighting**
 - 📊 **Tables & Lists**
@@ -298,11 +299,12 @@
 - ▶️ Play/Pause/Reset
 - 📊 Progress indicator
 - 🎵 **Ambient Music:**
-  - Lofi Beats
-  - Rain Sounds
-  - Ocean Waves
-  - Forest Ambience
-- 🔊 Volume control
+  - Lofi Beats, Rain, Ocean, Forest
+  - Integrated volume control
+- 🚫 **Distraction Free**:
+  - Virtual Pet automatically hides
+  - Simplified interface
+- 🔍 **Search Suggestions**: Enhanced search bar with auto-suggestions
 - 🌌 Deep space BG
 - 🔔 Notifications
       
@@ -416,6 +418,19 @@
 - Rain Sounds for relaxation
 - Ocean Waves for meditation
 - Forest Ambience for nature lovers
+
+### 🐾 Virtual Pet Companion
+
+**Your personal desktop friend!**
+- **Interactive**: Click to pet, watch it react!
+- **Smart Behavior**:
+  - Sleeps after 3 minutes of inactivity
+  - Wakes up happily when you return
+  - Wanders around your screen
+- **Customizable**:
+  - Multiple animal sprites (Fox, Cat, Dog, etc.)
+  - "Cool" and themed appearances
+- **Focus Friendly**: Automatically hides when you enter Focus Mode to let you work.
 
 ### 🛠️ Settings & Configuration
 

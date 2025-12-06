@@ -57,26 +57,27 @@ const getWeatherCondition = (code: number): string => {
 export const fetchWeatherData = async (_apiKey?: string) => {
     // Note: _apiKey parameter kept for compatibility but not used (prefixed with _ to suppress warning)
     // Open-Meteo is completely free and doesn't require an API key!
-    
+
     try {
         // Get user's location
         const { lat, lon } = await getUserLocation();
-        
+
         // Fetch weather data from Open-Meteo (FREE, no API key needed!)
-        const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,pressure_msl,visibility&timezone=auto`;
-        
+        const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,pressure_msl,visibility&daily=sunrise,sunset,uv_index_max&timezone=auto`;
+
         const response = await fetch(weatherUrl);
-        
+
         if (!response.ok) {
             return { error: `Weather API error: ${response.statusText}` };
         }
-        
+
         const data = await response.json();
         const current = data.current;
-        
+        const daily = data.daily;
+
         // Get city name
         const city = await getCityName(lat, lon);
-        
+
         return {
             city: city,
             temp: Math.round(current.temperature_2m),
@@ -86,6 +87,9 @@ export const fetchWeatherData = async (_apiKey?: string) => {
             pressure: Math.round(current.pressure_msl),
             visibility: Math.round((current.visibility || 10000) / 1000), // Convert to km
             feelsLike: Math.round(current.temperature_2m), // Open-Meteo doesn't provide feels_like, using temp
+            sunrise: daily.sunrise[0],
+            sunset: daily.sunset[0],
+            uvIndex: daily.uv_index_max[0],
         };
     } catch (error) {
         console.error("Weather fetch error:", error);
@@ -93,4 +97,4 @@ export const fetchWeatherData = async (_apiKey?: string) => {
     }
 };
 
-export {};
+export { };

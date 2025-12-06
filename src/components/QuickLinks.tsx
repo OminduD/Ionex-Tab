@@ -40,10 +40,23 @@ const getFaviconUrl = (url: string): string => {
   }
 };
 
-export const QuickLinks: React.FC<Props> = ({ shortcuts }) => {
+// Theme color mapping
+const themeColors: Record<string, { text: string; border: string; glow: string }> = {
+  aurora: { text: '#22d3ee', border: 'rgba(34, 211, 238, 0.3)', glow: 'rgba(34, 211, 238, 0.2)' }, // Cyan
+  neon: { text: '#f472b6', border: 'rgba(244, 114, 182, 0.3)', glow: 'rgba(244, 114, 182, 0.2)' }, // Pink
+  ocean: { text: '#60a5fa', border: 'rgba(96, 165, 250, 0.3)', glow: 'rgba(96, 165, 250, 0.2)' }, // Blue
+  forest: { text: '#4ade80', border: 'rgba(74, 222, 128, 0.3)', glow: 'rgba(74, 222, 128, 0.2)' }, // Green
+  midnight: { text: '#818cf8', border: 'rgba(129, 140, 248, 0.3)', glow: 'rgba(129, 140, 248, 0.2)' }, // Indigo
+  sunset: { text: '#fb923c', border: 'rgba(251, 146, 60, 0.3)', glow: 'rgba(251, 146, 60, 0.2)' }, // Orange
+  default: { text: '#e2e8f0', border: 'rgba(226, 232, 240, 0.3)', glow: 'rgba(226, 232, 240, 0.2)' }, // Slate
+};
+
+export const QuickLinks: React.FC<Props> = ({ shortcuts, theme }) => {
   const handleClick = (url: string) => {
     window.open(url, '_blank');
   };
+
+  const currentTheme = themeColors[theme] || themeColors.default;
 
   return (
     <motion.div
@@ -55,30 +68,33 @@ export const QuickLinks: React.FC<Props> = ({ shortcuts }) => {
       {shortcuts.slice(0, 12).map((shortcut, index) => {
         const materialIcon = materialIconMap[shortcut.icon || ''];
         const faviconUrl = getFaviconUrl(shortcut.url);
-        
+
         return (
           <motion.button
             key={shortcut.id}
             initial={{ opacity: 0, scale: 0, rotateY: -180 }}
             animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-            transition={{ 
+            transition={{
               delay: 0.3 + index * 0.05,
               type: 'spring',
               stiffness: 200,
               damping: 15
             }}
-            whileHover={{ 
-              scale: 1.15, 
+            whileHover={{
+              scale: 1.15,
               y: -8,
               rotateY: 15,
+              borderColor: currentTheme.text,
+              boxShadow: `0 0 20px ${currentTheme.glow}`,
               transition: { duration: 0.3 }
             }}
             whileTap={{ scale: 0.9 }}
             onClick={() => handleClick(shortcut.url)}
-            className="shortcut-button group relative w-16 h-16 rounded-2xl border border-white/20 hover:border-white/40 flex items-center justify-center transition-all shadow-lg hover:shadow-2xl overflow-hidden"
+            className="shortcut-button group relative w-16 h-16 rounded-2xl border flex items-center justify-center transition-all shadow-lg overflow-hidden"
             style={{
-              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%)',
+              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%)',
               backdropFilter: 'blur(16px)',
+              borderColor: currentTheme.border,
               transformStyle: 'preserve-3d'
             }}
             title={shortcut.name}
@@ -87,7 +103,7 @@ export const QuickLinks: React.FC<Props> = ({ shortcuts }) => {
             <motion.div
               className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
               style={{
-                background: 'radial-gradient(circle at center, var(--accent-light-tint, rgba(255, 255, 255, 0.3)) 0%, transparent 70%)'
+                background: `radial-gradient(circle at center, ${currentTheme.glow} 0%, transparent 70%)`
               }}
               animate={{
                 scale: [1, 1.2, 1],
@@ -102,12 +118,12 @@ export const QuickLinks: React.FC<Props> = ({ shortcuts }) => {
 
             {/* Material Icon or Favicon */}
             {materialIcon ? (
-              <motion.span 
+              <motion.span
                 className="material-icons relative z-10"
-                style={{ 
+                style={{
                   fontSize: '32px',
-                  color: 'var(--text-color-dark, #1e293b)',
-                  textShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                  color: currentTheme.text,
+                  textShadow: `0 0 10px ${currentTheme.glow}`
                 }}
                 whileHover={{ rotate: [0, -10, 10, -10, 0] }}
                 transition={{ duration: 0.5 }}
@@ -115,8 +131,8 @@ export const QuickLinks: React.FC<Props> = ({ shortcuts }) => {
                 {materialIcon}
               </motion.span>
             ) : faviconUrl ? (
-              <motion.img 
-                src={faviconUrl} 
+              <motion.img
+                src={faviconUrl}
                 alt={shortcut.name}
                 className="w-8 h-8 rounded-lg relative z-10"
                 whileHover={{ rotate: 360 }}
@@ -128,20 +144,20 @@ export const QuickLinks: React.FC<Props> = ({ shortcuts }) => {
                 }}
               />
             ) : null}
-            
+
             {/* Fallback letter */}
-            <span 
+            <span
               className={`text-2xl font-bold relative z-10 ${materialIcon || faviconUrl ? 'hidden' : ''}`}
-              style={{ 
-                color: 'var(--text-color-dark, #1e293b)',
-                textShadow: '0 2px 8px rgba(0,0,0,0.2)'
+              style={{
+                color: currentTheme.text,
+                textShadow: `0 0 10px ${currentTheme.glow}`
               }}
             >
               {shortcut.name.charAt(0)}
             </span>
-            
+
             {/* Tooltip with animation */}
-            <motion.span 
+            <motion.span
               initial={{ opacity: 0, y: -5 }}
               whileHover={{ opacity: 1, y: 0 }}
               className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-black/90 text-white text-xs px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap pointer-events-none shadow-xl backdrop-blur-sm border border-white/10"

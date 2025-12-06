@@ -41,30 +41,58 @@ export const QuoteAndIP: React.FC<QuoteAndIPProps> = ({ showQuotes = true, showI
   const [quote, setQuote] = useState('');
   const [ip, setIp] = useState('');
   const [location, setLocation] = useState('');
+  const [loadingQuote, setLoadingQuote] = useState(false);
+
+  const generateQuote = () => {
+    setLoadingQuote(true);
+    setTimeout(() => {
+      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+      setQuote(randomQuote);
+      setLoadingQuote(false);
+    }, 300);
+  };
 
   useEffect(() => {
-    // Set random quote
-    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-    setQuote(randomQuote);
+    generateQuote();
 
-    // Fetch IP address
-    fetch('https://api.ipify.org?format=json')
-      .then(response => response.json())
-      .then(data => {
+    // Fetch IP address with fallback
+    const fetchIP = async () => {
+      try {
+        // Try primary service
+        const response = await fetch('https://api.ipify.org?format=json');
+        if (!response.ok) throw new Error('Primary IP fetch failed');
+        const data = await response.json();
         setIp(data.ip);
+
         // Get location info
-        return fetch(`https://ipapi.co/${data.ip}/json/`);
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.city && data.country_name) {
-          setLocation(`${data.city}, ${data.country_name}`);
+        try {
+          const locResponse = await fetch(`https://ipapi.co/${data.ip}/json/`);
+          if (locResponse.ok) {
+            const locData = await locResponse.json();
+            if (locData.city && locData.country_name) {
+              setLocation(`${locData.city}, ${locData.country_name}`);
+            }
+          }
+        } catch (e) {
+          console.warn('Location fetch failed', e);
         }
-      })
-      .catch(error => {
-        console.error('Error fetching IP:', error);
-        setIp('Unable to fetch IP');
-      });
+
+      } catch (error) {
+        console.warn('Primary IP fetch failed, trying fallback...', error);
+        try {
+          // Fallback service (HTTPS)
+          const response = await fetch('https://ipapi.co/json/');
+          const data = await response.json();
+          setIp(data.ip);
+          setLocation(`${data.city}, ${data.country_name}`);
+        } catch (fallbackError) {
+          console.error('All IP fetch attempts failed', fallbackError);
+          setIp('Unavailable');
+        }
+      }
+    };
+
+    fetchIP();
   }, []);
 
   // Don't render if both are hidden
@@ -76,7 +104,7 @@ export const QuoteAndIP: React.FC<QuoteAndIPProps> = ({ showQuotes = true, showI
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ delay: 0.3, duration: 0.5 }}
-      className="mt-8 space-y-6 text-center flex flex-col items-center"
+      className="mt-8 space-y-6 text-center flex flex-col items-center w-full max-w-4xl mx-auto px-4"
     >
       {/* Quote Card */}
       {showQuotes && (
@@ -84,57 +112,86 @@ export const QuoteAndIP: React.FC<QuoteAndIPProps> = ({ showQuotes = true, showI
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.4, duration: 0.6 }}
-          className="relative group max-w-3xl w-full"
+          className="relative group w-full"
         >
-          {/* Holographic Border */}
-          <div className="absolute -inset-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent rounded-xl opacity-50 group-hover:opacity-100 transition-opacity" />
+          <div className="relative p-8 bg-black/20 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden hover:bg-black/30 transition-all duration-500 shadow-[0_0_30px_rgba(0,0,0,0.2)]">
 
-          <div className="relative px-8 py-6 bg-black/40 backdrop-blur-xl rounded-xl border border-white/10 overflow-hidden">
-            {/* Scanning Line */}
-            <motion.div
-              className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent"
-              animate={{ top: ['0%', '100%', '0%'] }}
-              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-            />
+            {/* Decorative Elements */}
+            <div className="absolute top-0 left-0 w-20 h-20 bg-primary/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute bottom-0 right-0 w-20 h-20 bg-accent/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
 
-            <div className="flex flex-col items-center gap-3 relative z-10">
-              <span className="text-[10px] font-mono text-primary/60 uppercase tracking-[0.3em] mb-1">Daily Transmission</span>
-              <p className="text-white/90 text-lg md:text-xl font-light italic leading-relaxed text-center drop-shadow-md">
-                "{quote.split('-')[0].trim()}"
-              </p>
-              <div className="w-12 h-[1px] bg-white/20 my-1" />
-              <span className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-                {quote.split('-')[1]?.trim() || 'Unknown'}
-              </span>
+            {/* Quote Content */}
+            <div className="relative z-10 flex flex-col items-center gap-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="h-[1px] w-8 bg-gradient-to-r from-transparent to-primary/50" />
+                <span className="text-[10px] font-mono text-primary/80 uppercase tracking-[0.3em]">Daily Insight</span>
+                <div className="h-[1px] w-8 bg-gradient-to-l from-transparent to-primary/50" />
+              </div>
+
+              <motion.div
+                key={quote}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="relative"
+              >
+                <span className="absolute -top-4 -left-6 text-4xl text-white/10 font-serif">"</span>
+                <p className="text-white/90 text-xl md:text-2xl font-light leading-relaxed text-center drop-shadow-md max-w-2xl mx-auto">
+                  {quote.split('-')[0].trim()}
+                </p>
+                <span className="absolute -bottom-8 -right-6 text-4xl text-white/10 font-serif">"</span>
+              </motion.div>
+
+              <div className="mt-4 flex flex-col items-center gap-2">
+                <div className="w-12 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                <span className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary via-white to-accent">
+                  {quote.split('-')[1]?.trim() || 'Unknown'}
+                </span>
+              </div>
+
+              {/* Controls */}
+              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-2">
+                <button
+                  onClick={generateQuote}
+                  disabled={loadingQuote}
+                  className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                  title="New Quote"
+                >
+                  <span className={`material-icons text-sm ${loadingQuote ? 'animate-spin' : ''}`}>refresh</span>
+                </button>
+              </div>
             </div>
           </div>
         </motion.div>
       )}
 
       {/* IP Status Bar */}
-      {showIP && ip && (
+      {showIP && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="flex items-center gap-4 px-6 py-2 bg-black/60 backdrop-blur-md rounded-full border border-white/10 shadow-lg hover:border-primary/30 transition-colors"
+          className="inline-flex items-center gap-6 px-8 py-3 bg-black/40 backdrop-blur-md rounded-full border border-white/5 shadow-lg hover:border-primary/30 transition-all duration-300 group"
         >
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono text-white/40 uppercase tracking-wider">IP Address</span>
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <div className="absolute inset-0 w-2 h-2 rounded-full bg-green-500 animate-ping opacity-20" />
+            </div>
+            <span className="text-[10px] font-mono text-white/40 uppercase tracking-wider">Network Status</span>
           </div>
 
           <div className="w-[1px] h-4 bg-white/10" />
 
           <div className="flex items-center gap-2">
-            <span className="material-icons text-primary text-sm">public</span>
-            <span className="text-xs font-mono text-white/80">{ip}</span>
+            <span className="material-icons text-primary/80 text-sm group-hover:text-primary transition-colors">public</span>
+            <span className="text-xs font-mono text-white/80 tracking-wide">{ip || 'Connecting...'}</span>
           </div>
 
           {location && (
             <>
               <div className="w-[1px] h-4 bg-white/10" />
               <div className="flex items-center gap-2">
-                <span className="material-icons text-accent text-sm">place</span>
+                <span className="material-icons text-accent/80 text-sm group-hover:text-accent transition-colors">place</span>
                 <span className="text-xs font-medium text-white/80">{location}</span>
               </div>
             </>

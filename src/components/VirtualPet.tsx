@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useAnimation, AnimatePresence } from 'framer-motion';
-import { Heart, Utensils } from 'lucide-react';
+import { Heart } from 'lucide-react';
 
 interface VirtualPetProps {
     theme: string;
@@ -8,10 +8,10 @@ interface VirtualPetProps {
 }
 
 const PET_SIZE = 64;
-const INACTIVITY_THRESHOLD = 15000; // 15 seconds to sleep
-const CHASE_CHANCE = 0.3; // 30% chance to chase cursor
+const INACTIVITY_THRESHOLD = 180000; // 3 minutes to sleep
 
-type PetState = 'idle' | 'walking' | 'sleeping' | 'chasing' | 'happy' | 'eating';
+
+type PetState = 'idle' | 'walking' | 'sleeping' | 'chasing' | 'happy' | 'dancing' | 'zoomies';
 
 interface SpriteConfig {
     url: string;
@@ -59,7 +59,6 @@ const VirtualPet: React.FC<VirtualPetProps> = ({ theme, enabled }) => {
     const [position, setPosition] = useState({ x: window.innerWidth / 2, y: window.innerHeight - 100 });
     const [state, setState] = useState<PetState>('idle');
     const [direction, setDirection] = useState<'left' | 'right'>('right');
-    const [foodPos, setFoodPos] = useState<{ x: number, y: number } | null>(null);
     const [speech, setSpeech] = useState<string | null>(null);
     const controls = useAnimation();
     const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -85,16 +84,16 @@ const VirtualPet: React.FC<VirtualPetProps> = ({ theme, enabled }) => {
     useEffect(() => {
         if (!enabled || state === 'sleeping') return;
 
-        const commonPhrases = ["Woof!", "Bark!", "*Pant*", "Zoomies!", "Hello!", "I'm watching you!", "Play with me?"];
+        const commonPhrases = ["Woof!", "Bark!", "*Pant*", "Zoomies!", "Hello!", "I'm watching you!", "Play with me?", "Let's dance!"];
         const themePhrases: Record<string, string[]> = {
-            ocean: ["Splash!", "Fish?", "Surfs up!"],
-            aurora: ["So cold...", "Pretty lights!", "Brrr!"],
-            sunset: ["Chasing the sun!", "Golden hour!", "Warm..."],
-            forest: ["Squirrel!", "Leaves!", "Nature..."],
-            midnight: ["Spooky...", "Full moon!", "Howl!"],
-            neon: ["Bzzzt!", "Laser!", "Glow!"],
-            cherry: ["Pink!", "Petals!", "Sweet!"],
-            mint: ["Fresh!", "Green!", "Cool!"]
+            ocean: ["Splash!", "Fish?", "Surfs up!", "Wavy!"],
+            aurora: ["So cold...", "Pretty lights!", "Brrr!", "Magical!"],
+            sunset: ["Chasing the sun!", "Golden hour!", "Warm...", "Relaxing..."],
+            forest: ["Squirrel!", "Leaves!", "Nature...", "Wild!"],
+            midnight: ["Spooky...", "Full moon!", "Howl!", "Shadows..."],
+            neon: ["Bzzzt!", "Laser!", "Glow!", "Cyber!"],
+            cherry: ["Pink!", "Petals!", "Sweet!", "Blossom!"],
+            mint: ["Fresh!", "Green!", "Cool!", "Breezy!"]
         };
 
         const phrases = [...commonPhrases, ...(themePhrases[theme] || [])];
@@ -121,18 +120,31 @@ const VirtualPet: React.FC<VirtualPetProps> = ({ theme, enabled }) => {
             lastMouseTime = now;
             mousePos.current = { x: e.clientX, y: e.clientY };
 
-            // Wake up
-            if (state === 'sleeping') {
-                const distToPet = Math.sqrt(Math.pow(e.clientX - position.x, 2) + Math.pow(e.clientY - position.y, 2));
-                if (distToPet < 200) {
-                    setState('idle');
-                    resetInactivity();
-                }
+            // Wake up on any significant mouse movement
+            if (state === 'sleeping' && dist > 5) {
+                setState('idle');
+                resetInactivity();
+
+                // Themed Wake-up Greeting
+                const wakeUpGreetings: Record<string, string> = {
+                    ocean: "Ready to swim!",
+                    aurora: "The lights are back!",
+                    sunset: "Good evening!",
+                    forest: "Adventure time!",
+                    midnight: "The night is young!",
+                    neon: "System online!",
+                    cherry: "Hello blossom!",
+                    mint: "Fresh start!"
+                };
+                setSpeech(wakeUpGreetings[theme] || "I'm awake!");
+                setTimeout(() => setSpeech(null), 3000);
+            } else {
+                resetInactivity();
             }
 
             // Petting (High speed near pet)
             const distToPet = Math.sqrt(Math.pow(e.clientX - position.x, 2) + Math.pow(e.clientY - position.y, 2));
-            if (distToPet < 100 && mouseSpeed > 0.5 && state !== 'sleeping' && state !== 'eating' && !isBusy.current) {
+            if (distToPet < 100 && mouseSpeed > 0.5 && state !== 'sleeping' && state !== 'zoomies' && !isBusy.current) {
                 setState('happy');
                 isBusy.current = true;
                 setTimeout(() => {
@@ -143,12 +155,12 @@ const VirtualPet: React.FC<VirtualPetProps> = ({ theme, enabled }) => {
         };
         window.addEventListener('mousemove', handleMouseMove);
         return () => window.removeEventListener('mousemove', handleMouseMove);
-    }, [state, position]);
+    }, [state, position, theme]);
 
     const resetInactivity = () => {
         if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
         inactivityTimer.current = setTimeout(() => {
-            if (state !== 'sleeping' && !isBusy.current && !foodPos) {
+            if (state !== 'sleeping' && !isBusy.current) {
                 setState('sleeping');
             }
         }, INACTIVITY_THRESHOLD);
@@ -162,52 +174,57 @@ const VirtualPet: React.FC<VirtualPetProps> = ({ theme, enabled }) => {
         const behaviorLoop = async () => {
             if (state === 'sleeping' || isBusy.current) return;
 
-            // Priority: Food
-            if (foodPos) {
-                setState('chasing');
-                const targetX = foodPos.x;
-                const targetY = foodPos.y;
-                setDirection(targetX > position.x ? 'right' : 'left');
-                const dist = Math.sqrt(Math.pow(targetX - position.x, 2) + Math.pow(targetY - position.y, 2));
+            const rand = Math.random();
 
-                if (dist < 50) {
-                    // Eat
-                    isBusy.current = true;
-                    setState('eating');
-                    setFoodPos(null);
-                    controls.stop();
-                    await new Promise(r => setTimeout(r, 2000));
-                    setState('happy');
-                    await new Promise(r => setTimeout(r, 2000));
-                    setState('idle');
-                    isBusy.current = false;
-                } else {
-                    const duration = (dist / 150) / currentPet.speed; // Apply speed
-                    await controls.start({ x: targetX, y: targetY, transition: { duration, ease: "linear" } });
+            if (rand < 0.1) {
+                // Dance!
+                isBusy.current = true;
+                setState('dancing');
+                // Perform a little dance (jump up and down)
+                await controls.start({ y: position.y - 30, transition: { duration: 0.2, yoyo: 3 } });
+                await new Promise(r => setTimeout(r, 1000));
+                setState('idle');
+                isBusy.current = false;
+            } else if (rand < 0.2) {
+                // Zoomies!
+                isBusy.current = true;
+                setState('zoomies');
+
+                // Run in a circle/zigzag
+                for (let i = 0; i < 4; i++) {
+                    const offsetX = (Math.random() - 0.5) * 300;
+                    const offsetY = (Math.random() - 0.5) * 300;
+                    const targetX = Math.max(50, Math.min(window.innerWidth - 50, position.x + offsetX));
+                    const targetY = Math.max(50, Math.min(window.innerHeight - 50, position.y + offsetY));
+
+                    setDirection(targetX > position.x ? 'right' : 'left');
+                    await controls.start({
+                        x: targetX,
+                        y: targetY,
+                        transition: { duration: 0.5, ease: "easeInOut" }
+                    });
                     setPosition({ x: targetX, y: targetY });
                 }
-                return;
-            }
 
-            // Normal Behavior
-            const rand = Math.random();
-            if (rand < CHASE_CHANCE) {
+                setState('idle');
+                isBusy.current = false;
+            } else if (rand < 0.4) { // Increased chase chance
                 // Chase Cursor
                 setState('chasing');
                 const targetX = mousePos.current.x;
                 const targetY = mousePos.current.y;
                 const angle = Math.atan2(targetY - position.y, targetX - position.x);
-                const stopDist = 100;
+                const stopDist = 120;
                 const finalX = targetX - Math.cos(angle) * stopDist;
                 const finalY = targetY - Math.sin(angle) * stopDist;
 
                 setDirection(finalX > position.x ? 'right' : 'left');
                 const dist = Math.sqrt(Math.pow(finalX - position.x, 2) + Math.pow(finalY - position.y, 2));
-                const duration = Math.max(1, (dist / 150) / currentPet.speed);
+                const duration = Math.max(0.8, (dist / 200) / currentPet.speed); // Smoother duration
 
-                await controls.start({ x: finalX, y: finalY, transition: { duration, ease: "linear" } });
+                await controls.start({ x: finalX, y: finalY, transition: { duration, ease: "easeOut" } });
                 setPosition({ x: finalX, y: finalY });
-            } else if (rand < 0.6) {
+            } else if (rand < 0.7) {
                 // Walk Randomly
                 setState('walking');
                 const padding = 100;
@@ -216,49 +233,25 @@ const VirtualPet: React.FC<VirtualPetProps> = ({ theme, enabled }) => {
 
                 setDirection(newX > position.x ? 'right' : 'left');
                 const dist = Math.sqrt(Math.pow(newX - position.x, 2) + Math.pow(newY - position.y, 2));
-                const duration = (dist / 60) / currentPet.speed;
+                const duration = (dist / 80) / currentPet.speed; // Slower, smoother walk
 
-                await controls.start({ x: newX, y: newY, transition: { duration, ease: "linear" } });
+                await controls.start({ x: newX, y: newY, transition: { duration, ease: "easeInOut" } });
                 setPosition({ x: newX, y: newY });
-            } else if (rand < 0.8) {
-                // Jump / Hop
-                setState('chasing'); // Use run animation for jump
-                const jumpHeight = 50;
-
-                // Jump up
-                await controls.start({
-                    y: position.y - jumpHeight,
-                    transition: { duration: 0.3, ease: "easeOut" }
-                });
-                // Fall down
-                await controls.start({
-                    y: position.y,
-                    transition: { duration: 0.3, ease: "easeIn" }
-                });
-
-                setState('idle');
-                await new Promise(r => setTimeout(r, 500));
             } else {
                 setState('idle');
                 await new Promise(r => setTimeout(r, 2000));
             }
         };
 
-        const interval = setInterval(behaviorLoop, 3000);
+        const interval = setInterval(behaviorLoop, 3500);
         return () => clearInterval(interval);
-    }, [enabled, state, position, foodPos, currentPet]);
+    }, [enabled, state, position, currentPet]);
 
-    const handleFeed = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        const padding = 100;
-        const x = Math.max(padding, Math.min(window.innerWidth - padding, Math.random() * window.innerWidth));
-        const y = Math.max(padding, Math.min(window.innerHeight - padding, Math.random() * window.innerHeight));
-        setFoodPos({ x, y });
-    };
+
 
     const handlePetClick = (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (state !== 'sleeping' && state !== 'eating') {
+        if (state !== 'sleeping' && state !== 'zoomies') {
             controls.stop(); // Stop movement immediately
             isBusy.current = true;
             setState('happy');
@@ -272,26 +265,13 @@ const VirtualPet: React.FC<VirtualPetProps> = ({ theme, enabled }) => {
     if (!enabled) return null;
 
     const getSpriteRow = (s: PetState) => {
-        return sprite.rows[s] ?? sprite.rows.idle;
+        if (s === 'dancing') return sprite.rows.happy;
+        if (s === 'zoomies') return sprite.rows.chasing;
+        return sprite.rows[s as keyof typeof sprite.rows] ?? sprite.rows.idle;
     };
 
     return (
         <>
-            {/* Food */}
-            <AnimatePresence>
-                {foodPos && (
-                    <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        className="fixed z-40 text-4xl"
-                        style={{ left: foodPos.x, top: foodPos.y }}
-                    >
-                        🍖
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
             {/* Pet Container */}
             <motion.div
                 animate={controls}
@@ -300,16 +280,10 @@ const VirtualPet: React.FC<VirtualPetProps> = ({ theme, enabled }) => {
                 style={{ width: PET_SIZE, height: PET_SIZE }}
                 onClick={handlePetClick}
             >
-                {/* Context Menu / Actions */}
-                <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
-                    <button
-                        onClick={handleFeed}
-                        className="p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
-                        title="Feed Pet"
-                    >
-                        <Utensils className="w-4 h-4 text-orange-500" />
-                    </button>
-                </div>
+                {/* Context Menu / Actions - Removed Feed */}
+                {/* <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
+                   
+                </div> */}
 
                 {/* Speech Bubble */}
                 <AnimatePresence>
@@ -378,7 +352,7 @@ const VirtualPet: React.FC<VirtualPetProps> = ({ theme, enabled }) => {
                             <div className="text-xl font-bold text-blue-400">Zzz...</div>
                         </motion.div>
                     )}
-                    {(state === 'happy' || state === 'eating') && (
+                    {(state === 'happy' || state === 'dancing') && (
                         <motion.div
                             initial={{ opacity: 0, scale: 0, y: 0 }}
                             animate={{ opacity: 1, scale: 1.5, y: -30 }}

@@ -100,11 +100,11 @@ export const SearchBar: React.FC<Props> = ({ selectedEngine = 'google', onEngine
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value);
-                  if (e.target.value.trim().length > 0) setShowSuggestions(true);
+                  setShowSuggestions(true);
                 }}
                 onFocus={() => {
                   setIsFocused(true);
-                  if (query.trim().length > 0) setShowSuggestions(true);
+                  setShowSuggestions(true);
                 }}
                 onBlur={() => {
                   setIsFocused(false);
@@ -160,7 +160,7 @@ export const SearchBar: React.FC<Props> = ({ selectedEngine = 'google', onEngine
             setShowSuggestions(false);
             handleSearch(suggestion);
           }}
-          show={showSuggestions && query.trim().length > 0}
+          show={showSuggestions}
         />
 
         {/* Engine Selector - HUD Style */}

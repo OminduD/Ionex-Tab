@@ -85,6 +85,12 @@ const FocusMode: React.FC<FocusModeProps> = ({ isActive, onClose }) => {
 
   const progressPercent = ((initialDuration - totalSeconds) / initialDuration) * 100;
 
+  // Breathing animation for the timer
+  const breathingVariant = {
+    inhale: { scale: 1.05, textShadow: "0 0 30px rgba(96, 165, 250, 0.6)", transition: { duration: 4, ease: "easeInOut" } },
+    exhale: { scale: 1, textShadow: "0 0 10px rgba(96, 165, 250, 0.2)", transition: { duration: 4, ease: "easeInOut" } }
+  };
+
   return (
     <AnimatePresence>
       {isActive && (
@@ -96,6 +102,36 @@ const FocusMode: React.FC<FocusModeProps> = ({ isActive, onClose }) => {
         >
           {/* Animated Deep Space Background */}
           <DeepSpaceBackground />
+
+          {/* Floating Particles Overlay */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(20)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute bg-white/20 rounded-full blur-sm"
+                initial={{
+                  x: Math.random() * window.innerWidth,
+                  y: Math.random() * window.innerHeight,
+                  scale: Math.random() * 0.5 + 0.2,
+                  opacity: 0
+                }}
+                animate={{
+                  y: [null, Math.random() * -100],
+                  opacity: [0, 0.5, 0]
+                }}
+                transition={{
+                  duration: Math.random() * 5 + 5,
+                  repeat: Infinity,
+                  delay: Math.random() * 5,
+                  ease: "linear"
+                }}
+                style={{
+                  width: Math.random() * 4 + 1 + 'px',
+                  height: Math.random() * 4 + 1 + 'px',
+                }}
+              />
+            ))}
+          </div>
 
           {/* Focus Controls Overlay */}
           <div className="relative z-10 flex flex-col items-center w-full max-w-5xl px-4 h-screen justify-center">
@@ -116,12 +152,14 @@ const FocusMode: React.FC<FocusModeProps> = ({ isActive, onClose }) => {
                   <p className="text-[10px] text-blue-300/60 tracking-wider">SYSTEM ONLINE</p>
                 </div>
               </div>
-              <button
-                onClick={onClose}
-                className="p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all hover:rotate-90 group"
-              >
-                <X className="w-5 h-5 text-white/70 group-hover:text-white" />
-              </button>
+              {!isRunning && (
+                <button
+                  onClick={onClose}
+                  className="p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all hover:rotate-90 group"
+                >
+                  <X className="w-5 h-5 text-white/70 group-hover:text-white" />
+                </button>
+              )}
             </motion.div>
 
             {/* Main Timer Interface */}
@@ -177,12 +215,9 @@ const FocusMode: React.FC<FocusModeProps> = ({ isActive, onClose }) => {
                   <div className="absolute inset-0 flex flex-col items-center justify-center z-20">
                     <motion.div
                       className="text-[120px] font-thin text-white tracking-tighter leading-none tabular-nums drop-shadow-2xl"
-                      animate={{
-                        textShadow: isRunning
-                          ? ["0 0 20px rgba(255,255,255,0.2)", "0 0 40px rgba(255,255,255,0.4)", "0 0 20px rgba(255,255,255,0.2)"]
-                          : "0 0 20px rgba(255,255,255,0.1)"
-                      }}
-                      transition={{ duration: 2, repeat: Infinity }}
+                      variants={breathingVariant}
+                      animate={isRunning ? ["inhale", "exhale"] : "exhale"}
+                      transition={{ repeat: Infinity, repeatType: "reverse" }}
                     >
                       {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
                     </motion.div>
@@ -257,7 +292,12 @@ const FocusMode: React.FC<FocusModeProps> = ({ isActive, onClose }) => {
                       : 'bg-white/5 border-white/10 text-white/60 hover:text-white'
                       }`}
                   >
-                    <Music className="w-6 h-6" />
+                    <div className="relative">
+                      <Music className="w-6 h-6" />
+                      {isMusicPlaying && (
+                        <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                      )}
+                    </div>
                   </button>
                 </motion.div>
 
@@ -268,31 +308,52 @@ const FocusMode: React.FC<FocusModeProps> = ({ isActive, onClose }) => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 20 }}
-                      className="w-full bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mt-4"
+                      className="w-full bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mt-4 relative overflow-hidden"
                     >
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-white/80 text-xs font-bold uppercase tracking-widest">Audio Stream</h3>
+                      {/* Visualizer Background */}
+                      {isMusicPlaying && (
+                        <div className="absolute inset-x-0 bottom-0 h-1/3 flex items-end justify-center gap-1 opacity-20 pointer-events-none">
+                          {[...Array(20)].map((_, i) => (
+                            <motion.div
+                              key={i}
+                              className="w-1 bg-white"
+                              animate={{ height: [5, Math.random() * 30 + 10, 5] }}
+                              transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.05 }}
+                            />
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-between mb-4 relative z-10">
+                        <h3 className="text-white/80 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                          Audio Stream
+                          {isMusicPlaying && <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />}
+                        </h3>
                         <button onClick={toggleMusic} className="text-white/60 hover:text-white">
                           {isMusicPlaying ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
                         </button>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 mb-4">
+                      <div className="grid grid-cols-2 gap-2 mb-4 relative z-10">
                         {ambientTracks.map((track, index) => (
                           <button
                             key={track.name}
-                            onClick={() => setSelectedTrack(index)}
-                            className={`p-3 rounded-lg text-left transition-all border ${selectedTrack === index
+                            onClick={() => {
+                              setSelectedTrack(index);
+                              if (!isMusicPlaying) setIsMusicPlaying(true);
+                            }}
+                            className={`p-3 rounded-lg text-left transition-all border group relative overflow-hidden ${selectedTrack === index
                               ? 'bg-white/10 border-white/20 text-white'
                               : 'bg-transparent border-transparent text-white/40 hover:bg-white/5'
                               }`}
                           >
-                            <span className="text-xs font-medium">{track.name}</span>
+                            <div className={`absolute left-0 top-0 bottom-0 w-1 transition-colors ${selectedTrack === index ? 'bg-' + track.color : 'bg-transparent'}`} style={{ backgroundColor: selectedTrack === index ? track.color : undefined }} />
+                            <span className="text-xs font-medium relative z-10 pl-2">{track.name}</span>
                           </button>
                         ))}
                       </div>
 
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-4 relative z-10">
                         <Volume2 className="w-3 h-3 text-white/40" />
                         <input
                           type="range"
@@ -312,12 +373,15 @@ const FocusMode: React.FC<FocusModeProps> = ({ isActive, onClose }) => {
 
           {/* Hidden YouTube iframe for ambient music - audio only */}
           {isMusicPlaying && (
-            <iframe
-              style={{ display: 'none' }}
-              src={`https://www.youtube.com/embed/${ambientTracks[selectedTrack].videoId}?autoplay=1&loop=1&playlist=${ambientTracks[selectedTrack].videoId}&volume=${volume}`}
-              allow="autoplay"
-              title="Ambient Music"
-            />
+            <div className="absolute opacity-0 pointer-events-none w-1 h-1 overflow-hidden">
+              <iframe
+                width="1"
+                height="1"
+                src={`https://www.youtube.com/embed/${ambientTracks[selectedTrack].videoId}?autoplay=1&loop=1&playlist=${ambientTracks[selectedTrack].videoId}&controls=0&showinfo=0&modestbranding=1`}
+                allow="autoplay; encrypted-media"
+                title="Ambient Music"
+              />
+            </div>
           )}
         </motion.div>
       )}

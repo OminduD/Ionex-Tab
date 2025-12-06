@@ -395,7 +395,7 @@ const App: React.FC = () => {
         {/* Virtual Pet */}
         <VirtualPet
           theme={settings.theme}
-          enabled={settings.showVirtualPet ?? false}
+          enabled={(settings.showVirtualPet ?? false) && !isFocusMode}
         />
 
         {/* Fullscreen Animation */}

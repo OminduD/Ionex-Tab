@@ -38,13 +38,13 @@ export const SearchSuggestions: React.FC<Props> = ({ query, onSelect, show }) =>
   // Save search to recent
   const saveToRecent = (search: string) => {
     if (!search.trim()) return;
-    
+
     const recent = getRecentSearches();
     const updated = [search, ...recent.filter(s => s !== search)].slice(0, MAX_RECENT);
     localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
   };
 
-  // Fetch suggestions from Google
+  // Fetch suggestions from DuckDuckGo (CORS-friendly)
   const fetchSuggestions = async (searchQuery: string) => {
     if (!searchQuery.trim()) {
       // Show recent searches when query is empty
@@ -62,27 +62,28 @@ export const SearchSuggestions: React.FC<Props> = ({ query, onSelect, show }) =>
     setLoading(true);
 
     try {
-      // Use Google Suggest API
+      // Use DuckDuckGo AC API
       const response = await fetch(
-        `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(searchQuery)}`,
+        `https://duckduckgo.com/ac/?q=${encodeURIComponent(searchQuery)}&type=list`,
         { signal: abortControllerRef.current.signal }
       );
 
       if (!response.ok) throw new Error('Failed to fetch suggestions');
 
       const data = await response.json();
-      const fetchedSuggestions = data[1] || [];
+      // DuckDuckGo returns: [{ phrase: "..." }, ...]
+      const fetchedSuggestions = data.map((item: any) => item.phrase);
 
       // Combine with recent searches that match
-      const recent = getRecentSearches().filter(s => 
+      const recent = getRecentSearches().filter(s =>
         s.toLowerCase().includes(searchQuery.toLowerCase())
       );
 
       const combined: Suggestion[] = [
         ...recent.map(text => ({ text, type: 'recent' as const })),
-        ...fetchedSuggestions.slice(0, 8).map((text: string) => ({ 
-          text, 
-          type: 'suggestion' as const 
+        ...fetchedSuggestions.slice(0, 8).map((text: string) => ({
+          text,
+          type: 'suggestion' as const
         }))
       ];
 
@@ -129,7 +130,7 @@ export const SearchSuggestions: React.FC<Props> = ({ query, onSelect, show }) =>
       switch (e.key) {
         case 'ArrowDown':
           e.preventDefault();
-          setSelectedIndex(prev => 
+          setSelectedIndex(prev =>
             prev < suggestions.length - 1 ? prev + 1 : prev
           );
           break;
@@ -187,7 +188,7 @@ export const SearchSuggestions: React.FC<Props> = ({ query, onSelect, show }) =>
             Loading suggestions...
           </div>
         )}
-        
+
         <div className="max-h-96 overflow-y-auto">
           {suggestions.map((suggestion, index) => (
             <motion.button
@@ -197,11 +198,10 @@ export const SearchSuggestions: React.FC<Props> = ({ query, onSelect, show }) =>
               transition={{ delay: index * 0.03 }}
               onClick={() => handleSelect(suggestion.text)}
               onMouseEnter={() => setSelectedIndex(index)}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
-                selectedIndex === index
+              className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${selectedIndex === index
                   ? 'bg-white/20'
                   : 'hover:bg-white/10'
-              }`}
+                }`}
             >
               {getIcon(suggestion.type)}
               <span className="flex-1 text-white">
