@@ -36,6 +36,9 @@ const FullscreenAnimation = React.lazy(() => import('./components/FullscreenAnim
 const SystemStatsWidget = React.lazy(() => import('./components/widgets/SystemStatsWidget'));
 const GitHubWidget = React.lazy(() => import('./components/widgets/GitHubWidget'));
 const CryptoWidget = React.lazy(() => import('./components/widgets/CryptoWidget'));
+const AchievementsWidget = React.lazy(() => import('./components/widgets/AchievementsWidget'));
+import { GamificationProvider } from './context/GamificationContext';
+import { LevelProgress } from './components/gamification/LevelProgress';
 
 // Default API key for weather (free tier OpenWeatherMap)
 const DEFAULT_WEATHER_API_KEY = 'bd5e378503939ddaee76f12ad7a97608';
@@ -160,6 +163,9 @@ const App: React.FC = () => {
             musicPlayer: { x: 800, y: 500 },
             analogClock: { x: 200, y: 200 },
             systemStats: { x: 100, y: 500 },
+            github: { x: 800, y: 100 },
+            crypto: { x: 100, y: 100 },
+            achievements: { x: 900, y: 500 },
         },
         shortcuts: [
             { id: '1', name: 'Gmail', url: 'https://mail.google.com', icon: 'gmail' },
@@ -244,20 +250,23 @@ const App: React.FC = () => {
 
     // Migration: Ensure new widgets are present in settings
     useEffect(() => {
-        if (settings.widgets && typeof settings.widgets.systemStats === 'undefined') {
+        if (settings.widgets && (typeof settings.widgets.systemStats === 'undefined' || typeof settings.widgets.achievements === 'undefined')) {
             setSettings((prev: Settings) => ({
                 ...prev,
                 widgets: {
                     ...prev.widgets,
-                    systemStats: false
+                    systemStats: prev.widgets.systemStats ?? false,
+                    achievements: prev.widgets.achievements ?? false,
                 },
                 widgetSizes: {
                     ...prev.widgetSizes,
-                    systemStats: 'medium'
+                    systemStats: prev.widgetSizes.systemStats ?? 'medium',
+                    achievements: prev.widgetSizes.achievements ?? 'medium',
                 },
                 widgetPositions: {
                     ...prev.widgetPositions,
-                    systemStats: { x: 100, y: 500 }
+                    systemStats: prev.widgetPositions.systemStats ?? { x: 100, y: 500 },
+                    achievements: prev.widgetPositions.achievements ?? { x: 900, y: 500 },
                 }
             }));
         }
@@ -312,213 +321,227 @@ const App: React.FC = () => {
         systemStats: <SystemStatsWidget theme={settings.theme} size={settings.widgetSizes.systemStats} />,
         github: <GitHubWidget username={settings.githubUsername} theme={settings.theme} size={settings.widgetSizes.github || 'medium'} />,
         crypto: <CryptoWidget coins={settings.cryptoCoins} theme={settings.theme} size={settings.widgetSizes.crypto || 'medium'} />,
+        achievements: <AchievementsWidget theme={settings.theme} />,
     };
 
     return (
-        <div className={`theme-${settings.theme} font-sans`}>
-            <motion.div
-                className={`h-screen w-screen text-white bg-cover bg-center bg-fixed overflow-hidden relative ${!settings.wallpaperFile && !settings.wallpaperUrl ? 'bg-theme-gradient' : ''}`}
-                style={{
-                    backgroundImage: settings.wallpaperFile || settings.wallpaperUrl ? `url(${settings.wallpaperFile || settings.wallpaperUrl})` : undefined,
-                    x: settings.enableParallax ? bgX : 0,
-                    y: settings.enableParallax ? bgY : 0,
-                    scale: settings.enableParallax ? 1.05 : 1 // Scale up slightly to avoid edges
-                }}
-            >
-                {/* Global Mouse Trail */}
-                <MouseTrail />
-
-                {/* Zen Mode Exit Button (Only visible in Zen Mode) */}
-                {isZenMode && (
-                    <motion.button
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        onClick={() => setIsZenMode(false)}
-                        className="fixed top-6 right-6 z-[60] px-4 py-2 bg-black/50 backdrop-blur-md rounded-full border border-white/20 text-white/80 hover:bg-white/10 transition-all font-medium text-sm tracking-wider uppercase"
-                    >
-                        Exit Zen Mode
-                    </motion.button>
-                )}
-
-                {/* Top-Left: Logo/Brand & Focus Button */}
+        <GamificationProvider>
+            <div className={`theme-${settings.theme} font-sans`}>
                 <motion.div
-                    className="fixed top-6 left-6 z-50 flex items-center gap-3"
-                    animate={{ opacity: isZenMode ? 0 : 1, pointerEvents: isZenMode ? 'none' : 'auto' }}
+                    className={`h-screen w-screen text-white bg-cover bg-center bg-fixed overflow-hidden relative ${!settings.wallpaperFile && !settings.wallpaperUrl ? 'bg-theme-gradient' : ''}`}
+                    style={{
+                        backgroundImage: settings.wallpaperFile || settings.wallpaperUrl ? `url(${settings.wallpaperFile || settings.wallpaperUrl})` : undefined,
+                        x: settings.enableParallax ? bgX : 0,
+                        y: settings.enableParallax ? bgY : 0,
+                        scale: settings.enableParallax ? 1.05 : 1 // Scale up slightly to avoid edges
+                    }}
                 >
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        style={{ perspective: 1000 }}
-                    >
-                        <LogoButton onClick={() => setShowFullscreenAnimation(true)} />
-                    </motion.div>
+                    {/* Global Mouse Trail */}
+                    <MouseTrail />
 
-                    {/* Focus Mode Button */}
-                    <motion.button
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.1 }}
-                        onClick={() => setIsFocusMode(true)}
-                        className="p-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 hover:bg-black/40 transition-all hover:scale-110 group"
-                        aria-label="Focus Mode"
-                        title="Focus Mode"
-                    >
-                        <Zap className="w-6 h-6 icon-color group-hover:rotate-12 transition-transform duration-300" />
-                    </motion.button>
-
-                    {/* Zen Mode Toggle */}
-                    <motion.button
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.2 }}
-                        onClick={() => setIsZenMode(true)}
-                        className="p-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 hover:bg-black/40 transition-all hover:scale-110 group"
-                        aria-label="Zen Mode"
-                        title="Zen Mode"
-                    >
-                        <div className="w-6 h-6 flex items-center justify-center">
-                            <div className="w-4 h-4 rounded-full border-2 border-white/60 group-hover:border-white transition-colors" />
-                        </div>
-                    </motion.button>
-                </motion.div>
-
-                {/* Top-Right: Settings Button */}
-                <motion.div
-                    className="fixed top-6 right-6 z-50"
-                    animate={{ opacity: isZenMode ? 0 : 1, pointerEvents: isZenMode ? 'none' : 'auto' }}
-                >
-                    <motion.button
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        onClick={() => setIsSettingsOpen(true)}
-                        className="p-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 hover:bg-black/40 transition-all hover:scale-110"
-                        aria-label="Settings"
-                    >
-                        <SettingsIcon className="w-6 h-6 icon-color" />
-                    </motion.button>
-                </motion.div>
-
-                {/* Bottom-Left: AI Tools Button */}
-                <motion.div animate={{ opacity: isZenMode ? 0 : 1, pointerEvents: isZenMode ? 'none' : 'auto' }}>
-                    <AIToolsButton />
-                </motion.div>
-
-                {/* Center: Greeting + Search Bar (Fixed Position) */}
-                <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 w-full max-w-4xl px-6">
-                    <motion.div style={{ x: settings.enableParallax ? fgX : 0, y: settings.enableParallax ? fgY : 0 }}>
-                        <Greeting userName={settings.userName} theme={settings.theme} />
-
-                        <SearchBar
-                            selectedEngine={settings.searchEngine}
-                            onEngineChange={(engine) => setSettings({ ...settings, searchEngine: engine })}
-                        />
-
-                        {/* Quote and IP Address */}
-                        <motion.div animate={{ opacity: isZenMode ? 0 : 1 }}>
-                            <QuoteAndIP
-                                showQuotes={settings.showQuotes ?? settings.showQuotesAndIP ?? true}
-                                showIP={settings.showIP ?? settings.showQuotesAndIP ?? true}
-                            />
-                        </motion.div>
-                    </motion.div>
-                </div>
-
-                {/* Bottom: Quick Links Bar (Fixed at Bottom) */}
-                <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40 w-full max-w-6xl px-6">
-                    <motion.div
-                        animate={{ opacity: isZenMode ? 0 : 1, pointerEvents: isZenMode ? 'none' : 'auto' }}
-                        style={{ x: settings.enableParallax ? fgX : 0, y: settings.enableParallax ? fgY : 0 }}
-                    >
-                        <QuickLinks
-                            shortcuts={settings.shortcuts}
-                            theme={settings.theme}
-                        />
-                    </motion.div>
-                </div>
-
-                {/* Draggable Widgets Area */}
-                <motion.div
-                    className="absolute inset-0 overflow-hidden"
-                    animate={{ opacity: isZenMode ? 0 : 1, pointerEvents: isZenMode ? 'none' : 'auto' }}
-                    style={{ x: settings.enableParallax ? fgX : 0, y: settings.enableParallax ? fgY : 0 }}
-                >
-                    <React.Suspense fallback={<div className="text-center">Loading...</div>}>
-                        {Object.entries(settings.widgets).map(([id, enabled]) => {
-                            const widgetId = id as WidgetId;
-                            // Skip aiAssistant as it's now a sidebar
-                            if (!enabled || !widgetMap[widgetId] || widgetId === 'aiAssistant') return null;
-
-                            const position = settings.widgetPositions[widgetId] || { x: 100, y: 100 };
-
-                            return (
-                                <DraggableWidget
-                                    key={widgetId}
-                                    id={widgetId}
-                                    position={position}
-                                    onPositionChange={(x: number, y: number) => updateWidgetPosition(widgetId, x, y)}
-                                    size={settings.widgetSizes[widgetId] || 'small'}
-                                >
-                                    {widgetMap[widgetId]}
-                                </DraggableWidget>
-                            );
-                        })}
-                    </React.Suspense>
-                </motion.div>
-
-                {/* AI Chat Sidebar & Toggle */}
-                {settings.widgets.aiAssistant && (
-                    <>
-                        {/* Toggle Button */}
+                    {/* Zen Mode Exit Button (Only visible in Zen Mode) */}
+                    {isZenMode && (
                         <motion.button
-                            initial={{ x: 100, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={() => setIsAIChatOpen(true)}
-                            className={`fixed right-0 top-1/2 -translate-y-1/2 z-40 p-3 bg-white/10 backdrop-blur-md border-l border-y border-white/20 rounded-l-2xl shadow-lg transition-all hover:bg-white/20 ${isAIChatOpen ? 'translate-x-full opacity-0 pointer-events-none' : ''}`}
+                            initial={{ opacity: 0, scale: 0.5 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            onClick={() => setIsZenMode(false)}
+                            className="fixed top-6 right-6 z-[60] px-4 py-2 bg-black/50 backdrop-blur-md rounded-full border border-white/20 text-white/80 hover:bg-white/10 transition-all font-medium text-sm tracking-wider uppercase"
                         >
-                            <div className="writing-vertical-rl text-white/80 text-xs font-bold tracking-widest py-2 flex items-center gap-2" style={{ writingMode: 'vertical-rl' }}>
-                                <span>AI CHAT</span>
+                            Exit Zen Mode
+                        </motion.button>
+                    )}
+
+                    {/* Top-Left: Logo/Brand & Focus Button */}
+                    <motion.div
+                        className="fixed top-6 left-6 z-50 flex items-center gap-3"
+                        animate={{ opacity: isZenMode ? 0 : 1, pointerEvents: isZenMode ? 'none' : 'auto' }}
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            style={{ perspective: 1000 }}
+                        >
+                            <LogoButton onClick={() => setShowFullscreenAnimation(true)} />
+                        </motion.div>
+
+                        {/* Focus Mode Button */}
+                        <motion.button
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.1 }}
+                            onClick={() => setIsFocusMode(true)}
+                            className="p-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 hover:bg-black/40 transition-all hover:scale-110 group"
+                            aria-label="Focus Mode"
+                            title="Focus Mode"
+                        >
+                            <Zap className="w-6 h-6 icon-color group-hover:rotate-12 transition-transform duration-300" />
+                        </motion.button>
+
+                        {/* Zen Mode Toggle */}
+                        <motion.button
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.2 }}
+                            onClick={() => setIsZenMode(true)}
+                            className="p-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 hover:bg-black/40 transition-all hover:scale-110 group"
+                            aria-label="Zen Mode"
+                            title="Zen Mode"
+                        >
+                            <div className="w-6 h-6 flex items-center justify-center">
+                                <div className="w-4 h-4 rounded-full border-2 border-white/60 group-hover:border-white transition-colors" />
                             </div>
                         </motion.button>
 
-                        <AIChatSidebar
-                            isOpen={isAIChatOpen}
-                            onClose={() => setIsAIChatOpen(false)}
-                            groqKey={settings.apiKeys.groq || ''}
-                        />
-                    </>
-                )}
+                        {/* Level Progress */}
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.3 }}
+                        >
+                            <LevelProgress />
+                        </motion.div>
+                    </motion.div>
 
-                {/* Focus Mode Overlay */}
-                <React.Suspense fallback={<div>Loading...</div>}>
-                    <FocusMode isActive={isFocusMode} onClose={() => setIsFocusMode(false)} />
-                </React.Suspense>
+                    {/* Top-Right: Settings Button */}
+                    <motion.div
+                        className="fixed top-6 right-6 z-50"
+                        animate={{ opacity: isZenMode ? 0 : 1, pointerEvents: isZenMode ? 'none' : 'auto' }}
+                    >
+                        <motion.button
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            onClick={() => setIsSettingsOpen(true)}
+                            className="p-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 hover:bg-black/40 transition-all hover:scale-110"
+                            aria-label="Settings"
+                        >
+                            <SettingsIcon className="w-6 h-6 icon-color" />
+                        </motion.button>
+                    </motion.div>
 
-                {/* Settings Panel */}
-                <SettingsPanel
-                    settings={settings}
-                    setSettings={setSettings}
-                    isVisible={isSettingsOpen}
-                    onClose={() => setIsSettingsOpen(false)}
-                />
+                    {/* Bottom-Left: AI Tools Button */}
+                    <motion.div animate={{ opacity: isZenMode ? 0 : 1, pointerEvents: isZenMode ? 'none' : 'auto' }}>
+                        <AIToolsButton />
+                    </motion.div>
 
-                {/* Virtual Pet */}
-                <VirtualPet
-                    theme={settings.theme}
-                    enabled={(settings.showVirtualPet ?? false) && !isFocusMode}
-                />
 
-                {/* Fullscreen Animation */}
-                <React.Suspense fallback={null}>
-                    <FullscreenAnimation
-                        theme={settings.theme}
-                        isVisible={showFullscreenAnimation}
-                        onComplete={() => setShowFullscreenAnimation(false)}
+
+                    {/* Center: Greeting + Search Bar (Fixed Position) */}
+                    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 w-full max-w-4xl px-6">
+                        <motion.div style={{ x: settings.enableParallax ? fgX : 0, y: settings.enableParallax ? fgY : 0 }}>
+                            <Greeting userName={settings.userName} theme={settings.theme} />
+
+                            <SearchBar
+                                selectedEngine={settings.searchEngine}
+                                onEngineChange={(engine) => setSettings({ ...settings, searchEngine: engine })}
+                            />
+
+                            {/* Quote and IP Address */}
+                            <motion.div animate={{ opacity: isZenMode ? 0 : 1 }}>
+                                <QuoteAndIP
+                                    showQuotes={settings.showQuotes ?? settings.showQuotesAndIP ?? true}
+                                    showIP={settings.showIP ?? settings.showQuotesAndIP ?? true}
+                                />
+                            </motion.div>
+                        </motion.div>
+                    </div>
+
+                    {/* Bottom: Quick Links Bar (Fixed at Bottom) */}
+                    <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40 w-full max-w-6xl px-6">
+                        <motion.div
+                            animate={{ opacity: isZenMode ? 0 : 1, pointerEvents: isZenMode ? 'none' : 'auto' }}
+                            style={{ x: settings.enableParallax ? fgX : 0, y: settings.enableParallax ? fgY : 0 }}
+                        >
+                            <QuickLinks
+                                shortcuts={settings.shortcuts}
+                                theme={settings.theme}
+                            />
+                        </motion.div>
+                    </div>
+
+                    {/* Draggable Widgets Area */}
+                    <motion.div
+                        className="absolute inset-0 overflow-hidden"
+                        animate={{ opacity: isZenMode ? 0 : 1, pointerEvents: isZenMode ? 'none' : 'auto' }}
+                        style={{ x: settings.enableParallax ? fgX : 0, y: settings.enableParallax ? fgY : 0 }}
+                    >
+                        <React.Suspense fallback={<div className="text-center">Loading...</div>}>
+                            {Object.entries(settings.widgets).map(([id, enabled]) => {
+                                const widgetId = id as WidgetId;
+                                // Skip aiAssistant as it's now a sidebar
+                                if (!enabled || !widgetMap[widgetId] || widgetId === 'aiAssistant') return null;
+
+                                const position = settings.widgetPositions[widgetId] || { x: 100, y: 100 };
+
+                                return (
+                                    <DraggableWidget
+                                        key={widgetId}
+                                        id={widgetId}
+                                        position={position}
+                                        onPositionChange={(x: number, y: number) => updateWidgetPosition(widgetId, x, y)}
+                                        size={settings.widgetSizes[widgetId] || 'small'}
+                                    >
+                                        {widgetMap[widgetId]}
+                                    </DraggableWidget>
+                                );
+                            })}
+                        </React.Suspense>
+                    </motion.div>
+
+                    {/* AI Chat Sidebar & Toggle */}
+                    {settings.widgets.aiAssistant && (
+                        <>
+                            {/* Toggle Button */}
+                            <motion.button
+                                initial={{ x: 100, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1 }}
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={() => setIsAIChatOpen(true)}
+                                className={`fixed right-0 top-1/2 -translate-y-1/2 z-40 p-3 bg-white/10 backdrop-blur-md border-l border-y border-white/20 rounded-l-2xl shadow-lg transition-all hover:bg-white/20 ${isAIChatOpen ? 'translate-x-full opacity-0 pointer-events-none' : ''}`}
+                            >
+                                <div className="writing-vertical-rl text-white/80 text-xs font-bold tracking-widest py-2 flex items-center gap-2" style={{ writingMode: 'vertical-rl' }}>
+                                    <span>AI CHAT</span>
+                                </div>
+                            </motion.button>
+
+                            <AIChatSidebar
+                                isOpen={isAIChatOpen}
+                                onClose={() => setIsAIChatOpen(false)}
+                                groqKey={settings.apiKeys.groq || ''}
+                            />
+                        </>
+                    )}
+
+                    {/* Focus Mode Overlay */}
+                    <React.Suspense fallback={<div>Loading...</div>}>
+                        <FocusMode isActive={isFocusMode} onClose={() => setIsFocusMode(false)} />
+                    </React.Suspense>
+
+                    {/* Settings Panel */}
+                    <SettingsPanel
+                        settings={settings}
+                        setSettings={setSettings}
+                        isVisible={isSettingsOpen}
+                        onClose={() => setIsSettingsOpen(false)}
                     />
-                </React.Suspense>
-            </motion.div>
-        </div>
+
+                    {/* Virtual Pet */}
+                    <VirtualPet
+                        theme={settings.theme}
+                        enabled={(settings.showVirtualPet ?? false) && !isFocusMode}
+                    />
+
+                    {/* Fullscreen Animation */}
+                    <React.Suspense fallback={null}>
+                        <FullscreenAnimation
+                            theme={settings.theme}
+                            isVisible={showFullscreenAnimation}
+                            onComplete={() => setShowFullscreenAnimation(false)}
+                        />
+                    </React.Suspense>
+                </motion.div>
+            </div>
+        </GamificationProvider>
     );
 };
 
