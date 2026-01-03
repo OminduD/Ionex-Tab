@@ -242,12 +242,17 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ groqKey, size = 'medium', t
                 )}
 
                 <div
-                  className={`max-w-[85%] rounded-2xl p-3 shadow-lg relative ${message.role === 'user'
+                  className={`max-w-[85%] rounded-2xl p-3 shadow-lg relative overflow-hidden ${message.role === 'user'
                     ? 'bg-gradient-to-br from-primary via-accent to-secondary text-white border border-white/20'
                     : 'bg-white/10 backdrop-blur-md text-white/90 border border-white/10'
                     }`}
                 >
-                  <div className={`markdown-content leading-relaxed ${isSmall ? 'text-xs' : 'text-sm'}`}>
+                  {/* Processing Glow for Assistant */}
+                  {message.role === 'assistant' && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 opacity-50 animate-pulse pointer-events-none" />
+                  )}
+
+                  <div className={`markdown-content leading-relaxed relative z-10 ${isSmall ? 'text-xs' : 'text-sm'}`}>
                     {message.role === 'assistant' ? (
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
