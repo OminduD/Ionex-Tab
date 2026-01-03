@@ -20,7 +20,7 @@ const Toggle = ({ checked, onChange, label, themeColor }: { checked: boolean; on
         {label && <span className="font-medium text-blue-100/80 group-hover:opacity-80 transition-colors tracking-wide" style={{ color: themeColor ? `${themeColor}CC` : undefined }}>{label}</span>}
         <div className="relative w-12 h-6">
             {/* Track */}
-            <div 
+            <div
                 className={`absolute inset-0 rounded-sm skew-x-[-10deg] transition-all duration-300 border ${!checked ? 'bg-slate-800/50 border-slate-600/50' : ''}`}
                 style={checked ? {
                     backgroundColor: `${themeColor}33`,
@@ -41,17 +41,7 @@ const Toggle = ({ checked, onChange, label, themeColor }: { checked: boolean; on
     </div>
 );
 
-// Theme Definitions
-const themes: Record<string, { name: string; class: string; wallpaper: string; colors: string[] }> = {
-    aurora: { name: 'Aurora', class: 'bg-gradient-to-br from-purple-600 to-blue-500', wallpaper: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2070&auto=format&fit=crop', colors: ['#9333ea', '#3b82f6', '#6366f1'] },
-    sunset: { name: 'Sunset', class: 'bg-gradient-to-br from-amber-500 to-rose-600', wallpaper: 'https://images.unsplash.com/photo-1495567720989-cebdbdd97913?q=80&w=2070&auto=format&fit=crop', colors: ['#f59e0b', '#f43f5e', '#e11d48'] },
-    forest: { name: 'Forest', class: 'bg-gradient-to-br from-lime-600 to-emerald-700', wallpaper: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop', colors: ['#65a30d', '#059669', '#047857'] },
-    ocean: { name: 'Ocean', class: 'bg-gradient-to-br from-sky-400 to-blue-700', wallpaper: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?q=80&w=2026&auto=format&fit=crop', colors: ['#38bdf8', '#1d4ed8', '#0369a1'] },
-    midnight: { name: 'Midnight', class: 'bg-gradient-to-br from-gray-900 to-violet-900', wallpaper: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070&auto=format&fit=crop', colors: ['#a78bfa', '#7c3aed', '#8b5cf6'] },
-    neon: { name: 'Neon', class: 'bg-gradient-to-br from-fuchsia-500 to-cyan-500', wallpaper: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=2187&auto=format&fit=crop', colors: ['#d946ef', '#06b6d4', '#8b5cf6'] },
-    cherry: { name: 'Cherry', class: 'bg-gradient-to-br from-pink-600 to-red-700', wallpaper: 'https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?q=80&w=2070&auto=format&fit=crop', colors: ['#db2777', '#dc2626', '#be123c'] },
-    mint: { name: 'Mint', class: 'bg-gradient-to-br from-teal-400 to-green-600', wallpaper: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?q=80&w=2070&auto=format&fit=crop', colors: ['#2dd4bf', '#16a34a', '#14b8a6'] },
-};
+import { themes } from '../utils/themes';
 
 type TabId = 'personal' | 'themes' | 'wallpaper' | 'clock' | 'widgets' | 'shortcuts' | 'api';
 
@@ -147,41 +137,41 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                         onClick={e => e.stopPropagation()}
                     >
                         {/* Decorative Corner Accents */}
-                        <motion.div 
+                        <motion.div
                             className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 rounded-tl-lg pointer-events-none"
                             style={{ borderColor: `${themeColor}80` }}
                             animate={{ opacity: [0.5, 1, 0.5] }}
                             transition={{ duration: 3, repeat: Infinity }}
                         />
-                        <motion.div 
+                        <motion.div
                             className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 rounded-br-lg pointer-events-none"
                             style={{ borderColor: `${themeColorSecondary}80` }}
                             animate={{ opacity: [0.5, 1, 0.5] }}
                             transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
                         />
-                        <motion.div 
+                        <motion.div
                             className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 rounded-tr-lg pointer-events-none"
                             style={{ borderColor: `${themeColorAccent}50` }}
                         />
-                        <motion.div 
+                        <motion.div
                             className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 rounded-bl-lg pointer-events-none"
                             style={{ borderColor: `${themeColorAccent}50` }}
                         />
 
                         {/* Sidebar */}
                         <div className="w-full md:w-64 bg-black/20 border-b md:border-b-0 md:border-r flex flex-col relative" style={{ borderColor: `${themeColor}1A` }}>
-                            <div className="p-6 border-b bg-gradient-to-r to-transparent" style={{ 
+                            <div className="p-6 border-b bg-gradient-to-r to-transparent" style={{
                                 borderColor: `${themeColor}1A`,
                                 background: `linear-gradient(to right, ${themeColor}1A, transparent)`
                             }}>
                                 <div className="flex items-center gap-3">
-                                    <motion.div 
+                                    <motion.div
                                         className="relative w-10 h-10 flex items-center justify-center rounded-lg border"
-                                        style={{ 
+                                        style={{
                                             backgroundColor: `${themeColor}1A`,
                                             borderColor: `${themeColor}50`
                                         }}
-                                        animate={{ 
+                                        animate={{
                                             boxShadow: [
                                                 `0 0 0px ${themeColor}00`,
                                                 `0 0 20px ${themeColor}80`,
@@ -216,16 +206,16 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                                 <motion.div
                                                     layoutId="activeTab"
                                                     className="absolute inset-0 bg-gradient-to-r to-transparent border-l-2"
-                                                    style={{ 
+                                                    style={{
                                                         background: `linear-gradient(to right, ${themeColor}1A, transparent)`,
                                                         borderColor: themeColor
                                                     }}
                                                     transition={{ duration: 0.3 }}
                                                 />
                                             )}
-                                            <Icon 
-                                                className={`w-5 h-5 relative z-10`} 
-                                                style={{ 
+                                            <Icon
+                                                className={`w-5 h-5 relative z-10`}
+                                                style={{
                                                     filter: isActive ? `drop-shadow(0 0 5px ${themeColor}80)` : undefined
                                                 }}
                                             />
@@ -236,7 +226,7 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                             </div>
 
                             <div className="p-4 border-t text-center" style={{ borderColor: `${themeColor}1A` }}>
-                                <div className="text-[10px] text-slate-500 uppercase tracking-widest">Ionex Tab v3.0.0 by OminduD</div>
+                                <div className="text-[10px] text-slate-500 uppercase tracking-widest">Ionex Tab v3.0.1 by OminduD</div>
                             </div>
                         </div>
 
@@ -246,13 +236,13 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                             <div className="p-6 border-b flex items-center justify-between bg-black/20" style={{ borderColor: `${themeColor}1A` }}>
                                 <div>
                                     <h3 className="text-xl font-bold text-white tracking-wide flex items-center gap-2">
-                                        <motion.span 
+                                        <motion.span
                                             style={{ color: themeColor }}
                                             animate={{ opacity: [0.5, 1, 0.5] }}
                                             transition={{ duration: 2, repeat: Infinity }}
                                         >/</motion.span>
                                         {tabs.find(t => t.id === activeTab)?.label.toUpperCase()}
-                                        <motion.span 
+                                        <motion.span
                                             style={{ color: themeColor }}
                                             animate={{ opacity: [0.5, 1, 0.5] }}
                                             transition={{ duration: 2, repeat: Infinity, delay: 1 }}
@@ -351,6 +341,13 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                                     </div>
                                                     <Toggle checked={localSettings.autoThemeFromWallpaper || false} onChange={(c) => setLocalSettings({ ...localSettings, autoThemeFromWallpaper: c })} themeColor={themeColor} />
                                                 </div>
+                                                <div className="flex items-center justify-between pb-4 border-b border-white/5">
+                                                    <div>
+                                                        <h4 className="font-bold uppercase text-sm tracking-wider" style={{ color: themeColor }}>Parallax Effect</h4>
+                                                        <p className="text-xs text-slate-500">3D depth animation on mouse move</p>
+                                                    </div>
+                                                    <Toggle checked={localSettings.enableParallax || false} onChange={(c) => setLocalSettings({ ...localSettings, enableParallax: c })} themeColor={themeColor} />
+                                                </div>
                                                 <div className="grid md:grid-cols-2 gap-6">
                                                     <div>
                                                         <label className="text-xs text-slate-400 uppercase tracking-wide block mb-2">Upload File</label>
@@ -407,37 +404,65 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
 
                                         {activeTab === 'widgets' && (
                                             <div className="grid gap-4">
-                                                {Object.entries(localSettings.widgets).map(([key, enabled]) => (
-                                                    <div key={key} className={`border rounded-lg p-4 transition-all ${enabled ? '' : 'bg-slate-900/30 border-slate-800'}`} style={enabled ? { backgroundColor: `${themeColor}1A`, borderColor: `${themeColor}4D` } : undefined}>
-                                                        <div className="flex items-center justify-between mb-3">
-                                                            <div className="flex items-center gap-3">
-                                                                <div className={`p-2 rounded ${enabled ? '' : 'bg-slate-800 text-slate-500'}`} style={enabled ? { backgroundColor: `${themeColor}33`, color: themeColor } : undefined}>
-                                                                    <LayoutGrid className="w-4 h-4" />
-                                                                </div>
-                                                                <span className="font-bold text-slate-200 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                                                            </div>
-                                                            <Toggle checked={Boolean(enabled)} onChange={(c) => setLocalSettings({ ...localSettings, widgets: { ...localSettings.widgets, [key]: c } })} themeColor={themeColor} />
-                                                        </div>
-                                                        {enabled && key !== 'aiAssistant' && (
-                                                            <div className="flex gap-2 pl-11">
-                                                                {(['small', 'medium', 'large'] as WidgetSize[]).map((size) => (
-                                                                    <button
-                                                                        key={size}
-                                                                        onClick={() => setLocalSettings({ ...localSettings, widgetSizes: { ...localSettings.widgetSizes, [key]: size } })}
-                                                                        className={`text-[10px] uppercase px-3 py-1 rounded border transition-all ${localSettings.widgetSizes[key] === size ? '' : 'border-slate-700 text-slate-500 hover:border-slate-500'}`}
-                                                                        style={localSettings.widgetSizes[key] === size ? {
-                                                                            backgroundColor: `${themeColor}33`,
-                                                                            borderColor: themeColor,
-                                                                            color: themeColor
-                                                                        } : undefined}
-                                                                    >
-                                                                        {size}
-                                                                    </button>
-                                                                ))}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                ))}
+                                                {(() => {
+                                                    const allWidgets: Record<string, boolean> = {
+                                                        clock: true, weather: true, calendar: true, todoList: true,
+                                                        aiAssistant: true, notes: true, appShortcuts: false,
+                                                        musicPlayer: false, newsFeed: true, analogClock: false,
+                                                        systemStats: false, github: false, crypto: false, ...localSettings.widgets
+                                                    };
+
+                                                    return (
+                                                        <motion.div
+                                                            className="grid gap-4"
+                                                            initial="hidden"
+                                                            animate="visible"
+                                                            variants={{
+                                                                visible: { transition: { staggerChildren: 0.05 } }
+                                                            }}
+                                                        >
+                                                            {Object.entries(allWidgets).map(([key, enabled]) => (
+                                                                <motion.div
+                                                                    key={key}
+                                                                    variants={{
+                                                                        hidden: { opacity: 0, y: 20 },
+                                                                        visible: { opacity: 1, y: 0 }
+                                                                    }}
+                                                                    className={`border rounded-lg p-4 transition-all ${enabled ? '' : 'bg-slate-900/30 border-slate-800'}`}
+                                                                    style={enabled ? { backgroundColor: `${themeColor}1A`, borderColor: `${themeColor}4D` } : undefined}
+                                                                >
+                                                                    <div className="flex items-center justify-between mb-3">
+                                                                        <div className="flex items-center gap-3">
+                                                                            <div className={`p-2 rounded ${enabled ? '' : 'bg-slate-800 text-slate-500'}`} style={enabled ? { backgroundColor: `${themeColor}33`, color: themeColor } : undefined}>
+                                                                                <LayoutGrid className="w-4 h-4" />
+                                                                            </div>
+                                                                            <span className="font-bold text-slate-200 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                                                                        </div>
+                                                                        <Toggle checked={Boolean(localSettings.widgets[key as keyof typeof localSettings.widgets] ?? false)} onChange={(c) => setLocalSettings({ ...localSettings, widgets: { ...localSettings.widgets, [key]: c } })} themeColor={themeColor} />
+                                                                    </div>
+                                                                    {enabled && key !== 'aiAssistant' && (
+                                                                        <div className="flex gap-2 pl-11">
+                                                                            {(['small', 'medium', 'large'] as WidgetSize[]).map((size) => (
+                                                                                <button
+                                                                                    key={size}
+                                                                                    onClick={() => setLocalSettings({ ...localSettings, widgetSizes: { ...localSettings.widgetSizes, [key]: size } })}
+                                                                                    className={`text-[10px] uppercase px-3 py-1 rounded border transition-all ${localSettings.widgetSizes[key] === size ? '' : 'border-slate-700 text-slate-500 hover:border-slate-500'}`}
+                                                                                    style={localSettings.widgetSizes[key] === size ? {
+                                                                                        backgroundColor: `${themeColor}33`,
+                                                                                        borderColor: themeColor,
+                                                                                        color: themeColor
+                                                                                    } : undefined}
+                                                                                >
+                                                                                    {size}
+                                                                                </button>
+                                                                            ))}
+                                                                        </div>
+                                                                    )}
+                                                                </motion.div>
+                                                            ))}
+                                                        </motion.div>
+                                                    );
+                                                })()}
                                             </div>
                                         )}
 
@@ -488,6 +513,52 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                                         </div>
                                                     </div>
                                                 ))}
+
+                                                {/* GitHub Username Input */}
+                                                <div className="bg-slate-900/50 border border-slate-700/50 rounded-lg p-6 hover:border-cyan-500/30 transition-colors">
+                                                    <div className="flex items-center justify-between mb-4">
+                                                        <div className="flex items-center gap-3">
+                                                            <span className="text-xl">🐙</span>
+                                                            <div>
+                                                                <h4 className="font-bold text-white text-sm uppercase tracking-wide">GitHub Integration</h4>
+                                                                {localSettings.githubUsername && <span className="text-[10px] text-green-400 font-mono">● CONNECTED</span>}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="relative">
+                                                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                                                        <input
+                                                            type="text"
+                                                            value={localSettings.githubUsername || ''}
+                                                            onChange={(e) => setLocalSettings({ ...localSettings, githubUsername: e.target.value })}
+                                                            placeholder="GITHUB USERNAME"
+                                                            className="w-full bg-black/40 border border-slate-700 rounded pl-10 pr-4 py-3 text-white text-xs font-mono focus:border-cyan-500/50 outline-none transition-all"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                {/* Crypto Selection */}
+                                                <div className="bg-slate-900/50 border border-slate-700/50 rounded-lg p-6 hover:border-cyan-500/30 transition-colors">
+                                                    <div className="flex items-center justify-between mb-4">
+                                                        <div className="flex items-center gap-3">
+                                                            <span className="text-xl">🪙</span>
+                                                            <div>
+                                                                <h4 className="font-bold text-white text-sm uppercase tracking-wide">Crypto Watchlist</h4>
+                                                                <p className="text-[10px] text-slate-500">Comma separated IDs (e.g. bitcoin, ethereum)</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="relative">
+                                                        <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                                                        <input
+                                                            type="text"
+                                                            value={localSettings.cryptoCoins?.join(', ') || ''}
+                                                            onChange={(e) => setLocalSettings({ ...localSettings, cryptoCoins: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
+                                                            placeholder="bitcoin, ethereum, solana"
+                                                            className="w-full bg-black/40 border border-slate-700 rounded pl-10 pr-4 py-3 text-white text-xs font-mono focus:border-cyan-500/50 outline-none transition-all"
+                                                        />
+                                                    </div>
+                                                </div>
                                             </div>
                                         )}
                                     </motion.div>
@@ -497,15 +568,15 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                             {/* Footer */}
                             <div className="p-6 border-t bg-black/40 flex justify-end gap-3" style={{ borderColor: `${themeColor}1A` }}>
                                 <button onClick={onClose} className="px-6 py-2 rounded text-slate-400 hover:text-white hover:bg-white/5 transition-colors text-sm font-medium">CANCEL</button>
-                                <motion.button 
-                                    onClick={handleSave} 
+                                <motion.button
+                                    onClick={handleSave}
                                     className="px-8 py-2 rounded border transition-all text-sm font-bold tracking-wide flex items-center gap-2"
-                                    style={{ 
+                                    style={{
                                         backgroundColor: `${themeColor}33`,
                                         color: themeColor,
                                         borderColor: `${themeColor}80`
                                     }}
-                                    whileHover={{ 
+                                    whileHover={{
                                         backgroundColor: `${themeColor}4D`,
                                         boxShadow: `0 0 20px ${themeColor}33`
                                     }}
