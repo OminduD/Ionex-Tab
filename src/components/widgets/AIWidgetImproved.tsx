@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Send, Trash2, Copy, Check, Bot } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useThemeAnimation } from '../../hooks/useThemeAnimation';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 interface AIWidgetProps {
   groqKey: string;
@@ -18,9 +19,24 @@ interface Message {
   timestamp: Date;
 }
 
+type StoredMessage = Omit<Message, 'timestamp'> & { timestamp: string };
+
+const AI_WIDGET_MESSAGES_KEY = 'ionex_ai_widget_improved_messages_v1';
+
 const AIWidgetImproved: React.FC<AIWidgetProps> = ({ groqKey, size = 'medium', theme = 'aurora' }) => {
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [storedMessages, setStoredMessages] = useLocalStorage<StoredMessage[]>(AI_WIDGET_MESSAGES_KEY, []);
+  const messages = useMemo<Message[]>(
+    () =>
+      storedMessages.map((m) => {
+        const parsed = new Date(m.timestamp);
+        return {
+          ...m,
+          timestamp: Number.isNaN(parsed.getTime()) ? new Date() : parsed,
+        };
+      }),
+    [storedMessages]
+  );
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -48,7 +64,7 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ groqKey, size = 'medium', t
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setStoredMessages(prev => [...prev, { ...userMessage, timestamp: userMessage.timestamp.toISOString() }]);
     const userInput = input.trim();
     setInput('');
     setLoading(true);
@@ -101,7 +117,7 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ groqKey, size = 'medium', t
         timestamp: new Date(),
       };
 
-      setMessages(prev => [...prev, assistantMessage]);
+      setStoredMessages(prev => [...prev, { ...assistantMessage, timestamp: assistantMessage.timestamp.toISOString() }]);
     } catch (error) {
       let errorContent = 'Sorry, there was an error processing your request.';
 
@@ -117,7 +133,7 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ groqKey, size = 'medium', t
         content: errorContent,
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setStoredMessages(prev => [...prev, { ...errorMessage, timestamp: errorMessage.timestamp.toISOString() }]);
     } finally {
       setLoading(false);
       inputRef.current?.focus();
@@ -131,7 +147,7 @@ const AIWidgetImproved: React.FC<AIWidgetProps> = ({ groqKey, size = 'medium', t
   };
 
   const clearChat = () => {
-    setMessages([]);
+    setStoredMessages([]);
   };
 
   return (

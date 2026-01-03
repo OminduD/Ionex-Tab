@@ -31,9 +31,10 @@ const searchEngines: SearchEngine[] = [
 interface Props {
   selectedEngine?: string;
   onEngineChange?: (engineId: string) => void;
+  isMinimalist?: boolean;
 }
 
-export const SearchBar: React.FC<Props> = ({ selectedEngine = 'google', onEngineChange }) => {
+export const SearchBar: React.FC<Props> = ({ selectedEngine = 'google', onEngineChange, isMinimalist }) => {
   const [query, setQuery] = useState('');
   const [activeEngine, setActiveEngine] = useState(selectedEngine);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -61,19 +62,19 @@ export const SearchBar: React.FC<Props> = ({ selectedEngine = 'google', onEngine
   return (
     <div className="w-full relative z-30">
       <motion.form
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={isMinimalist ? false : { opacity: 0, y: 20 }}
+        animate={isMinimalist ? false : { opacity: 1, y: 0 }}
         onSubmit={handleSubmit}
         className="relative"
       >
         {/* Futuristic Search Container */}
         <motion.div
           className="relative group"
-          animate={{ scale: isFocused ? 1.02 : 1 }}
+          animate={isMinimalist ? false : { scale: isFocused ? 1.02 : 1 }}
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
         >
           {/* Animated Glow Border */}
-          <div className={`absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary via-accent to-secondary opacity-50 blur-md transition-opacity duration-500 ${isFocused ? 'opacity-100' : 'opacity-30 group-hover:opacity-70'}`} />
+          {!isMinimalist && <div className={`absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary via-accent to-secondary opacity-50 blur-md transition-opacity duration-500 ${isFocused ? 'opacity-100' : 'opacity-30 group-hover:opacity-70'}`} />}
 
           {/* Main Input Area */}
           <div className="relative flex items-center bg-black/80 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
@@ -115,7 +116,7 @@ export const SearchBar: React.FC<Props> = ({ selectedEngine = 'google', onEngine
               />
 
               {/* Scanning Cursor Effect */}
-              {isFocused && (
+              {!isMinimalist && isFocused && (
                 <motion.div
                   layoutId="cursor"
                   className="absolute bottom-0 left-0 h-[2px] bg-primary shadow-[0_0_10px_var(--primary-color)]"

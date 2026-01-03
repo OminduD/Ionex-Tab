@@ -9,9 +9,10 @@ interface WeatherProps {
   apiKey: string;
   size?: 'small' | 'medium' | 'large';
   theme?: string;
+  onWeatherChange?: (condition: string) => void;
 }
 
-const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium', theme = 'aurora' }) => {
+const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium', theme = 'aurora', onWeatherChange }) => {
   const [weather, setWeather] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const { variants, containerStyle } = useThemeAnimation(theme);
@@ -22,12 +23,17 @@ const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium', theme = 'aur
       const data = await fetchWeatherData(apiKey);
       setWeather(data);
       setLoading(false);
+
+      // Notify parent component of weather condition change
+      if (data && data.condition && onWeatherChange) {
+        onWeatherChange(data.condition);
+      }
     };
 
     loadWeather();
     const interval = setInterval(loadWeather, 600000); // Update every 10 minutes
     return () => clearInterval(interval);
-  }, [apiKey]);
+  }, [apiKey, onWeatherChange]);
 
   const getWeatherIcon = (condition: string) => {
     const cond = condition?.toLowerCase() || '';

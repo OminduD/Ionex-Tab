@@ -3,12 +3,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useThemeAnimation } from '../../hooks/useThemeAnimation';
 
+import { CalendarEvent } from '../../types';
+
 interface CalendarProps {
   theme?: string;
   size?: 'small' | 'medium' | 'large';
+  events?: CalendarEvent[];
 }
 
-const Calendar: React.FC<CalendarProps> = ({ size = 'medium', theme = 'aurora' }) => {
+const Calendar: React.FC<CalendarProps> = ({ size = 'medium', theme = 'aurora', events = [] }) => {
   const [date, setDate] = useState(new Date());
   const [days, setDays] = useState<(number | null)[]>([]);
   const { variants, containerStyle } = useThemeAnimation(theme);
@@ -52,6 +55,18 @@ const Calendar: React.FC<CalendarProps> = ({ size = 'medium', theme = 'aurora' }
       date.getMonth() === currentMonth &&
       date.getFullYear() === currentYear
     );
+  };
+
+  const getEventsForDay = (day: number | null) => {
+    if (!day) return [];
+    return events.filter(event => {
+      const eventDate = new Date(event.startDate);
+      return (
+        eventDate.getDate() === day &&
+        eventDate.getMonth() === date.getMonth() &&
+        eventDate.getFullYear() === date.getFullYear()
+      );
+    });
   };
 
   const isSmall = size === 'small';
@@ -134,6 +149,28 @@ const Calendar: React.FC<CalendarProps> = ({ size = 'medium', theme = 'aurora' }
                       />
                     )}
                     <span className="relative z-10 drop-shadow-md">{day}</span>
+
+                    {/* Event Dots */}
+                    {getEventsForDay(day).length > 0 && (
+                      <div className="absolute bottom-1 left-0 right-0 flex justify-center gap-0.5">
+                        {getEventsForDay(day).slice(0, 3).map((_, idx) => (
+                          <div key={idx} className={`w-1 h-1 rounded-full ${isToday(day) ? 'bg-white' : 'bg-cyan-400'} shadow-sm`} />
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Tooltip for events */}
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-[150px] bg-black/80 backdrop-blur-md border border-white/10 rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20 hidden group-hover:block">
+                      {getEventsForDay(day).length > 0 ? (
+                        <div className="space-y-1">
+                          {getEventsForDay(day).map(e => (
+                            <div key={e.id} className="text-[10px] text-white truncate">• {e.title}</div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-[10px] text-slate-400">No events</div>
+                      )}
+                    </div>
 
                     {/* Glass Reflection */}
                     <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />

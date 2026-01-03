@@ -180,6 +180,22 @@ body {
     --whitish-color: #ffffff;
 }
 
+.theme-cyberpunk {
+    --primary-color: #00e5ff;
+    --secondary-color: #ff2bd6;
+    --accent-color: #ffd400;
+    --bg-gradient-start: #0b1020;
+    --bg-gradient-end: #2a0a3d;
+    --default-wallpaper: url('https://images.unsplash.com/photo-1605218427306-6354db696fc3?q=80&w=2070');
+    /* MaterialYou shades */
+    --dark-color: #00e5ff;
+    --bg-color: #06101a;
+    --accent-light-tint: #0b1f2a;
+    --darker-color: #ff2bd6;
+    --text-color-dark: #e6fbff;
+    --whitish-color: #ffffff;
+}
+
 .icon-color {
     color: var(--primary-color, #a78bfa) !important;
 }
@@ -459,4 +475,226 @@ body {
     color: rgba(255, 255, 255, 0.5);
     text-transform: uppercase;
     letter-spacing: 0.05em;
+}
+
+/* ============================================
+   Glassmorphism 2.0 - Enhanced Border Effects
+   ============================================ */
+
+/* Chromatic Aberration Effect */
+@keyframes chromaticShift {
+    0%, 100% {
+        filter: drop-shadow(1px 0 0 rgba(255, 0, 0, 0.3)) 
+                drop-shadow(-1px 0 0 rgba(0, 255, 255, 0.3));
+    }
+    50% {
+        filter: drop-shadow(2px 0 0 rgba(255, 0, 0, 0.4)) 
+                drop-shadow(-2px 0 0 rgba(0, 255, 255, 0.4));
+    }
+}
+
+/* Moving Shine/Glare Animation */
+@keyframes borderShine {
+    0% {
+        background-position: -200% center;
+    }
+    100% {
+        background-position: 200% center;
+    }
+}
+
+/* Prism Rainbow Gradient */
+@keyframes prismShift {
+    0% {
+        border-image-source: linear-gradient(135deg, 
+            rgba(255, 0, 0, 0.4), 
+            rgba(255, 127, 0, 0.4), 
+            rgba(255, 255, 0, 0.4), 
+            rgba(0, 255, 0, 0.4), 
+            rgba(0, 0, 255, 0.4), 
+            rgba(139, 0, 255, 0.4)
+        );
+    }
+    33% {
+        border-image-source: linear-gradient(135deg, 
+            rgba(139, 0, 255, 0.4), 
+            rgba(255, 0, 0, 0.4), 
+            rgba(255, 127, 0, 0.4), 
+            rgba(255, 255, 0, 0.4), 
+            rgba(0, 255, 0, 0.4), 
+            rgba(0, 0, 255, 0.4)
+        );
+    }
+    66% {
+        border-image-source: linear-gradient(135deg, 
+            rgba(0, 0, 255, 0.4), 
+            rgba(139, 0, 255, 0.4), 
+            rgba(255, 0, 0, 0.4), 
+            rgba(255, 127, 0, 0.4), 
+            rgba(255, 255, 0, 0.4), 
+            rgba(0, 255, 0, 0.4)
+        );
+    }
+    100% {
+        border-image-source: linear-gradient(135deg, 
+            rgba(255, 0, 0, 0.4), 
+            rgba(255, 127, 0, 0.4), 
+            rgba(255, 255, 0, 0.4), 
+            rgba(0, 255, 0, 0.4), 
+            rgba(0, 0, 255, 0.4), 
+            rgba(139, 0, 255, 0.4)
+        );
+    }
+}
+
+/* Glassmorphism 2.0 Border Shine */
+.glass-border-shine {
+    position: relative;
+    overflow: hidden;
+}
+
+.glass-border-shine::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.3),
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    background-size: 200% 100%;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    will-change: background-position;
+}
+
+.glass-border-shine:hover::before {
+    opacity: 1;
+    animation: borderShine 2.5s linear infinite;
+}
+
+/* Chromatic Aberration Border */
+.glass-chromatic-border {
+    position: relative;
+}
+
+.glass-chromatic-border::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    will-change: filter;
+}
+
+.glass-chromatic-border:hover::after {
+    opacity: 1;
+    animation: chromaticShift 1.5s ease-in-out infinite;
+}
+
+/* Prism Border Effect */
+.glass-prism-border {
+    position: relative;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.glass-prism-border::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    border: 2px solid transparent;
+    border-image-slice: 1;
+    border-image-source: linear-gradient(135deg, 
+        rgba(255, 0, 0, 0.3), 
+        rgba(255, 127, 0, 0.3), 
+        rgba(255, 255, 0, 0.3), 
+        rgba(0, 255, 0, 0.3), 
+        rgba(0, 0, 255, 0.3), 
+        rgba(139, 0, 255, 0.3)
+    );
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    will-change: border-image-source;
+}
+
+.glass-prism-border:hover::before {
+    opacity: 1;
+    animation: prismShift 3s linear infinite;
+}
+
+/* Combined Glassmorphism 2.0 Effect */
+.glassmorphism-2 {
+    position: relative;
+    overflow: hidden;
+}
+
+.glassmorphism-2::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255, 255, 255, 0.15),
+        rgba(255, 255, 255, 0.4),
+        rgba(255, 255, 255, 0.15),
+        transparent
+    );
+    background-size: 300% 100%;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: background-position, opacity;
+}
+
+.glassmorphism-2::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: filter;
+}
+
+.glassmorphism-2:hover::before {
+    opacity: 1;
+    animation: borderShine 3s linear infinite;
+}
+
+.glassmorphism-2:hover::after {
+    opacity: 1;
+    animation: chromaticShift 2s ease-in-out infinite;
+}
+
+/* Performance optimization */
+.glassmorphism-2,
+.glass-border-shine,
+.glass-chromatic-border,
+.glass-prism-border {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
 }

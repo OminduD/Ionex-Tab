@@ -8,15 +8,58 @@ interface GitHubWidgetProps {
     size?: 'small' | 'medium' | 'large';
 }
 
+type GitHubStats = {
+    publicRepos: number;
+    totalContributions: number;
+    streak: number;
+    fetchedAt?: number;
+};
+
+type CachedGitHubStats = {
+    stats: GitHubStats;
+    fetchedAt: number;
+};
+
+const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
+
+
+
+const safeParseJson = <T,>(raw: string | null): T | null => {
+    if (!raw) return null;
+    try {
+        return JSON.parse(raw) as T;
+    } catch {
+        return null;
+    }
+};
+
+
+
+
+
 const GitHubWidget: React.FC<GitHubWidgetProps> = ({ username, theme: _theme, size: _size = 'medium' }) => {
-    const [stats, setStats] = useState<{ publicRepos: number; totalContributions: number; streak: number } | null>(null);
+    const [stats, setStats] = useState<GitHubStats | null>(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (!username) return;
 
+        const cacheKey = `ionex:githubStats:${username}`;
+        const cached = safeParseJson<CachedGitHubStats>(localStorage.getItem(cacheKey));
+        const cacheFresh = cached && (Date.now() - cached.fetchedAt) < CACHE_TTL_MS;
+        if (cached?.stats) {
+            setStats(cached.stats);
+        }
+
+        if (cacheFresh) {
+            setError(null);
+            return;
+        }
+
         const fetchStats = async () => {
             setLoading(true);
+            setError(null);
             try {
                 // 1. Fetch User Profile for Public Repos
                 const profileResponse = await fetch(`https://api.github.com/users/${username}`);
@@ -28,30 +71,23 @@ const GitHubWidget: React.FC<GitHubWidgetProps> = ({ username, theme: _theme, si
                 if (!contribResponse.ok) throw new Error('Failed to fetch contributions');
                 const contribData = await contribResponse.json();
 
-                // Calculate Last Year (Rolling 365 Days)
                 const contributions = contribData.contributions;
-                const last365 = contributions.slice(-365);
-                const totalContributions = last365.reduce((acc: number, curr: any) => acc + curr.count, 0);
-
-                // Calculate Streak
                 const today = new Date().toISOString().split('T')[0];
 
-                // Find index of today
+                // Find today's index
                 let todayIndex = contributions.findIndex((c: any) => c.date === today);
                 if (todayIndex === -1) {
-                    // If today not found (timezone diffs), look for last available date
+                    // Fallback to last available day if today is not found (e.g. timezone diffs)
                     todayIndex = contributions.length - 1;
                 }
 
+                // Calculate Streak
                 let streak = 0;
                 let currentStreakActive = true;
 
-                // Check today first
                 if (contributions[todayIndex].count > 0) {
                     streak++;
                 } else {
-                    // If no contribs today, check if we missed yesterday (streak broken)
-                    // But if yesterday has contribs, streak is still valid (just haven't committed today yet)
                     const yesterdayIndex = todayIndex - 1;
                     if (yesterdayIndex >= 0 && contributions[yesterdayIndex].count === 0) {
                         currentStreakActive = false;
@@ -59,10 +95,6 @@ const GitHubWidget: React.FC<GitHubWidgetProps> = ({ username, theme: _theme, si
                 }
 
                 if (currentStreakActive) {
-                    // Count backwards from yesterday (or today if we already counted it)
-                    // If we counted today (streak=1), we start checking from yesterday
-                    // If we didn't count today (streak=0), we start checking from yesterday
-
                     let i = todayIndex - 1;
                     while (i >= 0) {
                         if (contributions[i].count > 0) {
@@ -74,14 +106,26 @@ const GitHubWidget: React.FC<GitHubWidgetProps> = ({ username, theme: _theme, si
                     }
                 }
 
-                setStats({
+                // Calculate Last Year (Rolling 365 Days)
+                const last365 = contributions.slice(-365);
+                const lastYearContribs = last365.reduce((acc: number, curr: any) => acc + curr.count, 0);
+
+                const computed: GitHubStats = {
                     publicRepos: profileData.public_repos,
-                    totalContributions: totalContributions,
-                    streak: streak
-                });
+                    totalContributions: lastYearContribs,
+                    streak: streak,
+                    fetchedAt: Date.now(),
+                };
+
+                setStats(computed);
+                localStorage.setItem(cacheKey, JSON.stringify({ stats: computed, fetchedAt: Date.now() } satisfies CachedGitHubStats));
             } catch (e) {
-                console.error(e);
-                setStats({ publicRepos: 0, totalContributions: 0, streak: 0 });
+                const message = e instanceof Error ? e.message : 'Failed to fetch GitHub stats';
+                console.error('GitHubWidget error:', e);
+                setError(message);
+
+                // Do not overwrite previously cached stats with zeros.
+                setStats((prev) => prev ?? { publicRepos: 0, totalContributions: 0, streak: 0, fetchedAt: Date.now() });
             } finally {
                 setLoading(false);
             }
@@ -116,7 +160,7 @@ const GitHubWidget: React.FC<GitHubWidgetProps> = ({ username, theme: _theme, si
             </div>
 
             <div className="flex-1 flex flex-col justify-center z-10">
-                {loading ? (
+                {loading && !stats ? (
                     <div className="space-y-2">
                         <div className="text-xs text-green-500 animate-pulse">&gt; ESTABLISHING_UPLINK...</div>
                         <div className="text-xs text-green-500/70 animate-pulse delay-75">&gt; AUTHENTICATING_USER...</div>
@@ -148,6 +192,12 @@ const GitHubWidget: React.FC<GitHubWidgetProps> = ({ username, theme: _theme, si
                                 {stats?.streak ?? 0} <span className="text-xs text-green-500/50">days</span>
                             </div>
                         </div>
+
+                        {error && (
+                            <div className="col-span-2 text-[9px] text-green-400/60 border border-green-500/10 bg-green-500/5 rounded px-2 py-1">
+                                &gt; WARN: {error.toUpperCase().replace(/\s+/g, '_')}
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

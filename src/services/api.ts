@@ -1,8 +1,34 @@
 // src/services/api.ts
 // This file centralizes all external API calls.
 
+// Get user's location using IP-based geolocation (fallback)
+const getLocationByIP = async (): Promise<{ lat: number; lon: number; city?: string }> => {
+    try {
+        // Using ipapi.co - free, no API key required
+        const response = await fetch('https://ipapi.co/json/');
+        const data = await response.json();
+
+        console.log('IP Geolocation data:', data);
+
+        if (data.latitude && data.longitude) {
+            const city = data.city || data.region || data.country_name;
+            console.log('Extracted city from IP:', city);
+            return {
+                lat: data.latitude,
+                lon: data.longitude,
+                city: city
+            };
+        }
+    } catch (error) {
+        console.error('IP geolocation error:', error);
+    }
+
+    // Ultimate fallback to Colombo, Sri Lanka
+    return { lat: 6.9271, lon: 79.8612 };
+};
+
 // Get user's location using browser geolocation API
-const getUserLocation = (): Promise<{ lat: number; lon: number }> => {
+const getUserLocation = (): Promise<{ lat: number; lon: number; city?: string }> => {
     return new Promise((resolve) => {
         if ('geolocation' in navigator) {
             navigator.geolocation.getCurrentPosition(
@@ -12,32 +38,46 @@ const getUserLocation = (): Promise<{ lat: number; lon: number }> => {
                         lon: position.coords.longitude,
                     });
                 },
-                () => {
-                    // Fallback to Colombo, Sri Lanka if permission denied
-                    resolve({ lat: 6.9271, lon: 79.8612 });
+                async () => {
+                    // If permission denied, use IP-based geolocation
+                    console.log('Geolocation denied, using IP-based location');
+                    const ipLocation = await getLocationByIP();
+                    resolve(ipLocation);
                 }
             );
         } else {
-            // Fallback to Colombo, Sri Lanka if geolocation not supported
-            resolve({ lat: 6.9271, lon: 79.8612 });
+            // If geolocation not supported, use IP-based geolocation
+            getLocationByIP().then(resolve);
         }
     });
 };
 
 // Get city name from coordinates using reverse geocoding
-const getCityName = async (lat: number, lon: number): Promise<string> => {
+const getCityName = async (lat: number, lon: number, apiKey: string = 'bd5e378503939ddaee76f12ad7a97608'): Promise<string> => {
     try {
+        // Try OpenWeatherMap reverse geocoding first (more reliable)
         const response = await fetch(
-            `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&count=1`
+            `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${apiKey}`
         );
         const data = await response.json();
-        if (data.results && data.results[0]) {
-            return data.results[0].name || 'Unknown';
+        if (data && data[0]) {
+            // OpenWeatherMap returns city name in the 'name' field
+            return data[0].name || data[0].local_names?.en || 'Your Location';
         }
-        return 'Unknown';
+
+        // Fallback to Open-Meteo if OpenWeatherMap fails
+        const fallbackResponse = await fetch(
+            `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&count=1`
+        );
+        const fallbackData = await fallbackResponse.json();
+        if (fallbackData.results && fallbackData.results[0]) {
+            return fallbackData.results[0].name || 'Your Location';
+        }
+
+        return 'Your Location';
     } catch (error) {
         console.error('City name fetch error:', error);
-        return 'Unknown';
+        return 'Your Location';
     }
 };
 
@@ -59,8 +99,9 @@ export const fetchWeatherData = async (_apiKey?: string) => {
     // Open-Meteo is completely free and doesn't require an API key!
 
     try {
-        // Get user's location
-        const { lat, lon } = await getUserLocation();
+        // Get user's location (tries browser geolocation first, then IP-based)
+        const locationData = await getUserLocation();
+        const { lat, lon, city: ipCity } = locationData;
 
         // Fetch weather data from Open-Meteo (FREE, no API key needed!)
         const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,pressure_msl,visibility&daily=sunrise,sunset,uv_index_max&timezone=auto`;
@@ -75,8 +116,10 @@ export const fetchWeatherData = async (_apiKey?: string) => {
         const current = data.current;
         const daily = data.daily;
 
-        // Get city name
-        const city = await getCityName(lat, lon);
+        // Get city name (use IP-based city if available, otherwise do reverse geocoding)
+        console.log('IP-based city:', ipCity);
+        const city = ipCity || await getCityName(lat, lon, _apiKey);
+        console.log('Final city name:', city);
 
         return {
             city: city,

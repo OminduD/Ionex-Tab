@@ -1,29 +1,30 @@
-// src/App.tsx
-// The main application component - Redesigned with unique cool layout
-
 import React, { useState, useEffect } from 'react';
 import { Settings, WidgetId } from './types';
 import { useLocalStorage } from './hooks/useLocalStorage';
-import { SettingsIcon } from './components/icons';
 import { SettingsPanel } from './components/SettingsPanel';
-import { SearchBar } from './components/SearchBar';
-import { QuickLinks } from './components/QuickLinks';
 import { AIToolsButton } from './components/AIToolsButton';
 import { Greeting } from './components/Greeting';
-import { QuoteAndIP } from './components/QuoteAndIP';
 import AIChatSidebar from './components/AIChatSidebar';
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
-import { Zap } from 'lucide-react';
+import { Eye, EyeOff, Settings as SettingsLucide, Minimize2, Maximize2, MessageCircle } from 'lucide-react';
 import { extractColorsFromImage, applyCustomColors } from './utils/colorExtractorImproved';
 import { getRandomWallpaper } from './utils/themeWallpapers';
 import VirtualPet from './components/VirtualPet';
 import { MouseTrail } from './components/MouseTrail';
+import { getThemeStyles } from './utils/themeStyles';
+import { GamificationProvider } from './context/GamificationContext';
+import { LevelProgress } from './components/gamification/LevelProgress';
+import { ParticleBackground } from './components/ParticleBackground';
+import { WeatherOverlay } from './components/WeatherOverlay';
 
 // Dynamically import widgets
 const Clock = React.lazy(() => import('./components/widgets/Clock'));
 const AnalogClock = React.lazy(() => import('./components/widgets/AnalogClock'));
 const Weather = React.lazy(() => import('./components/widgets/Weather'));
+const SearchBar = React.lazy(() => import('./components/SearchBar'));
+const QuickLinks = React.lazy(() => import('./components/QuickLinks'));
 const Calendar = React.lazy(() => import('./components/widgets/Calendar'));
+const QuoteAndIP = React.lazy(() => import('./components/QuoteAndIP'));
 const TodoList = React.lazy(() => import('./components/widgets/TodoList'));
 const AIWidget = React.lazy(() => import('./components/widgets/AIWidgetImproved'));
 const NotesWidget = React.lazy(() => import('./components/widgets/NotesWidget'));
@@ -37,8 +38,6 @@ const SystemStatsWidget = React.lazy(() => import('./components/widgets/SystemSt
 const GitHubWidget = React.lazy(() => import('./components/widgets/GitHubWidget'));
 const CryptoWidget = React.lazy(() => import('./components/widgets/CryptoWidget'));
 const AchievementsWidget = React.lazy(() => import('./components/widgets/AchievementsWidget'));
-import { GamificationProvider } from './context/GamificationContext';
-import { LevelProgress } from './components/gamification/LevelProgress';
 
 // Default API key for weather (free tier OpenWeatherMap)
 const DEFAULT_WEATHER_API_KEY = 'bd5e378503939ddaee76f12ad7a97608';
@@ -46,92 +45,41 @@ const DEFAULT_WEATHER_API_KEY = 'bd5e378503939ddaee76f12ad7a97608';
 const LogoButton = ({ onClick }: { onClick: () => void }) => {
     const x = useMotionValue(0);
     const y = useMotionValue(0);
-
-    const mouseX = useSpring(x, { stiffness: 500, damping: 100 });
-    const mouseY = useSpring(y, { stiffness: 500, damping: 100 });
-
-    const rotateX = useTransform(mouseY, [-0.5, 0.5], ["25deg", "-25deg"]);
-    const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-25deg", "25deg"]);
-    const brightness = useTransform(mouseY, [-0.5, 0.5], [1.2, 0.8]);
-
-    const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const width = rect.width;
-        const height = rect.height;
-        const mouseXFromCenter = e.clientX - rect.left - width / 2;
-        const mouseYFromCenter = e.clientY - rect.top - height / 2;
-        x.set(mouseXFromCenter / width);
-        y.set(mouseYFromCenter / height);
-    };
-
-    const handleMouseLeave = () => {
-        x.set(0);
-        y.set(0);
-    };
+    const rotateX = useSpring(useTransform(y, [-100, 100], [30, -30]), { stiffness: 200, damping: 20 });
+    const rotateY = useSpring(useTransform(x, [-100, 100], [-30, 30]), { stiffness: 200, damping: 20 });
 
     return (
         <motion.button
-            onClick={onClick}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            style={{
-                rotateX,
-                rotateY,
-                filter: `brightness(${brightness})`,
-                transformStyle: "preserve-3d",
-            }}
-            initial={{ scale: 1 }}
-            whileHover={{ scale: 1.05 }}
+            style={{ x, y, rotateX, rotateY, z: 100 }}
+            drag
+            dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            dragElastic={0.1}
+            whileHover={{ scale: 1.05, cursor: 'pointer' }}
             whileTap={{ scale: 0.95 }}
-            className="relative group cursor-pointer perspective-1000"
+            onClick={onClick}
+            className="relative group perspective-1000 flex items-center gap-4 bg-transparent border-none p-0 outline-none"
         >
-            {/* Holographic Glow Behind */}
-            <div className="absolute -inset-4 bg-gradient-to-r from-primary/40 via-accent/40 to-secondary/40 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-500 animate-pulse" />
-
-            {/* Main Glass Container */}
-            <div className="relative flex items-center gap-4 px-6 py-4 bg-black/60 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)] overflow-hidden group-hover:border-primary/50 transition-colors duration-500">
-
-                {/* Scanning Light Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite]" />
-
-                {/* Tech Grid Overlay */}
-                <div className="absolute inset-0 opacity-10 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:10px_10px]" />
-
-                {/* 3D Logo Container */}
+            <div className="relative w-12 h-12 flex items-center justify-center">
                 <motion.div
-                    className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center relative shadow-lg overflow-hidden"
-                    style={{ transformStyle: "preserve-3d", transform: "translateZ(30px)" }}
-                >
-                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
-                    <motion.div
-                        className="absolute inset-0 bg-white/30"
-                        animate={{
-                            rotate: [0, 360],
-                            scale: [1, 1.5, 1]
-                        }}
-                        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                    />
-                    <span className="text-white font-black text-2xl relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">I</span>
-                </motion.div>
+                    className="absolute inset-0 bg-white/10 rounded-xl backdrop-blur-sm border border-white/20"
+                    animate={{ rotate: [0, 360] }}
+                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                />
+                <span className="text-white font-black text-2xl relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">I</span>
+            </div>
 
-                {/* Text Content */}
-                <div style={{ transform: "translateZ(20px)" }} className="flex flex-col items-start">
-                    <div className="flex items-center gap-2">
-                        <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70 group-hover:from-primary group-hover:to-accent transition-all duration-300">
-                            Ionex
-                        </span>
-                        <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-white/10 text-white/60 border border-white/5 uppercase tracking-wider">
-                            Beta
-                        </span>
-                    </div>
-                    <div className="text-[10px] font-medium text-white/40 uppercase tracking-[0.2em] group-hover:text-white/80 transition-colors flex items-center gap-1">
-                        New Tab
-                    </div>
+            <div className="flex flex-col items-start text-left">
+                <div className="flex items-center gap-2">
+                    <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70 group-hover:from-cyan-400 group-hover:to-purple-400 transition-all duration-300">
+                        Ionex
+                    </span>
+                    <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-white/10 text-white/60 border border-white/5 uppercase tracking-wider">
+                        Beta
+                    </span>
                 </div>
-
-                {/* Corner Accents */}
-                <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/30 rounded-tl-lg" />
-                <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/30 rounded-br-lg" />
+                <div className="text-[10px] font-medium text-white/40 uppercase tracking-[0.2em] group-hover:text-white/80 transition-colors flex items-center gap-1">
+                    New Tab
+                </div>
             </div>
         </motion.button>
     );
@@ -142,31 +90,47 @@ const App: React.FC = () => {
         wallpaperUrl: 'https://images.unsplash.com/photo-1507525428034-b723a9ce6890?q=80&w=2070&auto=format&fit=crop',
         theme: 'aurora',
         clockType: 'digital',
-        timeFormat: '24h', // Default to 24-hour format
+        timeFormat: '24h',
         searchEngine: 'google',
         userName: '',
-        showQuotesAndIP: true, // Legacy support
-        showQuotes: true, // Separate toggle for quotes
-        showIP: true, // Separate toggle for IP
-        showVirtualPet: true, // Default to true for new users
-        widgets: { clock: true, weather: true, calendar: true, todoList: true, aiAssistant: true, notes: true, appShortcuts: false, musicPlayer: false, newsFeed: true, analogClock: false, systemStats: false },
-        widgetSizes: { clock: 'small', weather: 'medium', calendar: 'small', todoList: 'medium', aiAssistant: 'large', notes: 'medium', appShortcuts: 'medium', musicPlayer: 'medium', newsFeed: 'medium', analogClock: 'medium', systemStats: 'medium' },
-        widgetPositions: {
-            clock: { x: 50, y: 100 },
-            weather: { x: 400, y: 80 },
-            calendar: { x: 900, y: 100 },
-            todoList: { x: 100, y: 350 },
-            newsFeed: { x: 700, y: 350 },
-            aiAssistant: { x: 400, y: 350 },
-            notes: { x: 600, y: 400 },
-            appShortcuts: { x: 500, y: 500 },
-            musicPlayer: { x: 800, y: 500 },
-            analogClock: { x: 200, y: 200 },
-            systemStats: { x: 100, y: 500 },
-            github: { x: 800, y: 100 },
-            crypto: { x: 100, y: 100 },
-            achievements: { x: 900, y: 500 },
+        showQuotesAndIP: true,
+        showQuotes: true,
+        showIP: true,
+        showVirtualPet: true,
+        musicPlayerEmbedUrl: '',
+        widgets: {
+            clock: { id: 'clock', type: 'clock', x: 0, y: 0, w: 4, h: 2, visible: true },
+            weather: { id: 'weather', type: 'weather', x: 4, y: 0, w: 4, h: 2, visible: true },
+            search: { id: 'search', type: 'search', x: 0, y: 2, w: 8, h: 1, visible: true },
+            quickLinks: { id: 'quickLinks', type: 'quickLinks', x: 0, y: 3, w: 8, h: 1, visible: true },
+            calendar: { id: 'calendar', type: 'calendar', x: 8, y: 0, w: 4, h: 4, visible: true },
+            quote: { id: 'quote', type: 'quote', x: 0, y: 4, w: 8, h: 1, visible: true },
+            todo: { id: 'todo', type: 'todo', x: 0, y: 5, w: 4, h: 4, visible: true },
+            newsFeed: { id: 'newsFeed', type: 'newsFeed', x: 4, y: 5, w: 4, h: 4, visible: true },
+            systemStats: { id: 'systemStats', type: 'systemStats', x: 8, y: 4, w: 4, h: 2, visible: true },
+            github: { id: 'github', type: 'github', x: 8, y: 6, w: 4, h: 2, visible: true },
+            crypto: { id: 'crypto', type: 'crypto', x: 0, y: 9, w: 4, h: 2, visible: true },
+            achievements: { id: 'achievements', type: 'achievements', x: 4, y: 9, w: 4, h: 2, visible: true },
+            musicPlayer: { id: 'musicPlayer', type: 'musicPlayer', x: 8, y: 8, w: 4, h: 2, visible: true },
+            notes: { id: 'notes', type: 'notes', x: 0, y: 11, w: 4, h: 2, visible: true },
+            aiChat: { id: 'aiChat', type: 'aiChat', x: 4, y: 11, w: 4, h: 2, visible: true },
+            focusMode: { id: 'focusMode', type: 'focusMode', x: 8, y: 10, w: 4, h: 2, visible: true },
         },
+        widgetSizes: {
+            clock: 'medium',
+            weather: 'medium',
+            calendar: 'large',
+            todo: 'large',
+            newsFeed: 'large',
+            systemStats: 'medium',
+            github: 'medium',
+            crypto: 'medium',
+            musicPlayer: 'medium',
+            notes: 'medium',
+            aiChat: 'medium',
+            focusMode: 'large',
+        },
+        widgetPositions: {}, // Optional, kept for compatibility
         shortcuts: [
             { id: '1', name: 'Gmail', url: 'https://mail.google.com', icon: 'gmail' },
             { id: '2', name: 'YouTube', url: 'https://youtube.com', icon: 'youtube' },
@@ -178,13 +142,17 @@ const App: React.FC = () => {
             { id: '8', name: 'Figma', url: 'https://figma.com', icon: 'figma' },
         ],
         apiKeys: { weather: DEFAULT_WEATHER_API_KEY, groq: '' },
+        cryptoCoins: ['bitcoin', 'ethereum', 'solana']
     });
+
+    const styles = getThemeStyles(settings.theme);
 
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isFocusMode, setIsFocusMode] = useState(false);
     const [showFullscreenAnimation, setShowFullscreenAnimation] = useState(false);
     const [isAIChatOpen, setIsAIChatOpen] = useState(false);
     const [isZenMode, setIsZenMode] = useState(false);
+    const [weatherCondition, setWeatherCondition] = useState<string>('');
 
     // Parallax Effect
     const mouseX = useMotionValue(0);
@@ -255,18 +223,13 @@ const App: React.FC = () => {
                 ...prev,
                 widgets: {
                     ...prev.widgets,
-                    systemStats: prev.widgets.systemStats ?? false,
-                    achievements: prev.widgets.achievements ?? false,
+                    systemStats: { ...prev.widgets.systemStats, visible: prev.widgets.systemStats?.visible ?? false },
+                    achievements: { ...prev.widgets.achievements, visible: prev.widgets.achievements?.visible ?? false },
                 },
                 widgetSizes: {
                     ...prev.widgetSizes,
                     systemStats: prev.widgetSizes.systemStats ?? 'medium',
                     achievements: prev.widgetSizes.achievements ?? 'medium',
-                },
-                widgetPositions: {
-                    ...prev.widgetPositions,
-                    systemStats: prev.widgetPositions.systemStats ?? { x: 100, y: 500 },
-                    achievements: prev.widgetPositions.achievements ?? { x: 900, y: 500 },
                 }
             }));
         }
@@ -275,9 +238,9 @@ const App: React.FC = () => {
     const updateWidgetPosition = (id: WidgetId, x: number, y: number) => {
         setSettings((prev: Settings) => ({
             ...prev,
-            widgetPositions: {
-                ...prev.widgetPositions,
-                [id]: { x, y }
+            widgets: {
+                ...prev.widgets,
+                [id]: { ...prev.widgets[id], x, y }
             }
         }));
     };
@@ -310,34 +273,55 @@ const App: React.FC = () => {
                 theme={settings.theme}
             />
         ),
-        weather: <Weather apiKey={settings.apiKeys.weather} theme={settings.theme} size={settings.widgetSizes.weather} />,
-        calendar: <Calendar theme={settings.theme} size={settings.widgetSizes.calendar} />,
+        weather: <Weather apiKey={settings.apiKeys.weather} theme={settings.theme} size={settings.widgetSizes.weather} onWeatherChange={setWeatherCondition} />,
+        calendar: <Calendar theme={settings.theme} size={settings.widgetSizes.calendar} events={settings.calendarEvents} />,
         todoList: <TodoList theme={settings.theme} size={settings.widgetSizes.todoList} />,
         aiAssistant: <AIWidget groqKey={settings.apiKeys.groq || ''} size={settings.widgetSizes.aiAssistant} theme={settings.theme} />,
         notes: <NotesWidget theme={settings.theme} size={settings.widgetSizes.notes} />,
-        appShortcuts: <AppShortcuts shortcuts={settings.shortcuts} theme={settings.theme} size={settings.widgetSizes.appShortcuts} />,
-        musicPlayer: <MusicPlayer size={settings.widgetSizes.musicPlayer} theme={settings.theme} />,
+        appShortcuts: <AppShortcuts shortcuts={settings.shortcuts || []} theme={settings.theme} size={settings.widgetSizes.appShortcuts} />,
+        musicPlayer: <MusicPlayer size={settings.widgetSizes.musicPlayer} theme={settings.theme} embedUrl={settings.musicPlayerEmbedUrl} />,
         newsFeed: <NewsFeed apiKey={settings.apiKeys.news} theme={settings.theme} size={settings.widgetSizes.newsFeed} />,
         systemStats: <SystemStatsWidget theme={settings.theme} size={settings.widgetSizes.systemStats} />,
         github: <GitHubWidget username={settings.githubUsername} theme={settings.theme} size={settings.widgetSizes.github || 'medium'} />,
         crypto: <CryptoWidget coins={settings.cryptoCoins} theme={settings.theme} size={settings.widgetSizes.crypto || 'medium'} />,
         achievements: <AchievementsWidget theme={settings.theme} />,
+
     };
+
+    const isMinimalist = settings.minimalistMode;
+    const isLightMode = isMinimalist && settings.minimalistTheme === 'light';
+    const minimalistBg = isLightMode ? '#e2e8f0' : '#0f0f0f';
+    const textColor = isLightMode ? 'text-slate-900' : 'text-white';
+    const isAIChatEnabled = !!settings.widgets?.aiChat?.visible;
 
     return (
         <GamificationProvider>
             <div className={`theme-${settings.theme} font-sans`}>
                 <motion.div
-                    className={`h-screen w-screen text-white bg-cover bg-center bg-fixed overflow-hidden relative ${!settings.wallpaperFile && !settings.wallpaperUrl ? 'bg-theme-gradient' : ''}`}
+                    className={`h-screen w-screen ${textColor} bg-cover bg-center bg-fixed overflow-hidden relative ${!settings.wallpaperFile && !settings.wallpaperUrl && !isMinimalist ? 'bg-theme-gradient' : ''}`}
                     style={{
-                        backgroundImage: settings.wallpaperFile || settings.wallpaperUrl ? `url(${settings.wallpaperFile || settings.wallpaperUrl})` : undefined,
-                        x: settings.enableParallax ? bgX : 0,
-                        y: settings.enableParallax ? bgY : 0,
-                        scale: settings.enableParallax ? 1.05 : 1 // Scale up slightly to avoid edges
+                        backgroundImage: isMinimalist ? 'none' : (settings.wallpaperFile || settings.wallpaperUrl ? `url(${settings.wallpaperFile || settings.wallpaperUrl})` : undefined),
+                        backgroundColor: isMinimalist ? minimalistBg : undefined,
+                        x: settings.enableParallax && !isMinimalist ? bgX : 0,
+                        y: settings.enableParallax && !isMinimalist ? bgY : 0,
+                        scale: settings.enableParallax && !isMinimalist ? 1.05 : 1
                     }}
                 >
                     {/* Global Mouse Trail */}
-                    <MouseTrail />
+                    {!isMinimalist && (settings.enableMouseTrail ?? true) && <MouseTrail theme={settings.theme} />}
+
+                    {/* Particle Background */}
+                    {!isMinimalist && <ParticleBackground theme={settings.theme} />}
+
+                    {/* Ambient Weather Overlay */}
+                    {!isMinimalist && !isZenMode && <WeatherOverlay condition={weatherCondition} enabled={true} />}
+
+                    {/* Minimalist Mode Indicator */}
+                    {isMinimalist && (
+                        <div className="absolute top-4 right-4 text-xs text-white/20 font-mono tracking-widest pointer-events-none">
+                            MINIMALIST
+                        </div>
+                    )}
 
                     {/* Zen Mode Exit Button (Only visible in Zen Mode) */}
                     {isZenMode && (
@@ -364,34 +348,6 @@ const App: React.FC = () => {
                             <LogoButton onClick={() => setShowFullscreenAnimation(true)} />
                         </motion.div>
 
-                        {/* Focus Mode Button */}
-                        <motion.button
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.1 }}
-                            onClick={() => setIsFocusMode(true)}
-                            className="p-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 hover:bg-black/40 transition-all hover:scale-110 group"
-                            aria-label="Focus Mode"
-                            title="Focus Mode"
-                        >
-                            <Zap className="w-6 h-6 icon-color group-hover:rotate-12 transition-transform duration-300" />
-                        </motion.button>
-
-                        {/* Zen Mode Toggle */}
-                        <motion.button
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.2 }}
-                            onClick={() => setIsZenMode(true)}
-                            className="p-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 hover:bg-black/40 transition-all hover:scale-110 group"
-                            aria-label="Zen Mode"
-                            title="Zen Mode"
-                        >
-                            <div className="w-6 h-6 flex items-center justify-center">
-                                <div className="w-4 h-4 rounded-full border-2 border-white/60 group-hover:border-white transition-colors" />
-                            </div>
-                        </motion.button>
-
                         {/* Level Progress */}
                         <motion.div
                             initial={{ opacity: 0, x: -20 }}
@@ -402,46 +358,106 @@ const App: React.FC = () => {
                         </motion.div>
                     </motion.div>
 
-                    {/* Top-Right: Settings Button */}
-                    <motion.div
-                        className="fixed top-6 right-6 z-50"
-                        animate={{ opacity: isZenMode ? 0 : 1, pointerEvents: isZenMode ? 'none' : 'auto' }}
-                    >
+                    {/* Top Right Controls - Enhanced UI */}
+                    <div className="fixed top-6 right-6 z-50 flex items-center gap-4">
+                        {/* Zen Mode Toggle - Stealth Switch Style */}
                         <motion.button
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            onClick={() => setIsSettingsOpen(true)}
-                            className="p-3 rounded-full bg-black/30 backdrop-blur-md border border-white/10 hover:bg-black/40 transition-all hover:scale-110"
-                            aria-label="Settings"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setIsZenMode(!isZenMode)}
+                            className={`relative group w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 ${isZenMode ? styles.button.active : 'bg-black/40 border-white/10 hover:border-white/30'} backdrop-blur-md border`}
                         >
-                            <SettingsIcon className="w-6 h-6 icon-color" />
-                        </motion.button>
-                    </motion.div>
+                            <div className={`absolute inset-0 rounded-full border transition-all duration-300 ${isZenMode ? styles.button.border : 'border-transparent'}`} />
 
+                            {isZenMode ? (
+                                <Minimize2 size={20} className={`${styles.button.text} relative z-10`} />
+                            ) : (
+                                <Maximize2 size={20} className="text-white/70 group-hover:text-white relative z-10 transition-colors" />
+                            )}
+
+                            {/* Tooltip */}
+                            <div className="absolute top-full mt-2 right-0 px-2 py-1 bg-black/80 backdrop-blur-md rounded border border-white/10 text-[10px] font-mono text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                                {isZenMode ? 'EXIT_ZEN' : 'ENTER_ZEN'}
+                            </div>
+                        </motion.button>
+
+                        {/* Focus Mode Toggle - Targeting System Style */}
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setIsFocusMode(!isFocusMode)}
+                            className={`relative group w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 ${isFocusMode ? styles.button.active : 'bg-black/40 border-white/10 hover:border-white/30'} backdrop-blur-md border`}
+                        >
+                            {/* Rotating Reticle Ring */}
+                            <div className={`absolute inset-0 rounded-full border border-dashed transition-all duration-700 ${isFocusMode ? `${styles.button.ring} animate-[spin_10s_linear_infinite]` : 'border-white/20 group-hover:border-white/40'}`} />
+
+                            {/* Inner Focus Circle */}
+                            <div className={`absolute inset-2 rounded-full border transition-all duration-300 ${isFocusMode ? `${styles.button.border} scale-100` : 'border-transparent scale-0 group-hover:scale-90 group-hover:border-white/30'}`} />
+
+                            {isFocusMode ? (
+                                <EyeOff size={20} className={`${styles.button.text} relative z-10`} />
+                            ) : (
+                                <Eye size={20} className="text-white/70 group-hover:text-white relative z-10 transition-colors" />
+                            )}
+
+                            {/* Tooltip */}
+                            <div className="absolute top-full mt-2 right-0 px-2 py-1 bg-black/80 backdrop-blur-md rounded border border-white/10 text-[10px] font-mono text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                                {isFocusMode ? 'DISENGAGE_FOCUS' : 'INIT_FOCUS'}
+                            </div>
+                        </motion.button>
+
+                        {/* Settings Toggle - Reactor Gear Style */}
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setIsSettingsOpen(true)}
+                            className={`relative group w-12 h-12 rounded-full flex items-center justify-center bg-black/40 backdrop-blur-md border border-white/10 hover:border-white/30 transition-all duration-300 shadow-lg hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]`}
+                        >
+                            {/* Spinning Gear Animation */}
+                            <SettingsLucide
+                                size={20}
+                                className={`text-white/70 group-hover:text-white transition-all duration-700 group-hover:rotate-180`}
+                            />
+
+                            {/* Tech Ring Overlay */}
+                            <div className={`absolute inset-0 rounded-full border-t border-l border-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rotate-45 ${styles.button.glow}`} />
+                            <div className={`absolute inset-1 rounded-full border-b border-r border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -rotate-45 ${styles.button.glow}`} />
+
+                            {/* Tooltip */}
+                            <div className="absolute top-full mt-2 right-0 px-2 py-1 bg-black/80 backdrop-blur-md rounded border border-white/10 text-[10px] font-mono text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                                SYSTEM_CONFIG
+                            </div>
+                        </motion.button>
+                    </div>
                     {/* Bottom-Left: AI Tools Button */}
-                    <motion.div animate={{ opacity: isZenMode ? 0 : 1, pointerEvents: isZenMode ? 'none' : 'auto' }}>
-                        <AIToolsButton />
-                    </motion.div>
+                    {!isMinimalist && (
+                        <motion.div animate={{ opacity: isZenMode ? 0 : 1, pointerEvents: isZenMode ? 'none' : 'auto' }}>
+                            <AIToolsButton theme={settings.theme} />
+                        </motion.div>
+                    )}
 
 
 
                     {/* Center: Greeting + Search Bar (Fixed Position) */}
                     <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 w-full max-w-4xl px-6">
-                        <motion.div style={{ x: settings.enableParallax ? fgX : 0, y: settings.enableParallax ? fgY : 0 }}>
-                            <Greeting userName={settings.userName} theme={settings.theme} />
+                        <motion.div style={{ x: settings.enableParallax && !isMinimalist ? fgX : 0, y: settings.enableParallax && !isMinimalist ? fgY : 0 }}>
+                            <Greeting userName={settings.userName} theme={settings.theme} isMinimalist={isMinimalist} />
 
                             <SearchBar
                                 selectedEngine={settings.searchEngine}
-                                onEngineChange={(engine) => setSettings({ ...settings, searchEngine: engine })}
+                                onEngineChange={(engine: string) => setSettings({ ...settings, searchEngine: engine })}
+                                isMinimalist={isMinimalist}
                             />
 
                             {/* Quote and IP Address */}
-                            <motion.div animate={{ opacity: isZenMode ? 0 : 1 }}>
-                                <QuoteAndIP
-                                    showQuotes={settings.showQuotes ?? settings.showQuotesAndIP ?? true}
-                                    showIP={settings.showIP ?? settings.showQuotesAndIP ?? true}
-                                />
-                            </motion.div>
+                            {!isMinimalist && (
+                                <motion.div animate={{ opacity: isZenMode ? 0 : 1 }}>
+                                    <QuoteAndIP
+                                        showQuotes={settings.showQuotes ?? settings.showQuotesAndIP ?? true}
+                                        showIP={settings.showIP ?? settings.showQuotesAndIP ?? true}
+                                    />
+                                </motion.div>
+                            )}
                         </motion.div>
                     </div>
 
@@ -449,10 +465,10 @@ const App: React.FC = () => {
                     <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40 w-full max-w-6xl px-6">
                         <motion.div
                             animate={{ opacity: isZenMode ? 0 : 1, pointerEvents: isZenMode ? 'none' : 'auto' }}
-                            style={{ x: settings.enableParallax ? fgX : 0, y: settings.enableParallax ? fgY : 0 }}
+                            style={{ x: settings.enableParallax && !isMinimalist ? fgX : 0, y: settings.enableParallax && !isMinimalist ? fgY : 0 }}
                         >
                             <QuickLinks
-                                shortcuts={settings.shortcuts}
+                                shortcuts={settings.shortcuts || []}
                                 theme={settings.theme}
                             />
                         </motion.div>
@@ -462,47 +478,91 @@ const App: React.FC = () => {
                     <motion.div
                         className="absolute inset-0 overflow-hidden"
                         animate={{ opacity: isZenMode ? 0 : 1, pointerEvents: isZenMode ? 'none' : 'auto' }}
-                        style={{ x: settings.enableParallax ? fgX : 0, y: settings.enableParallax ? fgY : 0 }}
+                        style={{ x: settings.enableParallax && !isMinimalist ? fgX : 0, y: settings.enableParallax && !isMinimalist ? fgY : 0 }}
                     >
                         <React.Suspense fallback={<div className="text-center">Loading...</div>}>
-                            {Object.entries(settings.widgets).map(([id, enabled]) => {
-                                const widgetId = id as WidgetId;
-                                // Skip aiAssistant as it's now a sidebar
-                                if (!enabled || !widgetMap[widgetId] || widgetId === 'aiAssistant') return null;
+                            {Object.entries(settings.widgets)
+                                .filter(([id, widget]) => {
+                                    const widgetId = id as WidgetId;
+                                    // Skip aiAssistant as it's now a sidebar
+                                    if (!widget.visible || !widgetMap[widgetId] || widgetId === 'aiAssistant') return false;
+                                    // Minimalist Mode Filter
+                                    if (isMinimalist && !['clock', 'weather', 'todoList', 'calendar'].includes(widgetId)) return false;
+                                    return true;
+                                })
+                                .map(([id, widget], index) => {
+                                    const widgetId = id as WidgetId;
+                                    const position = { x: widget.x, y: widget.y };
 
-                                const position = settings.widgetPositions[widgetId] || { x: 100, y: 100 };
-
-                                return (
-                                    <DraggableWidget
-                                        key={widgetId}
-                                        id={widgetId}
-                                        position={position}
-                                        onPositionChange={(x: number, y: number) => updateWidgetPosition(widgetId, x, y)}
-                                        size={settings.widgetSizes[widgetId] || 'small'}
-                                    >
-                                        {widgetMap[widgetId]}
-                                    </DraggableWidget>
-                                );
-                            })}
+                                    return (
+                                        <DraggableWidget
+                                            key={widgetId}
+                                            id={widgetId}
+                                            position={position}
+                                            onPositionChange={(x: number, y: number) => updateWidgetPosition(widgetId, x, y)}
+                                            size={settings.widgetSizes[widgetId] || 'small'}
+                                            index={index}
+                                        >
+                                            {widgetMap[widgetId]}
+                                        </DraggableWidget>
+                                    );
+                                })}
                         </React.Suspense>
                     </motion.div>
 
                     {/* AI Chat Sidebar & Toggle */}
-                    {settings.widgets.aiAssistant && (
+                    {!isMinimalist && isAIChatEnabled && (
                         <>
                             {/* Toggle Button */}
-                            <motion.button
-                                initial={{ x: 100, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                                onClick={() => setIsAIChatOpen(true)}
-                                className={`fixed right-0 top-1/2 -translate-y-1/2 z-40 p-3 bg-white/10 backdrop-blur-md border-l border-y border-white/20 rounded-l-2xl shadow-lg transition-all hover:bg-white/20 ${isAIChatOpen ? 'translate-x-full opacity-0 pointer-events-none' : ''}`}
+                            <motion.div
+                                className="fixed right-0 top-1/2 -translate-y-1/2 z-[55]"
+                                initial={{ x: 120, opacity: 0 }}
+                                animate={{ x: 0, opacity: isZenMode ? 0 : 1, pointerEvents: isZenMode ? 'none' : 'auto' }}
+                                transition={{ type: 'spring', damping: 20, stiffness: 220 }}
                             >
-                                <div className="writing-vertical-rl text-white/80 text-xs font-bold tracking-widest py-2 flex items-center gap-2" style={{ writingMode: 'vertical-rl' }}>
-                                    <span>AI CHAT</span>
-                                </div>
-                            </motion.button>
+                                <motion.button
+                                    whileHover={{ x: -4 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={() => setIsAIChatOpen(true)}
+                                    className={`relative group flex items-center gap-2 pl-2 pr-2 py-2.5 bg-black/50 backdrop-blur-xl border border-r-0 rounded-l-lg shadow-2xl overflow-hidden ${styles.aiButton.border} ${isAIChatOpen ? 'translate-x-full opacity-0 pointer-events-none' : ''}`}
+                                    title="Open AI Chat"
+                                >
+                                    {/* Aura */}
+                                    <div className={`absolute -inset-6 blur-2xl opacity-40 group-hover:opacity-70 transition-opacity duration-300 ${styles.aiButton.glow}`} />
+
+                                    {/* Scanline */}
+                                    <motion.div
+                                        className="absolute inset-0 bg-gradient-to-t from-transparent via-white/15 to-transparent -translate-y-full"
+                                        animate={{ y: ['0%', '200%'] }}
+                                        transition={{ duration: 2.2, repeat: Infinity, ease: 'linear' }}
+                                    />
+
+                                    {/* Rotating ring */}
+                                    <motion.div
+                                        className={`absolute left-1.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full border border-dashed opacity-35 ${styles.aiButton.border}`}
+                                        animate={{ rotate: 360 }}
+                                        transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
+                                    />
+
+                                    {/* Icon */}
+                                    <div className="relative z-10 w-7 h-7 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+                                        <motion.div
+                                            animate={{ scale: [1, 1.08, 1] }}
+                                            transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                                        >
+                                            <MessageCircle className={`w-4 h-4 ${styles.aiButton.text}`} />
+                                        </motion.div>
+                                    </div>
+
+                                    {/* Vertical label */}
+                                    <div
+                                        className="relative z-10 text-[10px] font-black tracking-[0.3em] text-white/80 select-none"
+                                        style={{ writingMode: 'vertical-rl' as any }}
+                                    >
+                                        AI_CHAT
+                                    </div>
+                                </motion.button>
+                            </motion.div>
 
                             <AIChatSidebar
                                 isOpen={isAIChatOpen}
@@ -526,22 +586,26 @@ const App: React.FC = () => {
                     />
 
                     {/* Virtual Pet */}
-                    <VirtualPet
-                        theme={settings.theme}
-                        enabled={(settings.showVirtualPet ?? false) && !isFocusMode}
-                    />
+                    {!isMinimalist && (
+                        <VirtualPet
+                            theme={settings.theme}
+                            enabled={(settings.showVirtualPet ?? false) && !isFocusMode}
+                        />
+                    )}
 
                     {/* Fullscreen Animation */}
-                    <React.Suspense fallback={null}>
-                        <FullscreenAnimation
-                            theme={settings.theme}
-                            isVisible={showFullscreenAnimation}
-                            onComplete={() => setShowFullscreenAnimation(false)}
-                        />
-                    </React.Suspense>
+                    {!isMinimalist && (
+                        <React.Suspense fallback={null}>
+                            <FullscreenAnimation
+                                theme={settings.theme}
+                                isVisible={showFullscreenAnimation}
+                                onComplete={() => setShowFullscreenAnimation(false)}
+                            />
+                        </React.Suspense>
+                    )}
                 </motion.div>
-            </div>
-        </GamificationProvider>
+            </div >
+        </GamificationProvider >
     );
 };
 

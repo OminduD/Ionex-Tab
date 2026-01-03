@@ -28,10 +28,11 @@ export interface Settings {
   clockType: 'digital' | 'analog' | 'both';
   timeFormat?: '12h' | '24h'; // 12-hour (AM/PM) or 24-hour time format
   searchEngine: string;
-  widgets: Record<string, boolean>;
+  temperatureUnit?: 'celsius' | 'fahrenheit';
+  widgets: Record<string, { id: string; type: string; x: number; y: number; w: number; h: number; visible: boolean }>;
   widgetSizes: Record<string, WidgetSize>;
-  widgetPositions: Record<string, WidgetPosition>;
-  shortcuts: Shortcut[];
+  widgetPositions?: Record<string, WidgetPosition>; // Keeping for backward compatibility if needed
+  shortcuts?: Shortcut[];
   userName?: string; // User's name for greeting
   showQuotesAndIP?: boolean; // Toggle for quotes and IP display (legacy - keeping for backward compatibility)
   showQuotes?: boolean; // Separate toggle for quotes
@@ -42,10 +43,13 @@ export interface Settings {
   customPetUrl?: string; // URL for custom GIF pet
   apiKeys: {
     weather: string;
-    groq: string;
+    groq?: string;
+    openai?: string;
     news?: string; // News API key for real-time news
+    github?: string;
   };
   connectedMusicPlatforms?: string[];
+  musicPlayerEmbedUrl?: string; // Spotify/SoundCloud link to embed in the Music Player widget
   customColors?: {
     primary: string;
     secondary: string;
@@ -55,8 +59,24 @@ export interface Settings {
   };
   autoThemeFromWallpaper?: boolean;
   enableParallax?: boolean;
+  enableMouseTrail?: boolean;
+  enableGreeting?: boolean;
   githubUsername?: string;
   cryptoCoins?: string[]; // e.g. ['bitcoin', 'ethereum', 'dogecoin']
+  minimalistMode?: boolean;
+  minimalistTheme?: 'dark' | 'light';
+  calendarEvents?: CalendarEvent[];
+  googleCalendarUrl?: string;
+}
+
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  description?: string;
+  startDate: Date;
+  endDate?: Date;
+  allDay?: boolean;
+  location?: string;
 }
 
 export type WidgetId = 'clock' | 'analogClock' | 'weather' | 'calendar' | 'todoList' | 'aiAssistant' | 'notes' | 'appShortcuts' | 'musicPlayer' | 'newsFeed' | 'systemStats' | 'github' | 'crypto' | 'achievements';

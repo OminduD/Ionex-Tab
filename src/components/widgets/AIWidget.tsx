@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Send, Trash2, Copy, Check, Zap, Bot } from 'lucide-react';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 interface AIWidgetProps {
   apiKey: string;
@@ -15,11 +16,26 @@ interface Message {
   timestamp: Date;
 }
 
+type StoredMessage = Omit<Message, 'timestamp'> & { timestamp: string };
+
+const AI_WIDGET_MESSAGES_KEY = 'ionex_ai_widget_messages_v1';
+
 type AIProvider = 'gemini' | 'groq';
 
 const AIWidget: React.FC<AIWidgetProps> = ({ apiKey, groqKey, size = 'medium' }) => {
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [storedMessages, setStoredMessages] = useLocalStorage<StoredMessage[]>(AI_WIDGET_MESSAGES_KEY, []);
+  const messages = useMemo<Message[]>(
+    () =>
+      storedMessages.map((m) => {
+        const parsed = new Date(m.timestamp);
+        return {
+          ...m,
+          timestamp: Number.isNaN(parsed.getTime()) ? new Date() : parsed,
+        };
+      }),
+    [storedMessages]
+  );
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
   const [provider, setProvider] = useState<AIProvider>('gemini');
@@ -40,14 +56,16 @@ const AIWidget: React.FC<AIWidgetProps> = ({ apiKey, groqKey, size = 'medium' })
     const currentKey = provider === 'gemini' ? apiKey : groqKey;
     if (!input.trim() || !currentKey) return;
 
+    const userInput = input.trim();
+
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: input.trim(),
+      content: userInput,
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setStoredMessages(prev => [...prev, { ...userMessage, timestamp: userMessage.timestamp.toISOString() }]);
     setInput('');
     setLoading(true);
 
@@ -67,7 +85,7 @@ const AIWidget: React.FC<AIWidgetProps> = ({ apiKey, groqKey, size = 'medium' })
                 {
                   parts: [
                     {
-                      text: input.trim(),
+                      text: userInput,
                     },
                   ],
                 },
@@ -99,7 +117,7 @@ const AIWidget: React.FC<AIWidgetProps> = ({ apiKey, groqKey, size = 'medium' })
               messages: [
                 {
                   role: 'user',
-                  content: input.trim(),
+                  content: userInput,
                 },
               ],
               temperature: 0.7,
@@ -125,7 +143,7 @@ const AIWidget: React.FC<AIWidgetProps> = ({ apiKey, groqKey, size = 'medium' })
         timestamp: new Date(),
       };
 
-      setMessages(prev => [...prev, assistantMessage]);
+      setStoredMessages(prev => [...prev, { ...assistantMessage, timestamp: assistantMessage.timestamp.toISOString() }]);
     } catch (error) {
       console.error('AI Error:', error);
       const errorMessage: Message = {
@@ -134,7 +152,7 @@ const AIWidget: React.FC<AIWidgetProps> = ({ apiKey, groqKey, size = 'medium' })
         content: `Sorry, there was an error: ${error instanceof Error ? error.message : 'Unknown error'}. Please check your API key and console for details.`,
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setStoredMessages(prev => [...prev, { ...errorMessage, timestamp: errorMessage.timestamp.toISOString() }]);
     } finally {
       setLoading(false);
       inputRef.current?.focus();
@@ -148,7 +166,7 @@ const AIWidget: React.FC<AIWidgetProps> = ({ apiKey, groqKey, size = 'medium' })
   };
 
   const clearChat = () => {
-    setMessages([]);
+    setStoredMessages([]);
   };
 
   return (

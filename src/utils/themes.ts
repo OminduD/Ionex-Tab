@@ -9,5 +9,5 @@ export const themes: Record<string, { name: string; class: string; wallpaper: st
     neon: { name: 'Neon', class: 'bg-gradient-to-br from-fuchsia-500 to-cyan-500', wallpaper: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=2187&auto=format&fit=crop', colors: ['#d946ef', '#06b6d4', '#8b5cf6'] },
     cherry: { name: 'Cherry', class: 'bg-gradient-to-br from-pink-600 to-red-700', wallpaper: 'https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?q=80&w=2070&auto=format&fit=crop', colors: ['#db2777', '#dc2626', '#be123c'] },
     mint: { name: 'Mint', class: 'bg-gradient-to-br from-teal-400 to-green-600', wallpaper: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?q=80&w=2070&auto=format&fit=crop', colors: ['#2dd4bf', '#16a34a', '#14b8a6'] },
-    cyberpunk: { name: 'Cyberpunk', class: 'bg-gradient-to-br from-yellow-400 to-pink-600', wallpaper: 'https://images.unsplash.com/photo-1605218427306-6354db696fc3?q=80&w=2070&auto=format&fit=crop', colors: ['#facc15', '#db2777', '#22d3ee'] },
+    cyberpunk: { name: 'Cyberpunk', class: 'bg-gradient-to-br from-fuchsia-600 to-cyan-600', wallpaper: '/assets/cyberpunk-theme.png', colors: ['#d946ef', '#06b6d4', '#f472b6'] },
 };

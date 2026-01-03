@@ -1,9 +1,10 @@
 // src/components/AIChatSideTab.tsx
 // Fixed side tab for AI chat - can slide open/close
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Send, Trash2, Copy, Check, X, MessageCircle } from 'lucide-react';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 interface AIChatSideTabProps {
   isOpen: boolean;
@@ -19,9 +20,24 @@ interface Message {
   timestamp: Date;
 }
 
+type StoredMessage = Omit<Message, 'timestamp'> & { timestamp: string };
+
+const AI_CHAT_MESSAGES_KEY = 'ionex_ai_chat_messages_v1';
+
 const AIChatSideTab: React.FC<AIChatSideTabProps> = ({ isOpen, onToggle, groqKey }) => {
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [storedMessages, setStoredMessages] = useLocalStorage<StoredMessage[]>(AI_CHAT_MESSAGES_KEY, []);
+  const messages = useMemo<Message[]>(
+    () =>
+      storedMessages.map((m) => {
+        const parsed = new Date(m.timestamp);
+        return {
+          ...m,
+          timestamp: Number.isNaN(parsed.getTime()) ? new Date() : parsed,
+        };
+      }),
+    [storedMessages]
+  );
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -45,7 +61,8 @@ const AIChatSideTab: React.FC<AIChatSideTabProps> = ({ isOpen, onToggle, groqKey
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setStoredMessages(prev => [...prev, { ...userMessage, timestamp: userMessage.timestamp.toISOString() }]);
+    const userInput = input.trim();
     setInput('');
     setLoading(true);
 
@@ -64,7 +81,7 @@ const AIChatSideTab: React.FC<AIChatSideTabProps> = ({ isOpen, onToggle, groqKey
             messages: [
               {
                 role: 'user',
-                content: input.trim(),
+                content: userInput,
               },
             ],
             temperature: 0.7,
@@ -89,7 +106,7 @@ const AIChatSideTab: React.FC<AIChatSideTabProps> = ({ isOpen, onToggle, groqKey
         timestamp: new Date(),
       };
 
-      setMessages(prev => [...prev, assistantMessage]);
+      setStoredMessages(prev => [...prev, { ...assistantMessage, timestamp: assistantMessage.timestamp.toISOString() }]);
     } catch (error) {
       console.error('AI Error:', error);
       const errorMessage: Message = {
@@ -98,7 +115,7 @@ const AIChatSideTab: React.FC<AIChatSideTabProps> = ({ isOpen, onToggle, groqKey
         content: `Sorry, there was an error: ${error instanceof Error ? error.message : 'Unknown error'}. Please check your API key and console for details.`,
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setStoredMessages(prev => [...prev, { ...errorMessage, timestamp: errorMessage.timestamp.toISOString() }]);
     } finally {
       setLoading(false);
       inputRef.current?.focus();
@@ -112,7 +129,7 @@ const AIChatSideTab: React.FC<AIChatSideTabProps> = ({ isOpen, onToggle, groqKey
   };
 
   const clearChat = () => {
-    setMessages([]);
+    setStoredMessages([]);
   };
 
   return (

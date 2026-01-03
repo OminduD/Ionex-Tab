@@ -3,7 +3,9 @@
 
 import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+
 import { WidgetSize } from '../types';
+import { TiltContainer } from './TiltContainer';
 
 interface Props {
   id: string;
@@ -11,6 +13,7 @@ interface Props {
   onPositionChange: (x: number, y: number) => void;
   size: WidgetSize;
   children: React.ReactNode;
+  index?: number; // Added for staggered animation
 }
 
 const sizeMap: Record<WidgetSize, { width: number; height: number }> = {
@@ -19,7 +22,7 @@ const sizeMap: Record<WidgetSize, { width: number; height: number }> = {
   large: { width: 500, height: 450 },
 };
 
-export const DraggableWidget: React.FC<Props> = ({ position, onPositionChange, size, children }) => {
+export const DraggableWidget: React.FC<Props> = ({ position, onPositionChange, size, children, index = 0 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const dragRef = useRef<HTMLDivElement>(null);
   const { width, height } = sizeMap[size];
@@ -30,9 +33,13 @@ export const DraggableWidget: React.FC<Props> = ({ position, onPositionChange, s
       drag
       dragMomentum={false}
       dragElastic={0}
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0, y: 80, scale: 0.85 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{
+        duration: 0.8,
+        ease: [0.16, 1, 0.3, 1], // Cinematic easing curve - more dramatic
+        delay: index * 0.15 // Increased stagger for sci-fi effect
+      }}
       whileHover={{ scale: 1.02, borderColor: 'rgba(255,255,255,0.3)' }}
       style={{
         position: 'absolute',
@@ -50,7 +57,7 @@ export const DraggableWidget: React.FC<Props> = ({ position, onPositionChange, s
         const newY = Math.max(0, Math.min(window.innerHeight - height, position.y + info.offset.y));
         onPositionChange(newX, newY);
       }}
-      className={`widget-glass rounded-2xl border border-white/10 shadow-2xl backdrop-blur-xl flex flex-col transition-all duration-300 group relative overflow-hidden ${isDragging ? 'scale-105 shadow-cyan-500/20 border-cyan-500/30' : 'hover:shadow-lg hover:shadow-cyan-500/10'
+      className={`widget-glass glassmorphism-2 rounded-2xl border border-white/10 shadow-2xl backdrop-blur-xl flex flex-col transition-all duration-300 group relative ${isDragging ? 'scale-105 shadow-cyan-500/20 border-cyan-500/30' : 'hover:shadow-lg hover:shadow-cyan-500/10'
         }`}
     >
       {/* Animated Border Gradient */}
@@ -64,9 +71,9 @@ export const DraggableWidget: React.FC<Props> = ({ position, onPositionChange, s
       </div>
 
       {/* Widget Content */}
-      <div className="flex-1 overflow-hidden relative w-full h-full">
+      <TiltContainer className="flex-1 overflow-hidden relative w-full h-full" maxTilt={5} scale={1.0}>
         {children}
-      </div>
+      </TiltContainer>
     </motion.div>
   );
 };
