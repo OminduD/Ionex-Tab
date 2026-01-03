@@ -21,6 +21,7 @@ const Clock: React.FC<ClockProps> = ({ timeFormat = '24h', size = 'medium', them
 
   const isSmall = size === 'small';
   const isLarge = size === 'large';
+  const isCyberpunk = theme === 'cyberpunk' || theme === 'neon';
 
   return (
     <motion.div
@@ -38,16 +39,33 @@ const Clock: React.FC<ClockProps> = ({ timeFormat = '24h', size = 'medium', them
         className="relative z-10 flex flex-col items-center"
       >
         <div className="flex items-end gap-2">
-          <div className={`font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/50 drop-shadow-[0_0_15px_rgba(255,255,255,0.5)] ${isSmall ? 'text-4xl' : isLarge ? 'text-8xl' : 'text-6xl'
-            }`}>
-            {time.toLocaleTimeString('en-US', {
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: timeFormat === '12h'
-            }).split(' ')[0]}
+          <div className={`flex gap-1 ${isSmall ? 'scale-75' : isLarge ? 'scale-125' : 'scale-100'}`}>
+            {/* Hours */}
+            <div className="relative bg-black/40 backdrop-blur-md rounded-lg p-2 border border-white/10 shadow-lg overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-50" />
+              <span className={`relative z-10 font-black tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)] text-6xl ${isCyberpunk ? 'font-mono text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]' : ''}`}>
+                {timeFormat === '12h'
+                  ? (time.getHours() % 12 || 12).toString().padStart(2, '0')
+                  : time.getHours().toString().padStart(2, '0')}
+              </span>
+              {/* Flip Line */}
+              <div className="absolute top-1/2 left-0 w-full h-[1px] bg-black/50 z-20" />
+            </div>
+
+            <span className={`text-4xl font-bold self-center ${isCyberpunk ? 'text-cyan-400 animate-pulse' : 'text-white/50'}`}>:</span>
+
+            {/* Minutes */}
+            <div className="relative bg-black/40 backdrop-blur-md rounded-lg p-2 border border-white/10 shadow-lg overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-50" />
+              <span className={`relative z-10 font-black tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)] text-6xl ${isCyberpunk ? 'font-mono text-pink-500 drop-shadow-[0_0_10px_rgba(219,39,119,0.8)]' : ''}`}>
+                {time.getMinutes().toString().padStart(2, '0')}
+              </span>
+              {/* Flip Line */}
+              <div className="absolute top-1/2 left-0 w-full h-[1px] bg-black/50 z-20" />
+            </div>
           </div>
 
-          <div className={`font-medium text-primary mb-2 ${isSmall ? 'text-xs' : 'text-xl'}`}>
+          <div className={`font-medium text-primary mb-4 ${isSmall ? 'text-xs' : 'text-xl'}`}>
             {timeFormat === '12h' && time.toLocaleTimeString('en-US', { hour12: true }).split(' ')[1]}
           </div>
         </div>
