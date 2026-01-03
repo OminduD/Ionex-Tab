@@ -209,37 +209,42 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ apiKey, size = 'medium', theme = 'a
             news.map((item, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.05 }}
+                initial={{ opacity: 0, x: -20, scale: 0.95 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                transition={{ delay: index * 0.1, type: "spring", stiffness: 100 }}
                 whileHover={{ scale: 1.02, x: 5 }}
                 className="group relative"
               >
                 <div
-                  className={`relative ${isSmall ? 'p-2' : 'p-3'} bg-white/5 backdrop-blur-sm rounded-xl border border-white/5 hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer`}
+                  className={`relative ${isSmall ? 'p-2' : 'p-3'} bg-white/5 backdrop-blur-sm rounded-xl border border-white/5 hover:bg-white/10 hover:border-primary/30 transition-all cursor-pointer overflow-hidden`}
                   onClick={() => item.url && window.open(item.url, '_blank')}
                 >
-                  <div className="flex items-start justify-between gap-2 mb-1">
-                    <h4 className={`font-semibold ${isSmall ? 'text-xs' : 'text-sm'} leading-tight text-white/90 group-hover:text-white transition-colors flex-1 line-clamp-2`}>
-                      {item.title}
-                    </h4>
-                    {item.url && (
-                      <ExternalLink className="w-3 h-3 text-white/40 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 mt-0.5" />
-                    )}
-                  </div>
+                  {/* Hover Glow Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                  {item.description && !isSmall && (
-                    <p className="text-xs text-white/50 mb-2 line-clamp-2">
-                      {item.description}
-                    </p>
-                  )}
-
-                  <div className="flex items-center justify-between text-[10px] text-white/40">
-                    <div className="flex items-center gap-1">
-                      <TrendingUp className="w-3 h-3" />
-                      <span className="truncate max-w-[80px]">{item.source}</span>
+                  <div className="relative z-10">
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <h4 className={`font-semibold ${isSmall ? 'text-xs' : 'text-sm'} leading-tight text-white/90 group-hover:text-white transition-colors flex-1 line-clamp-2`}>
+                        {item.title}
+                      </h4>
+                      {item.url && (
+                        <ExternalLink className="w-3 h-3 text-white/40 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 mt-0.5 transform group-hover:translate-x-1 group-hover:-translate-y-1 duration-300" />
+                      )}
                     </div>
-                    <span>{item.time}</span>
+
+                    {item.description && !isSmall && (
+                      <p className="text-xs text-white/50 mb-2 line-clamp-2">
+                        {item.description}
+                      </p>
+                    )}
+
+                    <div className="flex items-center justify-between text-[10px] text-white/40">
+                      <div className="flex items-center gap-1">
+                        <TrendingUp className="w-3 h-3 text-primary/70" />
+                        <span className="truncate max-w-[80px] font-mono">{item.source}</span>
+                      </div>
+                      <span className="font-mono">{item.time}</span>
+                    </div>
                   </div>
                 </div>
               </motion.div>
