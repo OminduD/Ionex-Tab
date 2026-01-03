@@ -33,6 +33,7 @@ export const DraggableWidget: React.FC<Props> = ({ position, onPositionChange, s
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
+      whileHover={{ scale: 1.02, borderColor: 'rgba(255,255,255,0.3)' }}
       style={{
         position: 'absolute',
         left: position.x,
@@ -40,6 +41,7 @@ export const DraggableWidget: React.FC<Props> = ({ position, onPositionChange, s
         width,
         height,
         cursor: isDragging ? 'grabbing' : 'grab',
+        zIndex: isDragging ? 50 : 10,
       }}
       onDragStart={() => setIsDragging(true)}
       onDragEnd={(_e, info) => {
@@ -48,15 +50,19 @@ export const DraggableWidget: React.FC<Props> = ({ position, onPositionChange, s
         const newY = Math.max(0, Math.min(window.innerHeight - height, position.y + info.offset.y));
         onPositionChange(newX, newY);
       }}
-      className={`widget-glass rounded-2xl border border-white/10 shadow-2xl hover:shadow-accent/20 transition-shadow flex flex-col ${
-        isDragging ? 'scale-105' : ''
-      }`}
+      className={`widget-glass rounded-2xl border border-white/10 shadow-2xl backdrop-blur-xl flex flex-col transition-all duration-300 group relative overflow-hidden ${isDragging ? 'scale-105 shadow-cyan-500/20 border-cyan-500/30' : 'hover:shadow-lg hover:shadow-cyan-500/10'
+        }`}
     >
+      {/* Animated Border Gradient */}
+      <div className="absolute inset-0 rounded-2xl p-[1px] bg-gradient-to-br from-white/20 via-transparent to-white/10 opacity-50 group-hover:opacity-100 transition-opacity pointer-events-none" />
+
+      {/* Subtle Glow Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
       {/* Drag Handle */}
-      <div className="w-full h-6 flex items-center justify-center shrink-0">
-        <div className="w-12 h-1 bg-white/20 rounded-full" />
+      <div className="w-full h-6 flex items-center justify-center shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="w-12 h-1 bg-white/20 rounded-full group-hover:bg-cyan-500/50 transition-colors" />
       </div>
-      
+
       {/* Widget Content */}
       <div className="flex-1 overflow-hidden relative w-full h-full">
         {children}
