@@ -183,12 +183,21 @@ const NotesWidget: React.FC<NotesWidgetProps> = ({ size = 'medium', theme = 'aur
             notes.map((note) => (
               <motion.div
                 key={note.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, y: 20, rotateX: -10 }}
+                animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                exit={{
+                  opacity: 0,
+                  scale: 0.8,
+                  rotate: 10,
+                  filter: 'blur(10px)',
+                  transition: { duration: 0.3 }
+                }}
                 layout
-                className={`group relative bg-gradient-to-br ${note.color.includes('from-') ? note.color : 'from-white/5 to-white/10'} border border-white/10 rounded-xl ${isSmall ? 'p-2 mb-2' : 'p-3 mb-3'} shadow-lg hover:shadow-xl transition-all hover:border-white/20`}
+                className={`group relative bg-gradient-to-br ${note.color.includes('from-') ? note.color : 'from-white/5 to-white/10'} border border-white/10 rounded-xl ${isSmall ? 'p-2 mb-2' : 'p-3 mb-3'} shadow-lg hover:shadow-xl transition-all hover:border-white/30 backdrop-blur-md overflow-hidden`}
               >
+                {/* Holographic Shine */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
                 {editingNoteId === note.id ? (
                   <EditNoteForm
                     note={note}
@@ -198,7 +207,7 @@ const NotesWidget: React.FC<NotesWidgetProps> = ({ size = 'medium', theme = 'aur
                   />
                 ) : (
                   <>
-                    <div className="flex items-start justify-between gap-2 mb-1">
+                    <div className="flex items-start justify-between gap-2 mb-1 relative z-10">
                       <h4 className={`font-bold text-white ${isSmall ? 'text-sm' : 'text-base'} truncate`}>{note.title}</h4>
                       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
@@ -215,8 +224,8 @@ const NotesWidget: React.FC<NotesWidgetProps> = ({ size = 'medium', theme = 'aur
                         </button>
                       </div>
                     </div>
-                    <p className={`text-white/80 whitespace-pre-wrap line-clamp-3 ${isSmall ? 'text-xs' : 'text-sm'}`}>{note.content}</p>
-                    <p className="text-[10px] text-white/30 mt-2 text-right">
+                    <p className={`text-white/80 whitespace-pre-wrap line-clamp-3 ${isSmall ? 'text-xs' : 'text-sm'} relative z-10`}>{note.content}</p>
+                    <p className="text-[10px] text-white/30 mt-2 text-right font-mono relative z-10">
                       {new Date(note.updatedAt).toLocaleDateString()}
                     </p>
                   </>
