@@ -83,6 +83,15 @@ const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium', theme = 'aur
     );
   };
 
+  const getWeatherGradient = (condition: string) => {
+    const cond = condition?.toLowerCase() || '';
+    if (cond.includes('rain')) return 'from-blue-900/40 to-slate-900/40';
+    if (cond.includes('snow')) return 'from-slate-100/20 to-blue-100/10';
+    if (cond.includes('cloud')) return 'from-gray-500/30 to-slate-600/30';
+    if (cond.includes('clear') || cond.includes('sun')) return 'from-orange-400/20 to-yellow-400/10';
+    return 'from-white/5 to-transparent';
+  };
+
   if (loading) {
     return (
       <div className={`flex items-center justify-center h-full rounded-3xl ${containerStyle}`}>
@@ -111,11 +120,75 @@ const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium', theme = 'aur
       whileHover="hover"
       className={`relative h-full overflow-hidden flex flex-col ${isSmall ? 'p-3' : 'p-5'} rounded-3xl ${containerStyle}`}
     >
-      {/* Background Gradient based on weather */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50" />
+      {/* Dynamic Background Gradient based on weather */}
+      <motion.div
+        className={`absolute inset-0 bg-gradient-to-br ${getWeatherGradient(weather?.condition)} opacity-50`}
+        animate={{ opacity: [0.3, 0.6, 0.3] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      {/* Live Weather Effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {weather?.condition?.toLowerCase().includes('rain') && (
+          [...Array(20)].map((_, i) => (
+            <motion.div
+              key={`rain-${i}`}
+              className="absolute w-[1px] h-4 bg-blue-400/50"
+              initial={{ x: Math.random() * 400, y: -20 }}
+              animate={{ y: 400 }}
+              transition={{
+                duration: 0.5 + Math.random() * 0.5,
+                repeat: Infinity,
+                ease: "linear",
+                delay: Math.random() * 2
+              }}
+            />
+          ))
+        )}
+        {weather?.condition?.toLowerCase().includes('snow') && (
+          [...Array(15)].map((_, i) => (
+            <motion.div
+              key={`snow-${i}`}
+              className="absolute w-1 h-1 bg-white/80 rounded-full blur-[1px]"
+              initial={{ x: Math.random() * 400, y: -10 }}
+              animate={{ y: 400, x: `calc(${Math.random() * 400}px + ${Math.random() * 50 - 25}px)` }}
+              transition={{
+                duration: 2 + Math.random() * 3,
+                repeat: Infinity,
+                ease: "linear",
+                delay: Math.random() * 5
+              }}
+            />
+          ))
+        )}
+        {(weather?.condition?.toLowerCase().includes('cloud') || weather?.condition?.toLowerCase().includes('overcast')) && (
+          [...Array(3)].map((_, i) => (
+            <motion.div
+              key={`cloud-${i}`}
+              className="absolute w-32 h-12 bg-white/10 blur-xl rounded-full"
+              initial={{ x: -150, y: 20 + i * 40 }}
+              animate={{ x: 450 }}
+              transition={{
+                duration: 15 + Math.random() * 10,
+                repeat: Infinity,
+                ease: "linear",
+                delay: i * 5
+              }}
+            />
+          ))
+        )}
+      </div>
 
       {/* Content */}
       <div className="relative z-10 flex flex-col h-full">
+        {/* HUD Overlay */}
+        <div className="absolute inset-0 border border-white/10 rounded-3xl pointer-events-none">
+          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-white/30 rounded-tl-lg" />
+          <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-white/30 rounded-tr-lg" />
+          <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-white/30 rounded-bl-lg" />
+          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-white/30 rounded-br-lg" />
+        </div>
+
         {/* Header */}
         <div className="flex justify-between items-start">
           <div>
@@ -135,46 +208,52 @@ const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium', theme = 'aur
         </div>
 
         {/* Temperature */}
-        <div className="flex-1 flex items-center justify-center my-2">
-          <div className={`font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60 ${isSmall ? 'text-4xl' : 'text-6xl'} drop-shadow-xl`}>
+        <div className="flex-1 flex items-center justify-center my-2 relative">
+          <div className={`font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60 ${isSmall ? 'text-4xl' : 'text-6xl'} drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]`}>
             {Math.round(weather?.temp)}°
+          </div>
+          {/* Decorative Data Stream */}
+          <div className="absolute -right-2 top-1/2 -translate-y-1/2 flex flex-col gap-1 opacity-30">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="w-1 h-1 bg-white rounded-full" />
+            ))}
           </div>
         </div>
 
         {/* Details Grid (Medium/Large only) */}
         {!isSmall && (
           <div className="grid grid-cols-2 gap-2 mt-auto">
-            <div className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+            <div className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-colors backdrop-blur-sm">
               <Droplets className="w-4 h-4 text-blue-300" />
               <div className="flex flex-col">
-                <span className="text-[10px] text-white/50">Humidity</span>
-                <span className="text-xs font-bold">{weather?.humidity}%</span>
+                <span className="text-[10px] text-white/50 uppercase tracking-wider">Humidity</span>
+                <span className="text-xs font-bold font-mono">{weather?.humidity}%</span>
               </div>
             </div>
-            <div className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+            <div className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-colors backdrop-blur-sm">
               <Wind className="w-4 h-4 text-teal-300" />
               <div className="flex flex-col">
-                <span className="text-[10px] text-white/50">Wind</span>
-                <span className="text-xs font-bold">{weather?.windSpeed}km/h</span>
+                <span className="text-[10px] text-white/50 uppercase tracking-wider">Wind</span>
+                <span className="text-xs font-bold font-mono">{weather?.windSpeed}km/h</span>
               </div>
             </div>
 
             {/* Extended Data for Large or if space permits (using isLarge logic for now, but could adapt) */}
             {(isLarge || weather?.uvIndex !== undefined) && (
               <>
-                <div className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+                <div className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-colors backdrop-blur-sm">
                   <SunIcon className="w-4 h-4 text-orange-300" />
                   <div className="flex flex-col">
-                    <span className="text-[10px] text-white/50">UV Index</span>
-                    <span className="text-xs font-bold">{weather?.uvIndex ?? '-'}</span>
+                    <span className="text-[10px] text-white/50 uppercase tracking-wider">UV Index</span>
+                    <span className="text-xs font-bold font-mono">{weather?.uvIndex ?? '-'}</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+                <div className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-colors backdrop-blur-sm">
                   {/* Using Eye icon for visibility if available, or just text */}
                   <span className="material-icons text-xs text-purple-300">visibility</span>
                   <div className="flex flex-col">
-                    <span className="text-[10px] text-white/50">Visibility</span>
-                    <span className="text-xs font-bold">{weather?.visibility ? `${weather.visibility}km` : '-'}</span>
+                    <span className="text-[10px] text-white/50 uppercase tracking-wider">Vis</span>
+                    <span className="text-xs font-bold font-mono">{weather?.visibility ? `${weather.visibility}km` : '-'}</span>
                   </div>
                 </div>
               </>

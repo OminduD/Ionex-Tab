@@ -4,6 +4,7 @@ import { Todo } from '../../types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Trash2, Plus, Download, Upload } from 'lucide-react';
 import { useThemeAnimation } from '../../hooks/useThemeAnimation';
+import { useGamification } from '../../context/GamificationContext';
 
 interface TodoListProps {
   theme?: string;
@@ -14,6 +15,8 @@ const TodoList: React.FC<TodoListProps> = ({ size = 'medium', theme = 'aurora' }
   const [todos, setTodos] = useLocalStorage<Todo[]>('homeTabTodos', []);
   const [newTodo, setNewTodo] = useState('');
   const { variants, containerStyle } = useThemeAnimation(theme);
+  const { completeTask } = useGamification();
+  const [showXpPopup, setShowXpPopup] = useState<string | null>(null);
 
   const addTodo = () => {
     if (newTodo.trim()) {
@@ -23,7 +26,18 @@ const TodoList: React.FC<TodoListProps> = ({ size = 'medium', theme = 'aurora' }
   };
 
   const toggleTodo = (id: string) => {
-    setTodos(todos.map((todo: Todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo)));
+    setTodos(todos.map((todo: Todo) => {
+      if (todo.id === id) {
+        const isCompleting = !todo.completed;
+        if (isCompleting) {
+          completeTask();
+          setShowXpPopup(id);
+          setTimeout(() => setShowXpPopup(null), 2000);
+        }
+        return { ...todo, completed: !todo.completed };
+      }
+      return todo;
+    }));
   };
 
   const deleteTodo = (id: string) => {
@@ -129,11 +143,34 @@ const TodoList: React.FC<TodoListProps> = ({ size = 'medium', theme = 'aurora' }
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
                 layout
-                className={`group flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl ${isSmall ? 'p-2 mb-1.5' : 'p-3 mb-2'} transition-all`}
+                className={`group flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl ${isSmall ? 'p-2 mb-1.5' : 'p-3 mb-2'} transition-all relative overflow-hidden`}
               >
+                {/* XP Popup */}
+                <AnimatePresence>
+                  {showXpPopup === todo.id && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, y: -20, scale: 1.2 }}
+                      exit={{ opacity: 0 }}
+                      className="absolute right-10 top-1/2 -translate-y-1/2 text-yellow-400 font-bold text-sm z-50 pointer-events-none"
+                    >
+                      +10 XP
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Slash Animation for completed tasks */}
+                {todo.completed && (
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: '100%' }}
+                    className="absolute top-1/2 left-0 h-[1px] bg-white/50 z-20"
+                  />
+                )}
+
                 <button
                   onClick={() => toggleTodo(todo.id)}
-                  className={`flex-shrink-0 w-5 h-5 rounded-full border flex items-center justify-center transition-all ${todo.completed
+                  className={`flex-shrink-0 w-5 h-5 rounded-full border flex items-center justify-center transition-all z-10 ${todo.completed
                     ? 'bg-green-500 border-green-500 text-white'
                     : 'border-white/30 text-transparent hover:border-primary'
                     }`}
@@ -141,13 +178,13 @@ const TodoList: React.FC<TodoListProps> = ({ size = 'medium', theme = 'aurora' }
                   <Check className="w-3 h-3" />
                 </button>
 
-                <span className={`flex-1 text-sm text-white/90 ${todo.completed ? 'line-through text-white/40' : ''}`}>
+                <span className={`flex-1 text-sm text-white/90 z-10 transition-colors duration-300 ${todo.completed ? 'text-white/40' : ''}`}>
                   {todo.text}
                 </span>
 
                 <button
                   onClick={() => deleteTodo(todo.id)}
-                  className="flex-shrink-0 opacity-0 group-hover:opacity-100 text-white/40 hover:text-red-400 transition-all p-1"
+                  className="flex-shrink-0 opacity-0 group-hover:opacity-100 text-white/40 hover:text-red-400 transition-all p-1 z-10"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
