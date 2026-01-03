@@ -26,22 +26,38 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ size = 'medium', theme = 'aur
         <div className="relative">
           <motion.div
             animate={{ rotate: 360 }}
-            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-            className={`rounded-full border-2 border-white/10 bg-black/40 backdrop-blur-sm flex items-center justify-center relative overflow-hidden ${isSmall ? 'w-16 h-16' : 'w-24 h-24'}`}
+            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+            className={`rounded-full border-2 border-white/10 bg-black/60 backdrop-blur-md flex items-center justify-center relative overflow-hidden ${isSmall ? 'w-20 h-20' : 'w-32 h-32'} shadow-[0_0_30px_rgba(0,0,0,0.5)]`}
           >
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-accent/20" />
-            <div className="absolute inset-0 bg-[repeating-radial-gradient(transparent_0,transparent_2px,rgba(255,255,255,0.05)_3px)]" />
-            <div className={`rounded-full bg-gradient-to-br from-primary to-accent shadow-lg ${isSmall ? 'w-6 h-6' : 'w-8 h-8'}`} />
+            {/* Vinyl Grooves */}
+            <div className="absolute inset-0 bg-[repeating-radial-gradient(#111_0,#111_2px,#222_3px)] opacity-80" />
+
+            {/* Holographic Sheen */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent rotate-45" />
+
+            {/* Center Label */}
+            <div className={`rounded-full bg-gradient-to-br from-primary via-purple-500 to-accent shadow-inner ${isSmall ? 'w-8 h-8' : 'w-12 h-12'} flex items-center justify-center`}>
+              <div className="w-1.5 h-1.5 bg-black rounded-full" />
+            </div>
           </motion.div>
 
-          {/* Equalizer Bars */}
-          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex items-end gap-0.5 h-8">
-            {[...Array(5)].map((_, i) => (
+          {/* Dynamic Equalizer Bars */}
+          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex items-end gap-1 h-10">
+            {[...Array(8)].map((_, i) => (
               <motion.div
                 key={i}
-                className="w-1 bg-primary rounded-t-full"
-                animate={{ height: ['20%', '100%', '20%'] }}
-                transition={{ duration: 0.5 + i * 0.1, repeat: Infinity, ease: "easeInOut" }}
+                className="w-1.5 bg-gradient-to-t from-primary to-accent rounded-t-full shadow-[0_0_10px_rgba(var(--primary-color-rgb),0.5)]"
+                animate={{
+                  height: ['20%', '80%', '40%', '100%', '30%'],
+                  opacity: [0.6, 1, 0.6]
+                }}
+                transition={{
+                  duration: 0.8,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: i * 0.1,
+                  repeatType: "mirror"
+                }}
               />
             ))}
           </div>
