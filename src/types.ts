@@ -54,9 +54,12 @@ export interface Settings {
     bgGradientEnd: string;
   };
   autoThemeFromWallpaper?: boolean;
+  enableParallax?: boolean;
+  githubUsername?: string;
+  cryptoCoins?: string[]; // e.g. ['bitcoin', 'ethereum', 'dogecoin']
 }
 
-export type WidgetId = 'clock' | 'analogClock' | 'weather' | 'calendar' | 'todoList' | 'aiAssistant' | 'notes' | 'appShortcuts' | 'musicPlayer' | 'newsFeed';
+export type WidgetId = 'clock' | 'analogClock' | 'weather' | 'calendar' | 'todoList' | 'aiAssistant' | 'notes' | 'appShortcuts' | 'musicPlayer' | 'newsFeed' | 'systemStats' | 'github' | 'crypto' | 'achievements';
 
 export interface Note {
   id: string;
