@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Send, Trash2, Copy, Check, X, Bot } from 'lucide-react';
+import { Sparkles, Send, Trash2, Copy, Check, X, Bot, Cpu, Zap } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -138,22 +138,35 @@ export const AIChatSidebar: React.FC<AIChatSidebarProps> = ({ isOpen, onClose, g
 
           {/* Sidebar Panel */}
           <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
+            initial={{ x: '100%', rotateY: -10 }}
+            animate={{ x: 0, rotateY: 0 }}
+            exit={{ x: '100%', rotateY: -10 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-gradient-to-br from-gray-900/95 via-gray-800/95 to-gray-900/95 backdrop-blur-xl border-l border-white/10 shadow-2xl z-[70] flex flex-col overflow-hidden"
+            style={{ perspective: 1000 }}
+            className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-[#050a14]/95 backdrop-blur-2xl border-l border-cyan-500/20 shadow-[0_0_50px_rgba(6,182,212,0.15)] z-[70] flex flex-col overflow-hidden"
           >
-            {/* Glass Background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
+            {/* Cyber Grid Background */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.05)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
+
+            {/* Decorative Glows */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
             {/* Header */}
-            <div className="relative z-10 flex items-center justify-between p-4 bg-white/5 backdrop-blur-md border-b border-white/10">
-              <div className="flex items-center gap-3">
-                <Bot className="w-6 h-6 text-primary" />
+            <div className="relative z-10 flex items-center justify-between p-5 border-b border-cyan-500/10 bg-black/20 backdrop-blur-md">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                    <Bot className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-[#050a14] animate-pulse" />
+                </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white tracking-wide">AI Assistant</h3>
-                  <p className="text-[10px] text-white/50">Powered by Groq LLaMA 3.3</p>
+                  <h3 className="text-lg font-bold text-white tracking-wide flex items-center gap-2">
+                    IONEX AI
+                    <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-cyan-500/20 text-cyan-400 border border-cyan-500/20">BETA</span>
+                  </h3>
+                  <p className="text-[10px] text-cyan-300/60 font-mono tracking-wider">SYSTEM ONLINE • LLaMA 3.3</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -162,10 +175,10 @@ export const AIChatSidebar: React.FC<AIChatSidebarProps> = ({ isOpen, onClose, g
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={clearChat}
-                    className="p-2 hover:bg-red-500/20 rounded-lg transition-colors group border border-transparent hover:border-red-500/30"
+                    className="p-2 hover:bg-red-500/10 rounded-lg transition-colors group border border-transparent hover:border-red-500/20"
                     title="Clear chat history"
                   >
-                    <Trash2 className="w-4 h-4 text-white/60 group-hover:text-red-400 transition-colors" />
+                    <Trash2 className="w-4 h-4 text-white/40 group-hover:text-red-400 transition-colors" />
                   </motion.button>
                 )}
                 <motion.button
@@ -181,80 +194,86 @@ export const AIChatSidebar: React.FC<AIChatSidebarProps> = ({ isOpen, onClose, g
             </div>
 
             {/* Messages Container */}
-            <div className="relative z-10 flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-white/30 scrollbar-track-transparent">
+            <div className="relative z-10 flex-1 overflow-y-auto p-4 space-y-6 scrollbar-thin scrollbar-thumb-cyan-500/20 scrollbar-track-transparent">
               <AnimatePresence mode='popLayout'>
                 {messages.length === 0 ? (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="flex flex-col items-center justify-center h-full space-y-6"
+                    className="flex flex-col items-center justify-center h-full space-y-8"
                   >
-                    <div className="relative">
+                    <div className="relative group">
                       <motion.div
                         animate={{
-                          scale: [1, 1.2, 1],
-                          opacity: [0.3, 0.6, 0.3],
+                          rotate: 360,
+                          scale: [1, 1.1, 1],
                         }}
-                        transition={{ duration: 3, repeat: Infinity }}
-                        className="absolute inset-0 bg-gradient-to-r from-primary via-secondary to-accent rounded-full blur-2xl"
+                        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                        className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-opacity"
                       />
-                      <Sparkles className="w-16 h-16 text-primary relative z-10 drop-shadow-2xl" />
+                      <div className="relative w-24 h-24 rounded-2xl bg-black/40 border border-cyan-500/30 flex items-center justify-center backdrop-blur-xl">
+                        <Cpu className="w-12 h-12 text-cyan-400" />
+                      </div>
                     </div>
-                    <div className="text-center space-y-2">
-                      <h2 className="text-xl font-bold text-white">
-                        How can I help you?
+
+                    <div className="text-center space-y-2 max-w-[280px]">
+                      <h2 className="text-2xl font-bold text-white tracking-tight">
+                        System Ready
                       </h2>
-                      <p className="text-sm text-white/60">
-                        Ask me anything!
+                      <p className="text-sm text-cyan-200/50">
+                        Initiate conversation. I can assist with code, analysis, or creative tasks.
                       </p>
                     </div>
+
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                      className="grid gap-2 mt-6 w-full"
+                      transition={{ delay: 0.2 }}
+                      className="grid grid-cols-2 gap-3 w-full max-w-sm px-4"
                     >
                       {[
-                        { icon: '🧠', text: 'Explain quantum computing' },
-                        { icon: '✍️', text: 'Write a poem' },
-                        { icon: '⚡', text: 'Tips for productivity' },
-                        { icon: '🚀', text: 'Fun facts about space' },
+                        { icon: <Zap className="w-4 h-4 text-yellow-400" />, text: 'Brainstorm ideas' },
+                        { icon: <Cpu className="w-4 h-4 text-cyan-400" />, text: 'Explain code' },
+                        { icon: <Sparkles className="w-4 h-4 text-purple-400" />, text: 'Write a story' },
+                        { icon: <Bot className="w-4 h-4 text-green-400" />, text: 'Just chat' },
                       ].map((prompt, index) => (
                         <motion.button
                           key={index}
-                          whileHover={{ scale: 1.02, x: 5 }}
+                          whileHover={{ scale: 1.02, y: -2 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => setInput(prompt.text)}
-                          className="px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-xl text-sm text-white/80 hover:text-white transition-all backdrop-blur-sm text-left flex items-center gap-3"
+                          className="p-3 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-cyan-500/30 rounded-xl text-xs text-white/70 hover:text-white transition-all backdrop-blur-sm flex flex-col items-center gap-2 text-center group"
                         >
-                          <span className="text-lg">{prompt.icon}</span>
-                          <span className="text-xs">{prompt.text}</span>
+                          <div className="p-2 rounded-lg bg-black/30 group-hover:bg-black/50 transition-colors">
+                            {prompt.icon}
+                          </div>
+                          {prompt.text}
                         </motion.button>
                       ))}
                     </motion.div>
                   </motion.div>
                 ) : (
-                  messages.map((message, index) => (
+                  messages.map((message) => (
                     <motion.div
                       key={message.id}
-                      initial={{ opacity: 0, x: message.role === 'user' ? 20 : -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ delay: index * 0.05 }}
-                      className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} mb-4 group`}
+                      initial={{ opacity: 0, x: message.role === 'user' ? 50 : -50, y: 20 }}
+                      animate={{ opacity: 1, x: 0, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} group`}
                     >
                       {message.role === 'assistant' && (
                         <div className="flex-shrink-0 mr-3 mt-1">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
-                            <Sparkles className="w-4 h-4 text-white" />
+                          <div className="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center">
+                            <Bot className="w-4 h-4 text-cyan-400" />
                           </div>
                         </div>
                       )}
 
                       <div
                         className={`max-w-[85%] rounded-2xl p-4 shadow-lg relative ${message.role === 'user'
-                          ? 'bg-gradient-to-br from-primary via-accent to-secondary text-white border border-white/20'
-                          : 'bg-white/10 backdrop-blur-md text-white/90 border border-white/10'
+                          ? 'bg-gradient-to-br from-cyan-600 to-blue-700 text-white shadow-[0_4px_20px_rgba(6,182,212,0.2)]'
+                          : 'bg-[#0A101F]/80 backdrop-blur-md text-gray-100 border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.2)]'
                           }`}
                       >
                         <div className="markdown-content text-sm leading-relaxed">
@@ -265,13 +284,14 @@ export const AIChatSidebar: React.FC<AIChatSidebarProps> = ({ isOpen, onClose, g
                                 p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
                                 code: ({ node, inline, ...props }: any) =>
                                   inline ? (
-                                    <code className="bg-black/30 px-1 py-0.5 rounded text-xs font-mono" {...props} />
+                                    <code className="bg-black/30 px-1.5 py-0.5 rounded text-xs font-mono text-cyan-300" {...props} />
                                   ) : (
-                                    <code className="block bg-black/40 p-2 rounded-lg text-xs font-mono overflow-x-auto my-2" {...props} />
+                                    <code className="block bg-[#050a14] p-3 rounded-lg text-xs font-mono overflow-x-auto my-2 border border-white/5 text-gray-300" {...props} />
                                   ),
-                                a: ({ node, ...props }) => <a className="text-blue-300 hover:underline" target="_blank" rel="noopener noreferrer" {...props} />,
-                                ul: ({ node, ...props }) => <ul className="list-disc list-inside mb-2" {...props} />,
-                                ol: ({ node, ...props }) => <ol className="list-decimal list-inside mb-2" {...props} />,
+                                a: ({ node, ...props }) => <a className="text-cyan-400 hover:underline" target="_blank" rel="noopener noreferrer" {...props} />,
+                                ul: ({ node, ...props }) => <ul className="list-disc list-inside mb-2 space-y-1" {...props} />,
+                                ol: ({ node, ...props }) => <ol className="list-decimal list-inside mb-2 space-y-1" {...props} />,
+                                blockquote: ({ node, ...props }) => <blockquote className="border-l-2 border-cyan-500/50 pl-3 italic text-white/60 my-2" {...props} />,
                               }}
                             >
                               {message.content}
@@ -282,21 +302,22 @@ export const AIChatSidebar: React.FC<AIChatSidebarProps> = ({ isOpen, onClose, g
                         </div>
 
                         {message.role === 'assistant' && (
-                          <div className="flex items-center gap-2 mt-2 pt-2 border-t border-white/10">
+                          <div className="flex items-center gap-2 mt-3 pt-2 border-t border-white/5">
                             <motion.button
                               whileHover={{ scale: 1.1 }}
                               whileTap={{ scale: 0.9 }}
                               onClick={() => copyToClipboard(message.content, message.id)}
-                              className="p-1 hover:bg-white/10 rounded transition-colors group/btn"
+                              className="p-1.5 hover:bg-white/5 rounded-md transition-colors group/btn flex items-center gap-1.5"
                               title="Copy"
                             >
                               {copied === message.id ? (
                                 <Check className="w-3 h-3 text-green-400" />
                               ) : (
-                                <Copy className="w-3 h-3 text-white/40 group-hover/btn:text-white/80" />
+                                <Copy className="w-3 h-3 text-white/30 group-hover/btn:text-cyan-400 transition-colors" />
                               )}
+                              <span className="text-[10px] text-white/30 group-hover/btn:text-white/50">Copy</span>
                             </motion.button>
-                            <span className="text-[10px] text-white/30 ml-auto">
+                            <span className="text-[10px] text-white/20 ml-auto font-mono">
                               {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
                           </div>
@@ -305,8 +326,8 @@ export const AIChatSidebar: React.FC<AIChatSidebarProps> = ({ isOpen, onClose, g
 
                       {message.role === 'user' && (
                         <div className="flex-shrink-0 ml-3 mt-1">
-                          <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
-                            <span className="text-sm">👤</span>
+                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-lg">
+                            <span className="text-xs font-bold text-white">YOU</span>
                           </div>
                         </div>
                       )}
@@ -322,22 +343,23 @@ export const AIChatSidebar: React.FC<AIChatSidebarProps> = ({ isOpen, onClose, g
                   className="flex justify-start mb-4"
                 >
                   <div className="flex-shrink-0 mr-3 mt-1">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
-                      <Sparkles className="w-4 h-4 text-white" />
+                    <div className="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center">
+                      <Bot className="w-4 h-4 text-cyan-400" />
                     </div>
                   </div>
 
-                  <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 flex items-center gap-2 border border-white/10">
+                  <div className="bg-[#0A101F]/80 backdrop-blur-md rounded-2xl p-4 flex items-center gap-3 border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.1)]">
+                    <span className="text-xs text-cyan-400 font-mono animate-pulse">PROCESSING</span>
                     <div className="flex gap-1">
                       {[0, 1, 2].map((i) => (
                         <motion.div
                           key={i}
                           animate={{
-                            y: [0, -5, 0],
-                            scale: [1, 1.2, 1],
+                            height: [4, 12, 4],
+                            opacity: [0.5, 1, 0.5],
                           }}
-                          transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
-                          className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-primary to-accent"
+                          transition={{ duration: 1, repeat: Infinity, delay: i * 0.15 }}
+                          className="w-1 bg-cyan-400 rounded-full"
                         />
                       ))}
                     </div>
@@ -349,41 +371,50 @@ export const AIChatSidebar: React.FC<AIChatSidebarProps> = ({ isOpen, onClose, g
             </div>
 
             {/* Input Area */}
-            <div className="relative z-10 p-4 bg-white/5 backdrop-blur-md border-t border-white/10">
+            <div className="relative z-10 p-5 bg-[#050a14]/80 backdrop-blur-xl border-t border-cyan-500/10">
               {!groqKey ? (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-center text-xs bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3"
+                  className="text-center text-xs bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4"
                 >
-                  <p className="text-yellow-200/80">
-                    API Key Required
+                  <p className="text-yellow-200/80 font-medium">
+                    ⚠️ API Key Required
+                  </p>
+                  <p className="text-yellow-200/50 mt-1">
+                    Please add your Groq API key in Settings &gt; Network
                   </p>
                 </motion.div>
               ) : (
-                <div className="flex gap-2">
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && !loading && handleSubmit()}
-                    placeholder="Type your message..."
-                    className="flex-1 bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-primary/50 focus:bg-black/40 transition-all placeholder:text-white/30"
-                    disabled={loading}
-                  />
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleSubmit}
-                    disabled={loading || !input.trim()}
-                    className="bg-gradient-to-r from-primary to-accent hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl p-3 transition-all shadow-lg flex items-center justify-center"
-                    title="Send message"
-                  >
-                    <Send className="w-5 h-5 text-white" />
-                  </motion.button>
+                <div className="relative group">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl opacity-20 group-hover:opacity-40 transition-opacity blur" />
+                  <div className="relative flex gap-2 bg-[#0A101F] rounded-xl p-1.5 border border-white/10 group-focus-within:border-cyan-500/50 transition-colors">
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && !loading && handleSubmit()}
+                      placeholder="Type a message..."
+                      className="flex-1 bg-transparent px-3 py-2 text-sm text-white outline-none placeholder:text-white/20 font-medium"
+                      disabled={loading}
+                    />
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleSubmit}
+                      disabled={loading || !input.trim()}
+                      className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg p-2.5 transition-all shadow-lg flex items-center justify-center"
+                      title="Send message"
+                    >
+                      <Send className="w-4 h-4 text-white" />
+                    </motion.button>
+                  </div>
                 </div>
               )}
+              <div className="text-[10px] text-center mt-3 text-white/20 font-mono">
+                AI can make mistakes. Verify important information.
+              </div>
             </div>
           </motion.div>
         </>
