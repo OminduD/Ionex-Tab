@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useThemeAnimation } from '../../hooks/useThemeAnimation';
 
@@ -99,22 +99,50 @@ const Calendar: React.FC<CalendarProps> = ({ size = 'medium', theme = 'aurora' }
         ))}
 
         {/* Days */}
-        {days.map((day, i) => (
-          <div key={i} className="aspect-square flex items-center justify-center">
-            {day && (
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                className={`w-full h-full flex items-center justify-center rounded-lg text-xs font-medium transition-all ${isToday(day)
-                  ? 'bg-gradient-to-br from-primary to-secondary text-white shadow-[0_0_10px_rgba(var(--primary-color-rgb),0.5)]'
-                  : 'text-white/80 hover:bg-white/10'
-                  }`}
-              >
-                {day}
-              </motion.button>
-            )}
-          </div>
-        ))}
+        <AnimatePresence mode='wait' custom={date.getMonth()}>
+          <motion.div
+            key={date.getMonth()}
+            initial={{ rotateY: -90, opacity: 0 }}
+            animate={{ rotateY: 0, opacity: 1 }}
+            exit={{ rotateY: 90, opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="contents"
+          >
+            {days.map((day, i) => (
+              <div key={i} className="aspect-square flex items-center justify-center perspective-500">
+                {day && (
+                  <motion.button
+                    whileHover={{
+                      scale: 1.1,
+                      rotateX: 10,
+                      rotateY: 10,
+                      backgroundColor: 'rgba(255,255,255,0.15)',
+                      boxShadow: '0 5px 15px rgba(0,0,0,0.3)'
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`w-full h-full flex items-center justify-center rounded-xl text-xs font-medium transition-all relative group backdrop-blur-md border border-white/5 shadow-sm ${isToday(day)
+                      ? 'text-white font-bold bg-white/10'
+                      : 'text-white/80 hover:bg-white/10'
+                      }`}
+                    style={{ transformStyle: 'preserve-3d' }}
+                  >
+                    {isToday(day) && (
+                      <motion.div
+                        layoutId="today-glow"
+                        className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary to-secondary opacity-80 shadow-[0_0_20px_rgba(var(--primary-color-rgb),0.6)]"
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      />
+                    )}
+                    <span className="relative z-10 drop-shadow-md">{day}</span>
+
+                    {/* Glass Reflection */}
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                  </motion.button>
+                )}
+              </div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </motion.div>
   );
