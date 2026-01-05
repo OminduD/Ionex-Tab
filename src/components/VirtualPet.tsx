@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, memo } from 'react';
 import { motion, useAnimation, AnimatePresence } from 'framer-motion';
 import { Heart, Zap, Scan, Battery, Smile, Utensils, Play, Moon, X } from 'lucide-react';
 
@@ -165,9 +165,20 @@ const VirtualPet: React.FC<VirtualPetProps> = ({ theme, enabled }) => {
         return () => clearInterval(interval);
     }, [enabled, state, theme, sprite.isRobot, energy, showHUD]);
 
+    const lastMouseMoveTime = useRef(0);
+
     // Track mouse position & Interaction
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
+            const now = Date.now();
+            // Throttle to ~10fps (100ms) to reduce CPU usage
+            if (now - lastMouseMoveTime.current < 100) {
+                // Still update position for smooth chasing, but skip heavy logic
+                mousePos.current = { x: e.clientX, y: e.clientY };
+                return;
+            }
+            lastMouseMoveTime.current = now;
+
             const dist = Math.sqrt(Math.pow(e.clientX - mousePos.current.x, 2) + Math.pow(e.clientY - mousePos.current.y, 2));
             mousePos.current = { x: e.clientX, y: e.clientY };
 
@@ -653,4 +664,4 @@ const VirtualPet: React.FC<VirtualPetProps> = ({ theme, enabled }) => {
     );
 };
 
-export default VirtualPet;
+export default memo(VirtualPet);
