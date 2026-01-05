@@ -1,7 +1,7 @@
 // src/components/SearchBar.tsx
 // Enhanced search bar with futuristic cyberpunk aesthetics
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, memo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import SearchSuggestions from './SearchSuggestions';
 
@@ -34,30 +34,30 @@ interface Props {
   isMinimalist?: boolean;
 }
 
-export const SearchBar: React.FC<Props> = ({ selectedEngine = 'google', onEngineChange, isMinimalist }) => {
+const SearchBar: React.FC<Props> = ({ selectedEngine = 'google', onEngineChange, isMinimalist }) => {
   const [query, setQuery] = useState('');
   const [activeEngine, setActiveEngine] = useState(selectedEngine);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleSearch = (searchQuery?: string) => {
+  const handleSearch = useCallback((searchQuery?: string) => {
     const finalQuery = searchQuery || query;
     if (finalQuery.trim()) {
       const engine = searchEngines.find(e => e.id === activeEngine) || searchEngines[0];
       window.location.href = engine.searchUrl + encodeURIComponent(finalQuery);
     }
-  };
+  }, [query, activeEngine]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     handleSearch();
-  };
+  }, [handleSearch]);
 
-  const handleEngineSelect = (engineId: string) => {
+  const handleEngineSelect = useCallback((engineId: string) => {
     setActiveEngine(engineId);
     if (onEngineChange) onEngineChange(engineId);
-  };
+  }, [onEngineChange]);
 
   return (
     <div className="w-full relative z-30">
@@ -216,4 +216,4 @@ export const SearchBar: React.FC<Props> = ({ selectedEngine = 'google', onEngine
   );
 };
 
-export default SearchBar;
+export default memo(SearchBar);
