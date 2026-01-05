@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2560" height="1440" viewBox="0 0 2560 1440">
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="10" result="b" />
+      <feMerge>
+        <feMergeNode in="b" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="2560" height="1440" fill="#000" />
+
+  <!-- Big neon bands -->
+  <g filter="url(#glow)" opacity="0.55">
+    <rect x="-40" y="280" width="2680" height="90" fill="#06b6d4" opacity="0.20" />
+    <rect x="-40" y="610" width="2680" height="110" fill="#d946ef" opacity="0.16" />
+    <rect x="-40" y="980" width="2680" height="80" fill="#f472b6" opacity="0.14" />
+  </g>
+
+  <!-- Glitch blocks -->
+  <g opacity="0.30">
+    <rect x="160" y="220" width="440" height="26" fill="#06b6d4" />
+    <rect x="620" y="228" width="210" height="12" fill="#d946ef" />
+    <rect x="900" y="250" width="380" height="18" fill="#f472b6" />
+
+    <rect x="1380" y="530" width="520" height="24" fill="#d946ef" />
+    <rect x="1920" y="538" width="260" height="10" fill="#06b6d4" />
+    <rect x="2100" y="560" width="320" height="16" fill="#f472b6" />
+
+    <rect x="240" y="940" width="540" height="22" fill="#f472b6" />
+    <rect x="820" y="948" width="240" height="10" fill="#06b6d4" />
+    <rect x="1060" y="970" width="420" height="16" fill="#d946ef" />
+  </g>
+
+  <!-- Vertical neon cuts -->
+  <g filter="url(#glow)" opacity="0.32">
+    <rect x="420" y="0" width="10" height="1440" fill="#06b6d4" />
+    <rect x="1240" y="0" width="10" height="1440" fill="#d946ef" />
+    <rect x="2020" y="0" width="10" height="1440" fill="#f472b6" />
+  </g>
+
+  <!-- Thin scanlines -->
+  <g opacity="0.08">
+    <rect x="0" y="120" width="2560" height="2" fill="#06b6d4" />
+    <rect x="0" y="122" width="2560" height="1" fill="#d946ef" />
+    <rect x="0" y="124" width="2560" height="1" fill="#f472b6" />
+
+    <rect x="0" y="740" width="2560" height="2" fill="#06b6d4" />
+    <rect x="0" y="742" width="2560" height="1" fill="#d946ef" />
+    <rect x="0" y="744" width="2560" height="1" fill="#f472b6" />
+
+    <rect x="0" y="1280" width="2560" height="2" fill="#06b6d4" />
+    <rect x="0" y="1282" width="2560" height="1" fill="#d946ef" />
+    <rect x="0" y="1284" width="2560" height="1" fill="#f472b6" />
+  </g>
+</svg>
