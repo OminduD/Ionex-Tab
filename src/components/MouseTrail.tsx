@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { motion, useSpring, useMotionValue } from 'framer-motion';
 
 interface MouseTrailProps {
     theme?: string;
 }
 
-export const MouseTrail: React.FC<MouseTrailProps> = ({ theme = 'aurora' }) => {
+export const MouseTrail: React.FC<MouseTrailProps> = React.memo(({ theme = 'aurora' }) => {
     const [trail, setTrail] = useState<{ x: number; y: number; id: number }[]>([]);
     const cursorX = useMotionValue(-100);
     const cursorY = useMotionValue(-100);
@@ -16,12 +16,20 @@ export const MouseTrail: React.FC<MouseTrailProps> = ({ theme = 'aurora' }) => {
     const cursorYSpring = useSpring(cursorY, springConfig);
 
     useEffect(() => {
+        let lastUpdate = 0;
+        const throttleDelay = 16; // ~60fps
+        
         const handleMouseMove = (e: MouseEvent) => {
+            const now = Date.now();
+            if (now - lastUpdate < throttleDelay) return;
+            lastUpdate = now;
+            
             cursorX.set(e.clientX);
             cursorY.set(e.clientY);
 
+            // Reduced trail length from 20 to 10 for lower memory usage
             setTrail((prev) => [
-                ...prev.slice(-20),
+                ...prev.slice(-10),
                 { x: e.clientX, y: e.clientY, id: Date.now() }
             ]);
         };
@@ -94,7 +102,7 @@ export const MouseTrail: React.FC<MouseTrailProps> = ({ theme = 'aurora' }) => {
         }
     };
 
-    const styles = getThemeStyles();
+    const styles = useMemo(() => getThemeStyles(), [theme]);
 
     return (
         <div className="pointer-events-none fixed inset-0 z-[9999] overflow-hidden">
@@ -131,4 +139,4 @@ export const MouseTrail: React.FC<MouseTrailProps> = ({ theme = 'aurora' }) => {
             </motion.div>
         </div>
     );
-};
+});
