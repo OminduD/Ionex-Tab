@@ -6,13 +6,13 @@ interface WeatherOverlayProps {
     enabled?: boolean;
 }
 
-export const WeatherOverlay: React.FC<WeatherOverlayProps> = ({ condition, enabled = true }) => {
+export const WeatherOverlay: React.FC<WeatherOverlayProps> = React.memo(({ condition, enabled = true }) => {
     if (!enabled) return null;
 
     const weatherCondition = condition?.toLowerCase() || '';
 
     // Rain effect
-    const renderRain = () => {
+    const rainEffect = React.useMemo(() => {
         const rainDrops = Array.from({ length: 60 }, (_, i) => {
             const startX = Math.random() * 100; // 0-100%
             const duration = 0.4 + Math.random() * 0.3; // 0.4-0.7s
@@ -44,10 +44,10 @@ export const WeatherOverlay: React.FC<WeatherOverlayProps> = ({ condition, enabl
         });
 
         return <div className="absolute inset-0 overflow-hidden pointer-events-none">{rainDrops}</div>;
-    };
+    }, []);
 
     // Snow effect
-    const renderSnow = () => {
+    const snowEffect = React.useMemo(() => {
         const snowflakes = Array.from({ length: 50 }, (_, i) => {
             const startX = Math.random() * 100;
             const endX = startX + (Math.random() * 20 - 10); // Drift left/right
@@ -90,10 +90,10 @@ export const WeatherOverlay: React.FC<WeatherOverlayProps> = ({ condition, enabl
         });
 
         return <div className="absolute inset-0 overflow-hidden pointer-events-none">{snowflakes}</div>;
-    };
+    }, []);
 
     // Fog/mist effect
-    const renderFog = () => {
+    const fogEffect = React.useMemo(() => {
         const fogLayers = Array.from({ length: 3 }, (_, i) => (
             <motion.div
                 key={`fog-${i}`}
@@ -115,10 +115,10 @@ export const WeatherOverlay: React.FC<WeatherOverlayProps> = ({ condition, enabl
         ));
 
         return <div className="absolute inset-0 overflow-hidden pointer-events-none">{fogLayers}</div>;
-    };
+    }, []);
 
     // Clouds effect
-    const renderClouds = () => {
+    const cloudsEffect = React.useMemo(() => {
         const clouds = Array.from({ length: 4 }, (_, i) => {
             const startY = 10 + Math.random() * 40; // 10-50% from top
             const duration = 25 + Math.random() * 15; // 25-40s
@@ -148,13 +148,13 @@ export const WeatherOverlay: React.FC<WeatherOverlayProps> = ({ condition, enabl
         });
 
         return <div className="absolute inset-0 overflow-hidden pointer-events-none">{clouds}</div>;
-    };
+    }, []);
 
     // Thunderstorm effect (rain + lightning)
-    const renderThunderstorm = () => {
+    const thunderstormEffect = React.useMemo(() => {
         return (
             <>
-                {renderRain()}
+                {rainEffect}
                 <motion.div
                     className="absolute inset-0 bg-white/20 pointer-events-none"
                     initial={{ opacity: 0 }}
@@ -167,24 +167,24 @@ export const WeatherOverlay: React.FC<WeatherOverlayProps> = ({ condition, enabl
                 />
             </>
         );
-    };
+    }, [rainEffect]);
 
     // Determine which effect to render
     const renderWeatherEffect = () => {
         if (weatherCondition.includes('thunder') || weatherCondition.includes('storm')) {
-            return renderThunderstorm();
+            return thunderstormEffect;
         }
         if (weatherCondition.includes('rain') || weatherCondition.includes('drizzle')) {
-            return renderRain();
+            return rainEffect;
         }
         if (weatherCondition.includes('snow') || weatherCondition.includes('sleet')) {
-            return renderSnow();
+            return snowEffect;
         }
         if (weatherCondition.includes('fog') || weatherCondition.includes('mist') || weatherCondition.includes('haze')) {
-            return renderFog();
+            return fogEffect;
         }
         if (weatherCondition.includes('cloud') || weatherCondition.includes('overcast')) {
-            return renderClouds();
+            return cloudsEffect;
         }
         return null;
     };
@@ -198,6 +198,6 @@ export const WeatherOverlay: React.FC<WeatherOverlayProps> = ({ condition, enabl
             {effect}
         </div>
     );
-};
+});
 
 export default WeatherOverlay;
