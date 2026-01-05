@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2560" height="1440" viewBox="0 0 2560 1440">
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="2560" height="1440" fill="#000" />
+
+  <!-- Circuit traces (stylized) -->
+  <g filter="url(#glow)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 120 220 H 780 V 420 H 1060" stroke="#06b6d4" stroke-opacity="0.45" stroke-width="6" />
+    <path d="M 1060 420 H 1320 V 260 H 1620" stroke="#d946ef" stroke-opacity="0.35" stroke-width="6" />
+    <path d="M 1620 260 H 2120 V 520 H 2440" stroke="#f472b6" stroke-opacity="0.30" stroke-width="6" />
+
+    <path d="M 240 980 H 720 V 1180 H 1220" stroke="#d946ef" stroke-opacity="0.30" stroke-width="6" />
+    <path d="M 1220 1180 H 1560 V 960 H 1860" stroke="#06b6d4" stroke-opacity="0.40" stroke-width="6" />
+    <path d="M 1860 960 H 2280 V 1100 H 2480" stroke="#f472b6" stroke-opacity="0.28" stroke-width="6" />
+
+    <path d="M 540 640 H 980 V 780 H 1420 V 600 H 1860" stroke="#06b6d4" stroke-opacity="0.28" stroke-width="5" />
+    <path d="M 680 740 H 1040 V 900 H 1320" stroke="#f472b6" stroke-opacity="0.22" stroke-width="5" />
+    <path d="M 1480 720 H 1760 V 860 H 2060" stroke="#d946ef" stroke-opacity="0.22" stroke-width="5" />
+
+    <!-- Nodes -->
+    <g fill="#06b6d4" fill-opacity="0.55" stroke="none">
+      <circle cx="120" cy="220" r="10" />
+      <circle cx="780" cy="220" r="10" />
+      <circle cx="780" cy="420" r="10" />
+      <circle cx="1060" cy="420" r="10" />
+      <circle cx="1860" cy="600" r="10" />
+      <circle cx="540" cy="640" r="9" />
+      <circle cx="980" cy="640" r="9" />
+      <circle cx="1420" cy="780" r="9" />
+    </g>
+
+    <g fill="#d946ef" fill-opacity="0.50" stroke="none">
+      <circle cx="1320" cy="420" r="10" />
+      <circle cx="1320" cy="260" r="10" />
+      <circle cx="1620" cy="260" r="10" />
+      <circle cx="240" cy="980" r="10" />
+      <circle cx="720" cy="980" r="10" />
+      <circle cx="720" cy="1180" r="10" />
+      <circle cx="1220" cy="1180" r="10" />
+      <circle cx="2060" cy="860" r="9" />
+    </g>
+
+    <g fill="#f472b6" fill-opacity="0.45" stroke="none">
+      <circle cx="2120" cy="260" r="10" />
+      <circle cx="2120" cy="520" r="10" />
+      <circle cx="2440" cy="520" r="10" />
+      <circle cx="2480" cy="1100" r="10" />
+      <circle cx="1040" cy="740" r="9" />
+      <circle cx="1320" cy="900" r="9" />
+    </g>
+  </g>
+
+  <!-- Subtle diagonal scanlines -->
+  <g opacity="0.07">
+    <path d="M-200 200 L 400 0" stroke="#06b6d4" stroke-width="6" />
+    <path d="M-200 520 L 640 0" stroke="#d946ef" stroke-width="6" />
+    <path d="M-200 880 L 920 0" stroke="#f472b6" stroke-width="6" />
+    <path d="M 1200 1440 L 2560 720" stroke="#06b6d4" stroke-width="6" />
+    <path d="M 1560 1440 L 2560 960" stroke="#d946ef" stroke-width="6" />
+    <path d="M 1920 1440 L 2560 1160" stroke="#f472b6" stroke-width="6" />
+  </g>
+</svg>
