@@ -1,7 +1,7 @@
 // src/components/Greeting.tsx
 // Time-based greeting with username - Futuristic Holographic Design
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { motion } from 'framer-motion';
 import { GlitchText } from './GlitchText';
 import { DecodingText, StaggeredText, WavyText, GlowPulseText, SparkleText } from './TextAnimations';
@@ -12,7 +12,7 @@ interface GreetingProps {
   isMinimalist?: boolean;
 }
 
-export const Greeting: React.FC<GreetingProps> = ({ userName, theme: propTheme, isMinimalist }) => {
+export const Greeting: React.FC<GreetingProps> = memo(({ userName, theme: propTheme, isMinimalist }) => {
   const theme = propTheme || 'cyberpunk';
   const [greeting, setGreeting] = useState('');
   const [time, setTime] = useState(new Date());
@@ -249,5 +249,4 @@ export const Greeting: React.FC<GreetingProps> = ({ userName, theme: propTheme, 
       </div>
     </motion.div>
   );
-};
-
+});
