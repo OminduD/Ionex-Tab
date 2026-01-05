@@ -75,7 +75,22 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
     const [achievements, setAchievements] = useState<Achievement[]>(() => {
         const saved = localStorage.getItem('ionex_achievements');
-        if (saved) return JSON.parse(saved);
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                // Merge saved state (unlocked status) with static data (functions)
+                return ACHIEVEMENTS_DATA.map(staticAch => {
+                    const savedAch = parsed.find((p: Achievement) => p.id === staticAch.id);
+                    return {
+                        ...staticAch,
+                        unlocked: savedAch ? savedAch.unlocked : false
+                    };
+                });
+            } catch (e) {
+                console.error('Failed to parse achievements', e);
+                return ACHIEVEMENTS_DATA.map(a => ({ ...a, unlocked: false }));
+            }
+        }
         return ACHIEVEMENTS_DATA.map(a => ({ ...a, unlocked: false }));
     });
 
@@ -147,8 +162,17 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         addXp(10); // Base XP for task
     };
 
+    const value = React.useMemo(() => ({
+        stats,
+        achievements,
+        addXp,
+        completeTask,
+        xpToNextLevel,
+        progress
+    }), [stats, achievements, xpToNextLevel, progress]);
+
     return (
-        <GamificationContext.Provider value={{ stats, achievements, addXp, completeTask, xpToNextLevel, progress }}>
+        <GamificationContext.Provider value={value}>
             {children}
         </GamificationContext.Provider>
     );
