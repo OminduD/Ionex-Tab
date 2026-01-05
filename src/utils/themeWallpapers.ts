@@ -100,19 +100,10 @@ export const themeWallpapers: Record<string, string[]> = {
   ],
 
   cyberpunk: [
-    'https://images.alphacoders.com/133/thumb-1920-1337440.jpeg',
-    'https://images8.alphacoders.com/112/thumb-1920-1125856.jpg',
-    'https://images.alphacoders.com/914/thumb-1920-914670.jpg',
-    'https://images.alphacoders.com/988/thumb-1920-988021.jpg',
-    'https://images.alphacoders.com/135/1355218.jpg',
-    'https://img.goodfon.com/original/7680x4320/2/65/anime-serial-glavnyi-geroi-devid-martines-cyberpunk-edgerunn.jpg',
-    'https://www.pixelstalk.net/wp-content/uploads/images6/Cyberpunk-Wallpaper-4K-Neon-Samurai.jpg',
-    'https://m.gettywallpapers.com/wp-content/uploads/2022/03/Cyberpunk-4k-Wallpaper.png',
-    'https://i.redd.it/7pqh48g79fdc1.jpeg',
-    'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/d96bb958-4e6c-4ce0-9447-fbe226fbbecf/dg7vy51-4ded8255-5131-41f3-b717-f2a88a25fcfd.jpg',
-    'https://images5.alphacoders.com/128/thumb-1920-1286503.jpg',
-    'https://images4.alphacoders.com/134/thumb-1920-1340356.jpeg'
-
+    '/assets/cyberpunk-theme.png',
+    '/assets/cyberpunk-grid.svg',
+    '/assets/cyberpunk-circuit.svg',
+    '/assets/cyberpunk-glitch.svg',
   ],
 };
 
