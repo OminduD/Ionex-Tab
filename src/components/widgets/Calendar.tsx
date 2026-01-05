@@ -77,7 +77,7 @@ const Calendar: React.FC<CalendarProps> = ({ size = 'medium', theme = 'aurora', 
       initial="initial"
       animate="animate"
       whileHover="hover"
-      className={`h-full flex flex-col relative overflow-hidden ${isSmall ? 'p-2' : 'p-4'} rounded-3xl ${containerStyle}`}
+      className={`h-full flex flex-col relative overflow-hidden ${isSmall ? 'p-2' : 'p-3'} rounded-3xl ${containerStyle}`}
     >
       {/* Header */}
       <div className="relative z-10 flex items-center justify-between mb-2">
@@ -105,7 +105,7 @@ const Calendar: React.FC<CalendarProps> = ({ size = 'medium', theme = 'aurora', 
       </div>
 
       {/* Grid */}
-      <div className="relative z-10 grid grid-cols-7 gap-1 flex-1 content-start">
+      <div className="relative z-10 grid grid-cols-7 gap-1 flex-1 content-start overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/40">
         {/* Week Days */}
         {weekDays.map((day) => (
           <div key={day} className="text-center text-[10px] font-medium text-white/40 uppercase tracking-wider">
