@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 // import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
 
@@ -37,7 +37,8 @@ const CryptoWidget: React.FC<CryptoWidgetProps> = ({ coins = ['bitcoin', 'ethere
         };
 
         fetchPrices();
-        const interval = setInterval(fetchPrices, 60000); // Update every minute
+        // Reduced frequency: Update every 2 minutes instead of 1 for lower RAM usage
+        const interval = setInterval(fetchPrices, 120000);
         return () => clearInterval(interval);
     }, [coins]);
 
@@ -113,4 +114,4 @@ const CryptoWidget: React.FC<CryptoWidgetProps> = ({ coins = ['bitcoin', 'ethere
     );
 };
 
-export default CryptoWidget;
+export default memo(CryptoWidget);
