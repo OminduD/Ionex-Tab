@@ -1,21 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Settings, WidgetId } from './types';
 import { useLocalStorage } from './hooks/useLocalStorage';
-import { SettingsPanel } from './components/SettingsPanel';
-import { AIToolsButton } from './components/AIToolsButton';
-import { Greeting } from './components/Greeting';
-import AIChatSidebar from './components/AIChatSidebar';
+const SettingsPanel = React.lazy(() => import('./components/SettingsPanel').then(module => ({ default: module.SettingsPanel })));
+const AIChatSidebar = React.lazy(() => import('./components/AIChatSidebar'));
+const VirtualPet = React.lazy(() => import('./components/VirtualPet'));
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { Eye, EyeOff, Settings as SettingsLucide, Minimize2, Maximize2, MessageCircle } from 'lucide-react';
 import { extractColorsFromImage, applyCustomColors } from './utils/colorExtractorImproved';
 import { getRandomWallpaper } from './utils/themeWallpapers';
-import VirtualPet from './components/VirtualPet';
+import { AIToolsButton } from './components/AIToolsButton';
+import { Greeting } from './components/Greeting';
 import { MouseTrail } from './components/MouseTrail';
 import { getThemeStyles } from './utils/themeStyles';
 import { GamificationProvider } from './context/GamificationContext';
 import { LevelProgress } from './components/gamification/LevelProgress';
-import { ParticleBackground } from './components/ParticleBackground';
-import { WeatherOverlay } from './components/WeatherOverlay';
 
 // Dynamically import widgets
 const Clock = React.lazy(() => import('./components/widgets/Clock'));
@@ -42,7 +40,7 @@ const AchievementsWidget = React.lazy(() => import('./components/widgets/Achieve
 // Default API key for weather (free tier OpenWeatherMap)
 const DEFAULT_WEATHER_API_KEY = 'bd5e378503939ddaee76f12ad7a97608';
 
-const LogoButton = ({ onClick }: { onClick: () => void }) => {
+const LogoButton = React.memo(({ onClick }: { onClick: () => void }) => {
     const x = useMotionValue(0);
     const y = useMotionValue(0);
     const rotateX = useSpring(useTransform(y, [-100, 100], [30, -30]), { stiffness: 200, damping: 20 });
@@ -83,7 +81,7 @@ const LogoButton = ({ onClick }: { onClick: () => void }) => {
             </div>
         </motion.button>
     );
-};
+});
 
 const App: React.FC = () => {
     const [settings, setSettings] = useLocalStorage<Settings>('homeTabSettings-v7', {
@@ -105,7 +103,7 @@ const App: React.FC = () => {
             quickLinks: { id: 'quickLinks', type: 'quickLinks', x: 0, y: 3, w: 8, h: 1, visible: true },
             calendar: { id: 'calendar', type: 'calendar', x: 8, y: 0, w: 4, h: 4, visible: true },
             quote: { id: 'quote', type: 'quote', x: 0, y: 4, w: 8, h: 1, visible: true },
-            todo: { id: 'todo', type: 'todo', x: 0, y: 5, w: 4, h: 4, visible: true },
+            todoList: { id: 'todoList', type: 'todoList', x: 50, y: 150, w: 4, h: 4, visible: true },
             newsFeed: { id: 'newsFeed', type: 'newsFeed', x: 4, y: 5, w: 4, h: 4, visible: true },
             systemStats: { id: 'systemStats', type: 'systemStats', x: 8, y: 4, w: 4, h: 2, visible: true },
             github: { id: 'github', type: 'github', x: 8, y: 6, w: 4, h: 2, visible: true },
@@ -120,7 +118,7 @@ const App: React.FC = () => {
             clock: 'medium',
             weather: 'medium',
             calendar: 'large',
-            todo: 'large',
+            todoList: 'large',
             newsFeed: 'large',
             systemStats: 'medium',
             github: 'medium',
@@ -145,14 +143,67 @@ const App: React.FC = () => {
         cryptoCoins: ['bitcoin', 'ethereum', 'solana']
     });
 
-    const styles = getThemeStyles(settings.theme);
+    const styles = useMemo(() => getThemeStyles(settings.theme), [settings.theme]);
+
+    // Migrate old 'todo' widget key to 'todoList' for backward compatibility
+    useEffect(() => {
+        const needsMigration = (settings.widgets as any).todo && !settings.widgets.todoList;
+        const needsInit = !settings.widgets.todoList && !(settings.widgets as any).todo;
+
+        if (needsMigration || needsInit) {
+            setSettings(prev => {
+                const widgets = { ...prev.widgets } as any;
+                const sizes = { ...prev.widgetSizes } as any;
+
+                if (needsMigration) {
+                    // Migrate from old 'todo' key
+                    const { todo, ...restWidgets } = widgets;
+                    const { todo: todoSize, ...restSizes } = sizes;
+                    return {
+                        ...prev,
+                        widgets: {
+                            ...restWidgets,
+                            todoList: { ...todo, id: 'todoList', type: 'todoList' }
+                        },
+                        widgetSizes: {
+                            ...restSizes,
+                            todoList: todoSize || 'large'
+                        }
+                    };
+                } else {
+                    // Initialize todoList from scratch
+                    return {
+                        ...prev,
+                        widgets: {
+                            ...widgets,
+                            todoList: { id: 'todoList', type: 'todoList', x: 50, y: 150, w: 4, h: 4, visible: true }
+                        },
+                        widgetSizes: {
+                            ...sizes,
+                            todoList: 'large'
+                        }
+                    };
+                }
+            });
+        }
+
+        // Fix for todoList being stuck at 0,5 (grid coordinates interpreted as pixels)
+        if (settings.widgets.todoList && settings.widgets.todoList.x === 0 && settings.widgets.todoList.y === 5) {
+            setSettings(prev => ({
+                ...prev,
+                widgets: {
+                    ...prev.widgets,
+                    todoList: { ...prev.widgets.todoList, x: 50, y: 150 }
+                }
+            }));
+        }
+    }, []);
 
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isFocusMode, setIsFocusMode] = useState(false);
     const [showFullscreenAnimation, setShowFullscreenAnimation] = useState(false);
     const [isAIChatOpen, setIsAIChatOpen] = useState(false);
     const [isZenMode, setIsZenMode] = useState(false);
-    const [weatherCondition, setWeatherCondition] = useState<string>('');
 
     // Parallax Effect
     const mouseX = useMotionValue(0);
@@ -235,7 +286,7 @@ const App: React.FC = () => {
         }
     }, [settings.widgets]);
 
-    const updateWidgetPosition = (id: WidgetId, x: number, y: number) => {
+    const updateWidgetPosition = useCallback((id: WidgetId, x: number, y: number) => {
         setSettings((prev: Settings) => ({
             ...prev,
             widgets: {
@@ -243,9 +294,9 @@ const App: React.FC = () => {
                 [id]: { ...prev.widgets[id], x, y }
             }
         }));
-    };
+    }, [setSettings]);
 
-    const widgetMap: Record<WidgetId, React.ReactNode> = {
+    const widgetMap: Record<WidgetId, React.ReactNode> = useMemo(() => ({
         clock: (
             <>
                 {(settings.clockType === 'digital' || settings.clockType === 'both') && (
@@ -273,9 +324,9 @@ const App: React.FC = () => {
                 theme={settings.theme}
             />
         ),
-        weather: <Weather apiKey={settings.apiKeys.weather} theme={settings.theme} size={settings.widgetSizes.weather} onWeatherChange={setWeatherCondition} />,
-        calendar: <Calendar theme={settings.theme} size={settings.widgetSizes.calendar} events={settings.calendarEvents} />,
-        todoList: <TodoList theme={settings.theme} size={settings.widgetSizes.todoList} />,
+        weather: <Weather apiKey={settings.apiKeys.weather} theme={settings.theme} size={settings.widgetSizes.weather} />,
+        calendar: <Calendar theme={settings.theme} size={settings.widgetSizes.calendar} />,
+        todoList: <TodoList theme={settings.theme} size={settings.widgetSizes.todoList || settings.widgetSizes.todo} />,
         aiAssistant: <AIWidget groqKey={settings.apiKeys.groq || ''} size={settings.widgetSizes.aiAssistant} theme={settings.theme} />,
         notes: <NotesWidget theme={settings.theme} size={settings.widgetSizes.notes} />,
         appShortcuts: <AppShortcuts shortcuts={settings.shortcuts || []} theme={settings.theme} size={settings.widgetSizes.appShortcuts} />,
@@ -286,7 +337,7 @@ const App: React.FC = () => {
         crypto: <CryptoWidget coins={settings.cryptoCoins} theme={settings.theme} size={settings.widgetSizes.crypto || 'medium'} />,
         achievements: <AchievementsWidget theme={settings.theme} />,
 
-    };
+    }), [settings.theme, settings.timeFormat, settings.clockType, settings.widgetSizes, settings.apiKeys, settings.shortcuts, settings.musicPlayerEmbedUrl, settings.githubUsername, settings.cryptoCoins]);
 
     const isMinimalist = settings.minimalistMode;
     const isLightMode = isMinimalist && settings.minimalistTheme === 'light';
@@ -309,12 +360,6 @@ const App: React.FC = () => {
                 >
                     {/* Global Mouse Trail */}
                     {!isMinimalist && (settings.enableMouseTrail ?? true) && <MouseTrail theme={settings.theme} />}
-
-                    {/* Particle Background */}
-                    {!isMinimalist && <ParticleBackground theme={settings.theme} />}
-
-                    {/* Ambient Weather Overlay */}
-                    {!isMinimalist && !isZenMode && <WeatherOverlay condition={weatherCondition} enabled={true} />}
 
                     {/* Minimalist Mode Indicator */}
                     {isMinimalist && (
@@ -480,33 +525,35 @@ const App: React.FC = () => {
                         animate={{ opacity: isZenMode ? 0 : 1, pointerEvents: isZenMode ? 'none' : 'auto' }}
                         style={{ x: settings.enableParallax && !isMinimalist ? fgX : 0, y: settings.enableParallax && !isMinimalist ? fgY : 0 }}
                     >
-                        <React.Suspense fallback={<div className="text-center">Loading...</div>}>
-                            {Object.entries(settings.widgets)
-                                .filter(([id, widget]) => {
-                                    const widgetId = id as WidgetId;
-                                    // Skip aiAssistant as it's now a sidebar
-                                    if (!widget.visible || !widgetMap[widgetId] || widgetId === 'aiAssistant') return false;
-                                    // Minimalist Mode Filter
-                                    if (isMinimalist && !['clock', 'weather', 'todoList', 'calendar'].includes(widgetId)) return false;
-                                    return true;
-                                })
-                                .map(([id, widget], index) => {
-                                    const widgetId = id as WidgetId;
-                                    const position = { x: widget.x, y: widget.y };
+                        <React.Suspense fallback={<div className="sr-only">Loading widget...</div>}>
+                            {Object.entries(settings.widgets).map(([id, widget]) => {
+                                const widgetId = id as WidgetId;
 
-                                    return (
-                                        <DraggableWidget
-                                            key={widgetId}
-                                            id={widgetId}
-                                            position={position}
-                                            onPositionChange={(x: number, y: number) => updateWidgetPosition(widgetId, x, y)}
-                                            size={settings.widgetSizes[widgetId] || 'small'}
-                                            index={index}
-                                        >
-                                            {widgetMap[widgetId]}
-                                        </DraggableWidget>
-                                    );
-                                })}
+                                // Debug logging
+                                if (widgetId === 'todoList') {
+                                    console.log('TodoList widget found:', { widgetId, widget, visible: widget.visible, hasComponent: !!widgetMap[widgetId] });
+                                }
+
+                                // Skip aiAssistant as it's now a sidebar
+                                if (!widget.visible || !widgetMap[widgetId] || widgetId === 'aiAssistant') return null;
+
+                                // Minimalist Mode Filter
+                                if (isMinimalist && !['clock', 'weather', 'todoList', 'calendar'].includes(widgetId)) return null;
+
+                                const position = { x: widget.x, y: widget.y };
+
+                                return (
+                                    <DraggableWidget
+                                        key={widgetId}
+                                        id={widgetId}
+                                        position={position}
+                                        onPositionChange={(x: number, y: number) => updateWidgetPosition(widgetId, x, y)}
+                                        size={settings.widgetSizes[widgetId] || 'small'}
+                                    >
+                                        {widgetMap[widgetId]}
+                                    </DraggableWidget>
+                                );
+                            })}
                         </React.Suspense>
                     </motion.div>
 
@@ -564,11 +611,13 @@ const App: React.FC = () => {
                                 </motion.button>
                             </motion.div>
 
-                            <AIChatSidebar
-                                isOpen={isAIChatOpen}
-                                onClose={() => setIsAIChatOpen(false)}
-                                groqKey={settings.apiKeys.groq || ''}
-                            />
+                            <React.Suspense fallback={null}>
+                                <AIChatSidebar
+                                    isOpen={isAIChatOpen}
+                                    onClose={() => setIsAIChatOpen(false)}
+                                    groqKey={settings.apiKeys.groq || ''}
+                                />
+                            </React.Suspense>
                         </>
                     )}
 
@@ -578,19 +627,24 @@ const App: React.FC = () => {
                     </React.Suspense>
 
                     {/* Settings Panel */}
-                    <SettingsPanel
-                        settings={settings}
-                        setSettings={setSettings}
-                        isVisible={isSettingsOpen}
-                        onClose={() => setIsSettingsOpen(false)}
-                    />
+                    {/* Settings Panel */}
+                    <React.Suspense fallback={null}>
+                        <SettingsPanel
+                            settings={settings}
+                            setSettings={setSettings}
+                            isVisible={isSettingsOpen}
+                            onClose={() => setIsSettingsOpen(false)}
+                        />
+                    </React.Suspense>
 
                     {/* Virtual Pet */}
                     {!isMinimalist && (
-                        <VirtualPet
-                            theme={settings.theme}
-                            enabled={(settings.showVirtualPet ?? false) && !isFocusMode}
-                        />
+                        <React.Suspense fallback={null}>
+                            <VirtualPet
+                                theme={settings.theme}
+                                enabled={(settings.showVirtualPet ?? false) && !isFocusMode}
+                            />
+                        </React.Suspense>
                     )}
 
                     {/* Fullscreen Animation */}
