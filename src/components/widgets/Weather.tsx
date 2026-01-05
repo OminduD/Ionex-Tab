@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { SunIcon } from '../icons';
 import { fetchWeatherData } from '../../services/api';
 import { motion } from 'framer-motion';
@@ -31,7 +31,8 @@ const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium', theme = 'aur
     };
 
     loadWeather();
-    const interval = setInterval(loadWeather, 600000); // Update every 10 minutes
+    // Reduced frequency: Update every 15 minutes instead of 10 for lower RAM usage
+    const interval = setInterval(loadWeather, 900000);
     return () => clearInterval(interval);
   }, [apiKey, onWeatherChange]);
 
@@ -186,7 +187,7 @@ const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium', theme = 'aur
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col h-full">
+      <div className="relative z-10 flex flex-col h-full overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/40">
         {/* HUD Overlay */}
         <div className="absolute inset-0 border border-white/10 rounded-3xl pointer-events-none">
           <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-white/30 rounded-tl-lg" />
@@ -208,14 +209,14 @@ const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium', theme = 'aur
               {weather?.condition}
             </p>
           </div>
-          <div className={`${isSmall ? 'w-10 h-10' : 'w-16 h-16'}`}>
+          <div className={`${isSmall ? 'w-10 h-10' : 'w-14 h-14'}`}>
             {getWeatherIcon(weather?.condition)}
           </div>
         </div>
 
         {/* Temperature */}
         <div className="flex-1 flex items-center justify-center my-2 relative">
-          <div className={`font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60 ${isSmall ? 'text-4xl' : 'text-6xl'} drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]`}>
+          <div className={`font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60 ${isSmall ? 'text-4xl' : 'text-5xl'} drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]`}>
             {Math.round(weather?.temp)}°
           </div>
           {/* Decorative Data Stream */}
@@ -271,4 +272,4 @@ const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium', theme = 'aur
   );
 };
 
-export default Weather;
+export default memo(Weather);
