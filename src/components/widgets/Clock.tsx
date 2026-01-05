@@ -29,7 +29,7 @@ const Clock: React.FC<ClockProps> = ({ timeFormat = '24h', size = 'medium', them
       initial="initial"
       animate="animate"
       whileHover="hover"
-      className={`flex flex-col items-center justify-center h-full relative overflow-hidden ${isSmall ? 'p-2' : 'p-6'} rounded-3xl ${containerStyle}`}
+      className={`flex flex-col items-center justify-center h-full relative overflow-hidden ${isSmall ? 'p-2' : 'p-6'} rounded-3xl ${containerStyle} overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/40`}
     >
       {/* Animated Grid Overlay */}
       <div className="absolute inset-0 opacity-20 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:20px_20px]" />
@@ -43,7 +43,7 @@ const Clock: React.FC<ClockProps> = ({ timeFormat = '24h', size = 'medium', them
             {/* Hours */}
             <div className="relative bg-black/40 backdrop-blur-md rounded-lg p-2 border border-white/10 shadow-lg overflow-hidden group">
               <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-50" />
-              <span className={`relative z-10 font-black tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)] text-6xl ${isCyberpunk ? 'font-mono text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]' : ''}`}>
+              <span className={`relative z-10 font-black tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)] text-5xl ${isCyberpunk ? 'font-mono text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]' : ''}`}>
                 {timeFormat === '12h'
                   ? (time.getHours() % 12 || 12).toString().padStart(2, '0')
                   : time.getHours().toString().padStart(2, '0')}
@@ -57,7 +57,7 @@ const Clock: React.FC<ClockProps> = ({ timeFormat = '24h', size = 'medium', them
             {/* Minutes */}
             <div className="relative bg-black/40 backdrop-blur-md rounded-lg p-2 border border-white/10 shadow-lg overflow-hidden group">
               <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-50" />
-              <span className={`relative z-10 font-black tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)] text-6xl ${isCyberpunk ? 'font-mono text-pink-500 drop-shadow-[0_0_10px_rgba(219,39,119,0.8)]' : ''}`}>
+              <span className={`relative z-10 font-black tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)] text-5xl ${isCyberpunk ? 'font-mono text-pink-500 drop-shadow-[0_0_10px_rgba(219,39,119,0.8)]' : ''}`}>
                 {time.getMinutes().toString().padStart(2, '0')}
               </span>
               {/* Flip Line */}
