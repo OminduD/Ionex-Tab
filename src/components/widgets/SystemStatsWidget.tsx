@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { Activity, Cpu, Battery, BatteryCharging, BatteryLow, BatteryMedium, BatteryFull } from 'lucide-react';
 import { themes } from '../../utils/themes';
 
@@ -16,12 +16,12 @@ const SystemStatsWidget: React.FC<SystemStatsWidgetProps> = ({ theme = 'aurora' 
     const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
     const [isCharging, setIsCharging] = useState(false);
 
-    // Simulate CPU and RAM fluctuation
+    // Simulate CPU and RAM fluctuation (reduced frequency for lower RAM usage)
     useEffect(() => {
         const interval = setInterval(() => {
             setCpuUsage(Math.floor(Math.random() * 30) + 10); // 10-40%
             setRamUsage(Math.floor(Math.random() * 20) + 40); // 40-60%
-        }, 2000);
+        }, 5000); // Increased from 2s to 5s
         return () => clearInterval(interval);
     }, []);
 
@@ -63,7 +63,7 @@ const SystemStatsWidget: React.FC<SystemStatsWidgetProps> = ({ theme = 'aurora' 
     };
 
     return (
-        <div className="h-full w-full bg-black/60 backdrop-blur-xl rounded-2xl border border-white/10 p-4 flex flex-col justify-between overflow-hidden relative group">
+        <div className="h-full w-full bg-black/60 backdrop-blur-xl rounded-2xl border border-white/10 p-3 flex flex-col justify-between overflow-hidden relative group">
             {/* HUD Overlay */}
             <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-white/20 rounded-tl-lg" />
@@ -81,11 +81,11 @@ const SystemStatsWidget: React.FC<SystemStatsWidgetProps> = ({ theme = 'aurora' 
                     <Activity className="w-4 h-4 animate-pulse" style={{ color: primaryColor }} />
                     <span className="text-xs font-bold uppercase tracking-widest text-white/80">SYS_DIAGNOSTICS</span>
                 </div>
-                <div className="text-[10px] font-mono text-white/40">V3.1.0</div>
+                <div className="text-[10px] font-mono text-white/40">V3.1.1</div>
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 gap-3 flex-1 relative z-10">
+            <div className="grid grid-cols-1 gap-3 flex-1 relative z-10 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/40">
 
                 {/* CPU Circular Stat */}
                 <div className="flex items-center justify-between bg-white/5 rounded-lg p-2 border border-white/5">
@@ -175,4 +175,4 @@ const SystemStatsWidget: React.FC<SystemStatsWidgetProps> = ({ theme = 'aurora' 
     );
 };
 
-export default SystemStatsWidget;
+export default memo(SystemStatsWidget);
