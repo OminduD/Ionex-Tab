@@ -17,7 +17,7 @@ interface NewsFeedProps {
   size?: 'small' | 'medium' | 'large';
 }
 
-const NewsFeed: React.FC<NewsFeedProps> = ({ apiKey, size = 'medium', theme = 'aurora' }) => {
+const NewsFeed: React.FC<NewsFeedProps> = React.memo(({ apiKey, size = 'medium', theme = 'aurora' }) => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -254,6 +254,6 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ apiKey, size = 'medium', theme = 'a
       </div>
     </motion.div>
   );
-};
+});
 
 export default NewsFeed;
