@@ -78,26 +78,34 @@ export const ParticleBackground: React.FC<ParticleBackgroundProps> = ({ theme })
 
         const init = () => {
             particles = [];
-            const particleCount = Math.min(100, (width * height) / 15000); // Responsive count
+            // Significantly reduced particle count for lower RAM usage
+            const particleCount = Math.min(50, (width * height) / 25000);
             for (let i = 0; i < particleCount; i++) {
                 particles.push(new Particle());
             }
         };
 
+        let frameCount = 0;
         const animate = () => {
-            ctx.clearRect(0, 0, width, height);
+            frameCount++;
+            
+            // Clear only every other frame for better performance
+            if (frameCount % 2 === 0) {
+                ctx.clearRect(0, 0, width, height);
+            }
 
-            // Connect particles
-            for (let a = 0; a < particles.length; a++) {
-                for (let b = a; b < particles.length; b++) {
+            // Connect particles - but only check a subset for performance
+            const maxConnections = Math.min(particles.length, 15);
+            for (let a = 0; a < maxConnections; a++) {
+                for (let b = a + 1; b < particles.length; b++) {
                     const dx = particles[a].x - particles[b].x;
                     const dy = particles[a].y - particles[b].y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
 
-                    if (distance < 100) {
+                    if (distance < 80) {
                         ctx.beginPath();
                         ctx.strokeStyle = particles[a].color;
-                        ctx.globalAlpha = (100 - distance) / 1000; // Faint lines
+                        ctx.globalAlpha = (80 - distance) / 1200;
                         ctx.lineWidth = 0.5;
                         ctx.moveTo(particles[a].x, particles[a].y);
                         ctx.lineTo(particles[b].x, particles[b].y);
