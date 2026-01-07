@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo, useMemo } from 'react';
 import { SunIcon } from '../icons';
 import { fetchWeatherData } from '../../services/api';
 import { motion } from 'framer-motion';
@@ -99,6 +99,36 @@ const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium', theme = 'aur
     return 'from-white/5 to-transparent';
   };
 
+  // Memoize weather effects BEFORE early returns to prevent React hooks error #310
+  // Reduced particle counts for performance
+  const rainDrops = useMemo(() => 
+    weather?.condition?.toLowerCase().includes('rain') 
+      ? [...Array(8)].map((_, i) => ({ // Reduced from 20 to 8
+          id: i,
+          x: Math.random() * 100,
+          duration: 0.5 + Math.random() * 0.5,
+          delay: Math.random() * 2
+        }))
+      : [],
+    [weather?.condition]
+  );
+
+  const snowFlakes = useMemo(() => 
+    weather?.condition?.toLowerCase().includes('snow')
+      ? [...Array(6)].map((_, i) => ({ // Reduced from 15 to 6
+          id: i,
+          x: Math.random() * 100,
+          endX: Math.random() * 100,
+          duration: 2 + Math.random() * 3,
+          delay: Math.random() * 5
+        }))
+      : [],
+    [weather?.condition]
+  );
+
+  const isSmall = size === 'small';
+  const isLarge = size === 'large';
+
   if (loading) {
     return (
       <div className={`flex items-center justify-center h-full rounded-3xl ${containerStyle}`}>
@@ -116,9 +146,6 @@ const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium', theme = 'aur
     );
   }
 
-  const isSmall = size === 'small';
-  const isLarge = size === 'large';
-
   return (
     <motion.div
       variants={variants}
@@ -127,59 +154,56 @@ const Weather: React.FC<WeatherProps> = ({ apiKey, size = 'medium', theme = 'aur
       whileHover="hover"
       className={`relative h-full overflow-hidden flex flex-col ${isSmall ? 'p-3' : 'p-5'} rounded-3xl ${containerStyle}`}
     >
-      {/* Dynamic Background Gradient based on weather */}
-      <motion.div
-        className={`absolute inset-0 bg-gradient-to-br ${getWeatherGradient(weather?.condition)} opacity-50`}
-        animate={{ opacity: [0.3, 0.6, 0.3] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      {/* Dynamic Background Gradient based on weather - static opacity for performance */}
+      <div
+        className={`absolute inset-0 bg-gradient-to-br ${getWeatherGradient(weather?.condition)} opacity-40`}
       />
 
-      {/* Live Weather Effects */}
+      {/* Live Weather Effects - reduced count for performance */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {weather?.condition?.toLowerCase().includes('rain') && (
-          [...Array(20)].map((_, i) => (
-            <motion.div
-              key={`rain-${i}`}
-              className="absolute w-[1px] h-4 bg-blue-400/50"
-              initial={{ x: Math.random() * 400, y: -20 }}
-              animate={{ y: 400 }}
-              transition={{
-                duration: 0.5 + Math.random() * 0.5,
-                repeat: Infinity,
-                ease: "linear",
-                delay: Math.random() * 2
-              }}
-            />
-          ))
-        )}
-        {weather?.condition?.toLowerCase().includes('snow') && (
-          [...Array(15)].map((_, i) => (
-            <motion.div
-              key={`snow-${i}`}
-              className="absolute w-1 h-1 bg-white/80 rounded-full blur-[1px]"
-              initial={{ x: Math.random() * 400, y: -10 }}
-              animate={{ y: 400, x: `calc(${Math.random() * 400}px + ${Math.random() * 50 - 25}px)` }}
-              transition={{
-                duration: 2 + Math.random() * 3,
-                repeat: Infinity,
-                ease: "linear",
-                delay: Math.random() * 5
-              }}
-            />
-          ))
-        )}
+        {rainDrops.map((drop) => (
+          <motion.div
+            key={`rain-${drop.id}`}
+            className="absolute w-[1px] h-4 bg-blue-400/50"
+            style={{ left: `${drop.x}%` }}
+            initial={{ y: -20 }}
+            animate={{ y: 400 }}
+            transition={{
+              duration: drop.duration,
+              repeat: Infinity,
+              ease: "linear",
+              delay: drop.delay
+            }}
+          />
+        ))}
+        {snowFlakes.map((flake) => (
+          <motion.div
+            key={`snow-${flake.id}`}
+            className="absolute w-1 h-1 bg-white/80 rounded-full blur-[1px]"
+            style={{ left: `${flake.x}%` }}
+            initial={{ y: -10 }}
+            animate={{ y: 400, x: `${flake.endX - flake.x}%` }}
+            transition={{
+              duration: flake.duration,
+              repeat: Infinity,
+              ease: "linear",
+              delay: flake.delay
+            }}
+          />
+        ))}
+        {/* Reduced cloud animations from 3 to 2 */}
         {(weather?.condition?.toLowerCase().includes('cloud') || weather?.condition?.toLowerCase().includes('overcast')) && (
-          [...Array(3)].map((_, i) => (
+          [...Array(2)].map((_, i) => (
             <motion.div
               key={`cloud-${i}`}
               className="absolute w-32 h-12 bg-white/10 blur-xl rounded-full"
-              initial={{ x: -150, y: 20 + i * 40 }}
+              initial={{ x: -150, y: 20 + i * 50 }}
               animate={{ x: 450 }}
               transition={{
-                duration: 15 + Math.random() * 10,
+                duration: 20 + i * 5,
                 repeat: Infinity,
                 ease: "linear",
-                delay: i * 5
+                delay: i * 8
               }}
             />
           ))
