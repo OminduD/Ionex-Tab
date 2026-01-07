@@ -1,11 +1,38 @@
 // src/services/api.ts
 // This file centralizes all external API calls.
 
+// Cache for IP geolocation to prevent repeated calls
+let ipLocationCache: { lat: number; lon: number; city?: string } | null = null;
+let ipLocationCacheTime = 0;
+const IP_CACHE_DURATION = 30 * 60 * 1000; // 30 minutes cache
+let ipApiRateLimited = false;
+let rateLimitResetTime = 0;
+
 // Get user's location using IP-based geolocation (fallback)
 const getLocationByIP = async (): Promise<{ lat: number; lon: number; city?: string }> => {
+    // Return cached result if still valid
+    if (ipLocationCache && Date.now() - ipLocationCacheTime < IP_CACHE_DURATION) {
+        return ipLocationCache;
+    }
+
+    // If rate limited, wait before retrying
+    if (ipApiRateLimited && Date.now() < rateLimitResetTime) {
+        console.log('IP API rate limited, using fallback');
+        return ipLocationCache || { lat: 6.9271, lon: 79.8612, city: 'Colombo' };
+    }
+
     try {
         // Using ipapi.co - free, no API key required
         const response = await fetch('https://ipapi.co/json/');
+        
+        // Handle rate limiting (429)
+        if (response.status === 429) {
+            console.warn('IP API rate limited (429), backing off');
+            ipApiRateLimited = true;
+            rateLimitResetTime = Date.now() + 60 * 1000; // Wait 1 minute before retry
+            return ipLocationCache || { lat: 6.9271, lon: 79.8612, city: 'Colombo' };
+        }
+
         const data = await response.json();
 
         console.log('IP Geolocation data:', data);
@@ -13,18 +40,26 @@ const getLocationByIP = async (): Promise<{ lat: number; lon: number; city?: str
         if (data.latitude && data.longitude) {
             const city = data.city || data.region || data.country_name;
             console.log('Extracted city from IP:', city);
-            return {
+            const result = {
                 lat: data.latitude,
                 lon: data.longitude,
                 city: city
             };
+            // Cache the successful result
+            ipLocationCache = result;
+            ipLocationCacheTime = Date.now();
+            ipApiRateLimited = false;
+            return result;
         }
     } catch (error) {
         console.error('IP geolocation error:', error);
     }
 
     // Ultimate fallback to Colombo, Sri Lanka
-    return { lat: 6.9271, lon: 79.8612 };
+    const fallback = { lat: 6.9271, lon: 79.8612, city: 'Colombo' };
+    ipLocationCache = fallback;
+    ipLocationCacheTime = Date.now();
+    return fallback;
 };
 
 // Get user's location using browser geolocation API
