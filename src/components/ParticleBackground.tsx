@@ -1,23 +1,33 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, memo } from 'react';
 
 interface ParticleBackgroundProps {
     theme: string;
 }
 
-export const ParticleBackground: React.FC<ParticleBackgroundProps> = ({ theme }) => {
+export const ParticleBackground: React.FC<ParticleBackgroundProps> = memo(({ theme }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const isVisibleRef = useRef(true);
+    const animationFrameRef = useRef<number>(0);
 
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { alpha: true });
         if (!ctx) return;
 
-        let animationFrameId: number;
         let particles: Particle[] = [];
         let width = window.innerWidth;
         let height = window.innerHeight;
+        
+        // Pause animation when tab is not visible to save CPU/RAM
+        const handleVisibilityChange = () => {
+            isVisibleRef.current = !document.hidden;
+            if (isVisibleRef.current && animationFrameRef.current === 0) {
+                animate();
+            }
+        };
+        document.addEventListener('visibilitychange', handleVisibilityChange);
 
         // Theme colors
         const getColors = () => {
@@ -78,8 +88,8 @@ export const ParticleBackground: React.FC<ParticleBackgroundProps> = ({ theme })
 
         const init = () => {
             particles = [];
-            // Significantly reduced particle count for lower RAM usage
-            const particleCount = Math.min(50, (width * height) / 25000);
+            // Further reduced particle count for lower RAM usage (35 max instead of 50)
+            const particleCount = Math.min(35, Math.floor((width * height) / 35000));
             for (let i = 0; i < particleCount; i++) {
                 particles.push(new Particle());
             }
@@ -87,25 +97,34 @@ export const ParticleBackground: React.FC<ParticleBackgroundProps> = ({ theme })
 
         let frameCount = 0;
         const animate = () => {
+            // Skip animation when tab is hidden
+            if (!isVisibleRef.current) {
+                animationFrameRef.current = 0;
+                return;
+            }
+            
             frameCount++;
             
-            // Clear only every other frame for better performance
-            if (frameCount % 2 === 0) {
+            // Skip every 3rd frame for better performance (from every 2nd)
+            if (frameCount % 3 === 0) {
                 ctx.clearRect(0, 0, width, height);
             }
 
-            // Connect particles - but only check a subset for performance
-            const maxConnections = Math.min(particles.length, 15);
+            // Connect particles - reduced subset for performance (10 instead of 15)
+            const maxConnections = Math.min(particles.length, 10);
             for (let a = 0; a < maxConnections; a++) {
                 for (let b = a + 1; b < particles.length; b++) {
                     const dx = particles[a].x - particles[b].x;
                     const dy = particles[a].y - particles[b].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    // Use squared distance to avoid expensive sqrt calculation
+                    const distanceSq = dx * dx + dy * dy;
+                    const maxDistSq = 5625; // 75^2 (reduced from 80)
 
-                    if (distance < 80) {
+                    if (distanceSq < maxDistSq) {
+                        const distance = Math.sqrt(distanceSq);
                         ctx.beginPath();
                         ctx.strokeStyle = particles[a].color;
-                        ctx.globalAlpha = (80 - distance) / 1200;
+                        ctx.globalAlpha = (75 - distance) / 1200;
                         ctx.lineWidth = 0.5;
                         ctx.moveTo(particles[a].x, particles[a].y);
                         ctx.lineTo(particles[b].x, particles[b].y);
@@ -119,15 +138,20 @@ export const ParticleBackground: React.FC<ParticleBackgroundProps> = ({ theme })
                 particle.draw();
             });
 
-            animationFrameId = requestAnimationFrame(animate);
+            animationFrameRef.current = requestAnimationFrame(animate);
         };
 
+        // Throttle resize handler
+        let resizeTimeout: ReturnType<typeof setTimeout>;
         const handleResize = () => {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
-            init();
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
+                init();
+            }, 150);
         };
 
         handleResize();
@@ -137,7 +161,9 @@ export const ParticleBackground: React.FC<ParticleBackgroundProps> = ({ theme })
 
         return () => {
             window.removeEventListener('resize', handleResize);
-            cancelAnimationFrame(animationFrameId);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            cancelAnimationFrame(animationFrameRef.current);
+            clearTimeout(resizeTimeout);
         };
     }, [theme]);
 
@@ -148,4 +174,6 @@ export const ParticleBackground: React.FC<ParticleBackgroundProps> = ({ theme })
             style={{ opacity: 0.6 }} // Subtle overlay
         />
     );
-};
+});
+
+export default ParticleBackground;
