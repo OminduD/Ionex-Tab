@@ -1,11 +1,10 @@
 // src/components/DraggableWidget.tsx
 // Draggable widget container with free positioning
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, memo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 
 import { WidgetSize } from '../types';
-import { TiltContainer } from './TiltContainer';
 
 interface Props {
   id: string;
@@ -22,10 +21,20 @@ const sizeMap: Record<WidgetSize, { width: number; height: number }> = {
   large: { width: 500, height: 450 },
 };
 
-export const DraggableWidget: React.FC<Props> = ({ position, onPositionChange, size, children, index = 0 }) => {
+const DraggableWidgetComponent: React.FC<Props> = ({ position, onPositionChange, size, children, index = 0 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const dragRef = useRef<HTMLDivElement>(null);
   const { width, height } = sizeMap[size];
+
+  // Memoize drag handlers to prevent re-renders
+  const handleDragStart = useCallback(() => setIsDragging(true), []);
+  
+  const handleDragEnd = useCallback((_e: any, info: any) => {
+    setIsDragging(false);
+    const newX = Math.max(0, Math.min(window.innerWidth - width, position.x + info.offset.x));
+    const newY = Math.max(0, Math.min(window.innerHeight - height, position.y + info.offset.y));
+    onPositionChange(newX, newY);
+  }, [position.x, position.y, width, height, onPositionChange]);
 
   return (
     <motion.div
@@ -50,13 +59,8 @@ export const DraggableWidget: React.FC<Props> = ({ position, onPositionChange, s
         cursor: isDragging ? 'grabbing' : 'grab',
         zIndex: isDragging ? 50 : 10,
       }}
-      onDragStart={() => setIsDragging(true)}
-      onDragEnd={(_e, info) => {
-        setIsDragging(false);
-        const newX = Math.max(0, Math.min(window.innerWidth - width, position.x + info.offset.x));
-        const newY = Math.max(0, Math.min(window.innerHeight - height, position.y + info.offset.y));
-        onPositionChange(newX, newY);
-      }}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
       className={`widget-glass glassmorphism-2 rounded-2xl border border-white/10 shadow-2xl backdrop-blur-xl flex flex-col transition-all duration-300 group relative ${isDragging ? 'scale-105 shadow-cyan-500/20 border-cyan-500/30' : 'hover:shadow-lg hover:shadow-cyan-500/10'
         }`}
     >
@@ -70,12 +74,15 @@ export const DraggableWidget: React.FC<Props> = ({ position, onPositionChange, s
         <div className="w-12 h-1 bg-white/20 rounded-full group-hover:bg-cyan-500/50 transition-colors" />
       </div>
 
-      {/* Widget Content */}
-      <TiltContainer className="flex-1 overflow-hidden relative w-full h-full" maxTilt={5} scale={1.0}>
+      {/* Widget Content - Removed TiltContainer for reduced CPU usage on hover */}
+      <div className="flex-1 overflow-hidden relative w-full h-full">
         {children}
-      </TiltContainer>
+      </div>
     </motion.div>
   );
 };
+
+// Memoize the component to prevent unnecessary re-renders
+export const DraggableWidget = memo(DraggableWidgetComponent);
 
 export default DraggableWidget;
