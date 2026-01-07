@@ -5,7 +5,7 @@ const SettingsPanel = React.lazy(() => import('./components/SettingsPanel').then
 const AIChatSidebar = React.lazy(() => import('./components/AIChatSidebar'));
 const VirtualPet = React.lazy(() => import('./components/VirtualPet'));
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
-import { Eye, EyeOff, Settings as SettingsLucide, Minimize2, Maximize2, MessageCircle } from 'lucide-react';
+import { Eye, EyeOff, Settings as SettingsLucide, Minimize2, Maximize2, MessageCircle, Bookmark } from 'lucide-react';
 import { extractColorsFromImage, applyCustomColors } from './utils/colorExtractorImproved';
 import { getRandomWallpaper } from './utils/themeWallpapers';
 import { AIToolsButton } from './components/AIToolsButton';
@@ -36,6 +36,11 @@ const SystemStatsWidget = React.lazy(() => import('./components/widgets/SystemSt
 const GitHubWidget = React.lazy(() => import('./components/widgets/GitHubWidget'));
 const CryptoWidget = React.lazy(() => import('./components/widgets/CryptoWidget'));
 const AchievementsWidget = React.lazy(() => import('./components/widgets/AchievementsWidget'));
+const BookmarkSidebar = React.lazy(() => import('./components/BookmarkSidebar'));
+const CountdownTimer = React.lazy(() => import('./components/widgets/CountdownTimer'));
+const PasswordGenerator = React.lazy(() => import('./components/widgets/PasswordGenerator'));
+const ProductivityDashboard = React.lazy(() => import('./components/widgets/ProductivityDashboard'));
+const HabitTracker = React.lazy(() => import('./components/widgets/HabitTracker'));
 
 // Default API key for weather (free tier OpenWeatherMap)
 const DEFAULT_WEATHER_API_KEY = 'bd5e378503939ddaee76f12ad7a97608';
@@ -113,6 +118,11 @@ const App: React.FC = () => {
             notes: { id: 'notes', type: 'notes', x: 0, y: 11, w: 4, h: 2, visible: true },
             aiChat: { id: 'aiChat', type: 'aiChat', x: 4, y: 11, w: 4, h: 2, visible: true },
             focusMode: { id: 'focusMode', type: 'focusMode', x: 8, y: 10, w: 4, h: 2, visible: true },
+            bookmarks: { id: 'bookmarks', type: 'bookmarks', x: 200, y: 50, w: 4, h: 3, visible: false },
+            countdown: { id: 'countdown', type: 'countdown', x: 200, y: 200, w: 4, h: 3, visible: false },
+            passwordGenerator: { id: 'passwordGenerator', type: 'passwordGenerator', x: 400, y: 50, w: 4, h: 3, visible: false },
+            productivity: { id: 'productivity', type: 'productivity', x: 400, y: 200, w: 4, h: 3, visible: false },
+            habits: { id: 'habits', type: 'habits', x: 600, y: 50, w: 4, h: 3, visible: false },
         },
         widgetSizes: {
             clock: 'medium',
@@ -127,6 +137,11 @@ const App: React.FC = () => {
             notes: 'medium',
             aiChat: 'medium',
             focusMode: 'large',
+            bookmarks: 'medium',
+            countdown: 'medium',
+            passwordGenerator: 'medium',
+            productivity: 'large',
+            habits: 'large',
         },
         widgetPositions: {}, // Optional, kept for compatibility
         shortcuts: [
@@ -204,6 +219,7 @@ const App: React.FC = () => {
     const [showFullscreenAnimation, setShowFullscreenAnimation] = useState(false);
     const [isAIChatOpen, setIsAIChatOpen] = useState(false);
     const [isZenMode, setIsZenMode] = useState(false);
+    const [isBookmarkSidebarOpen, setIsBookmarkSidebarOpen] = useState(false);
 
     // Parallax Effect
     const mouseX = useMotionValue(0);
@@ -325,7 +341,7 @@ const App: React.FC = () => {
             />
         ),
         weather: <Weather apiKey={settings.apiKeys.weather} theme={settings.theme} size={settings.widgetSizes.weather} />,
-        calendar: <Calendar theme={settings.theme} size={settings.widgetSizes.calendar} />,
+        calendar: <Calendar theme={settings.theme} size={settings.widgetSizes.calendar} googleCalendarUrl={settings.googleCalendarUrl} />,
         todoList: <TodoList theme={settings.theme} size={settings.widgetSizes.todoList || settings.widgetSizes.todo} />,
         aiAssistant: <AIWidget groqKey={settings.apiKeys.groq || ''} size={settings.widgetSizes.aiAssistant} theme={settings.theme} />,
         notes: <NotesWidget theme={settings.theme} size={settings.widgetSizes.notes} />,
@@ -336,6 +352,11 @@ const App: React.FC = () => {
         github: <GitHubWidget username={settings.githubUsername} theme={settings.theme} size={settings.widgetSizes.github || 'medium'} />,
         crypto: <CryptoWidget coins={settings.cryptoCoins} theme={settings.theme} size={settings.widgetSizes.crypto || 'medium'} />,
         achievements: <AchievementsWidget theme={settings.theme} />,
+        bookmarks: null, // Bookmarks are now shown in a sidebar, not as a widget
+        countdown: <CountdownTimer theme={settings.theme} size={settings.widgetSizes.countdown || 'medium'} />,
+        passwordGenerator: <PasswordGenerator theme={settings.theme} size={settings.widgetSizes.passwordGenerator || 'medium'} />,
+        productivity: <ProductivityDashboard theme={settings.theme} size={settings.widgetSizes.productivity || 'large'} />,
+        habits: <HabitTracker theme={settings.theme} size={settings.widgetSizes.habits || 'large'} />,
 
     }), [settings.theme, settings.timeFormat, settings.clockType, settings.widgetSizes, settings.apiKeys, settings.shortcuts, settings.musicPlayerEmbedUrl, settings.githubUsername, settings.cryptoCoins]);
 
@@ -401,7 +422,30 @@ const App: React.FC = () => {
                         >
                             <LevelProgress />
                         </motion.div>
+
+                        {/* Bookmark Sidebar Button */}
+                        <motion.button
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.4 }}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setIsBookmarkSidebarOpen(true)}
+                            className="relative group flex items-center gap-2 px-3 py-2 rounded-xl bg-black/40 backdrop-blur-md border border-white/10 hover:border-white/30 transition-all"
+                        >
+                            <Bookmark className="w-4 h-4 text-white/70 group-hover:text-primary transition-colors" />
+                            <span className="text-xs font-medium text-white/70 group-hover:text-white transition-colors">Bookmarks</span>
+                        </motion.button>
                     </motion.div>
+
+                    {/* Bookmark Sidebar */}
+                    <React.Suspense fallback={null}>
+                        <BookmarkSidebar
+                            isOpen={isBookmarkSidebarOpen}
+                            onClose={() => setIsBookmarkSidebarOpen(false)}
+                            theme={settings.theme}
+                        />
+                    </React.Suspense>
 
                     {/* Top Right Controls - Enhanced UI */}
                     <div className="fixed top-6 right-6 z-50 flex items-center gap-4">
