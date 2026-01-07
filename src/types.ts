@@ -79,7 +79,7 @@ export interface CalendarEvent {
   location?: string;
 }
 
-export type WidgetId = 'clock' | 'analogClock' | 'weather' | 'calendar' | 'todoList' | 'aiAssistant' | 'notes' | 'appShortcuts' | 'musicPlayer' | 'newsFeed' | 'systemStats' | 'github' | 'crypto' | 'achievements';
+export type WidgetId = 'clock' | 'analogClock' | 'weather' | 'calendar' | 'todoList' | 'aiAssistant' | 'notes' | 'appShortcuts' | 'musicPlayer' | 'newsFeed' | 'systemStats' | 'github' | 'crypto' | 'achievements' | 'bookmarks' | 'countdown' | 'passwordGenerator' | 'productivity' | 'habits';
 
 export interface Note {
   id: string;
