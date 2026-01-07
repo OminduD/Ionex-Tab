@@ -1,12 +1,19 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { motion, useSpring, useMotionValue } from 'framer-motion';
 
 interface MouseTrailProps {
     theme?: string;
 }
 
+// Use canvas-based trail for better performance
 export const MouseTrail: React.FC<MouseTrailProps> = React.memo(({ theme = 'aurora' }) => {
-    const [trail, setTrail] = useState<{ x: number; y: number; id: number }[]>([]);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const cursorRef = useRef<HTMLDivElement>(null);
+    const trailRef = useRef<{ x: number; y: number; alpha: number }[]>([]);
+    const isVisibleRef = useRef(true);
+    const animationFrameRef = useRef<number>(0);
+    const themeColorsRef = useRef({ trail: 'rgba(255,255,255,0.6)', cursor: 'rgba(255,255,255,0.3)' });
+    
     const cursorX = useMotionValue(-100);
     const cursorY = useMotionValue(-100);
 
@@ -15,123 +22,158 @@ export const MouseTrail: React.FC<MouseTrailProps> = React.memo(({ theme = 'auro
     const cursorXSpring = useSpring(cursorX, springConfig);
     const cursorYSpring = useSpring(cursorY, springConfig);
 
+    // Theme colors memoized
+    const themeColors = useMemo(() => {
+        const colorMap: Record<string, { trail: string; cursor: string }> = {
+            cyberpunk: { trail: '#ec4899', cursor: '#22d3ee' },
+            neon: { trail: '#22d3ee', cursor: '#d946ef' },
+            nature: { trail: '#a3e635', cursor: '#34d399' },
+            forest: { trail: '#a3e635', cursor: '#34d399' },
+            mint: { trail: '#a3e635', cursor: '#34d399' },
+            sunset: { trail: '#f43f5e', cursor: '#f59e0b' },
+            cherry: { trail: '#f43f5e', cursor: '#f59e0b' },
+            ocean: { trail: '#3b82f6', cursor: '#38bdf8' },
+            midnight: { trail: '#818cf8', cursor: '#8b5cf6' },
+            aurora: { trail: 'rgba(255,255,255,0.6)', cursor: 'rgba(255,255,255,0.3)' },
+        };
+        return colorMap[theme] || colorMap.aurora;
+    }, [theme]);
+
+    // Keep theme colors ref updated
     useEffect(() => {
+        themeColorsRef.current = themeColors;
+    }, [themeColors]);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        // Set canvas size
+        const handleResize = () => {
+            if (canvas) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        };
+        handleResize();
+
+        // Animation function using ref for colors
+        const animate = () => {
+            if (!isVisibleRef.current) {
+                animationFrameRef.current = 0;
+                return;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                animationFrameRef.current = requestAnimationFrame(animate);
+                return;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Update and draw trail
+            const trail = trailRef.current;
+            for (let i = trail.length - 1; i >= 0; i--) {
+                trail[i].alpha -= 0.08; // Fade out faster
+                if (trail[i].alpha <= 0) {
+                    trail.splice(i, 1);
+                    continue;
+                }
+
+                ctx.beginPath();
+                ctx.arc(trail[i].x, trail[i].y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = themeColorsRef.current.trail;
+                ctx.globalAlpha = trail[i].alpha;
+                ctx.fill();
+            }
+
+            animationFrameRef.current = requestAnimationFrame(animate);
+        };
+
+        // Visibility handling
+        const handleVisibilityChange = () => {
+            isVisibleRef.current = !document.hidden;
+            if (isVisibleRef.current && animationFrameRef.current === 0) {
+                animate();
+            }
+        };
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
         let lastUpdate = 0;
-        const throttleDelay = 16; // ~60fps
+        const throttleDelay = 25; // ~40fps for trail (reduced from 60fps)
         
         const handleMouseMove = (e: MouseEvent) => {
-            const now = Date.now();
-            if (now - lastUpdate < throttleDelay) return;
-            lastUpdate = now;
-            
             cursorX.set(e.clientX);
             cursorY.set(e.clientY);
 
-            // Reduced trail length from 20 to 10 for lower memory usage
-            setTrail((prev) => [
-                ...prev.slice(-10),
-                { x: e.clientX, y: e.clientY, id: Date.now() }
-            ]);
+            const now = Date.now();
+            if (now - lastUpdate < throttleDelay) return;
+            lastUpdate = now;
+
+            // Add to trail (max 8 points for lower memory)
+            trailRef.current.push({ x: e.clientX, y: e.clientY, alpha: 0.6 });
+            if (trailRef.current.length > 8) {
+                trailRef.current.shift();
+            }
         };
 
         // Hide default cursor
         document.body.style.cursor = 'none';
 
-        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mousemove', handleMouseMove, { passive: true });
+        window.addEventListener('resize', handleResize, { passive: true });
+        
+        // Start animation loop
+        animate();
+
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('resize', handleResize);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
             document.body.style.cursor = 'auto';
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+            }
         };
-    }, []);
+    }, []); // Empty dependency - animation uses refs
 
-    // Theme-specific styles
-    const getThemeStyles = () => {
-        switch (theme) {
-            case 'cyberpunk':
-                return {
-                    cursor: 'border-2 border-cyan-400 bg-transparent rounded-none rotate-45 w-6 h-6',
-                    trail: 'bg-pink-500 rounded-none w-2 h-2',
-                    trailGlow: '0 0 10px #ec4899',
-                    cursorGlow: '0 0 15px #22d3ee'
-                };
-            case 'neon':
-                return {
-                    cursor: 'border-2 border-fuchsia-500 bg-transparent rounded-full w-6 h-6',
-                    trail: 'bg-cyan-400 rounded-full w-1.5 h-1.5',
-                    trailGlow: '0 0 10px #22d3ee',
-                    cursorGlow: '0 0 15px #d946ef'
-                };
-            case 'nature':
-            case 'forest':
-            case 'mint':
-                return {
-                    cursor: 'border-2 border-emerald-400 bg-emerald-400/20 rounded-full w-5 h-5 rounded-tl-none',
-                    trail: 'bg-lime-400 rounded-full w-2 h-2 rounded-tl-none',
-                    trailGlow: '0 0 8px #a3e635',
-                    cursorGlow: '0 0 12px #34d399'
-                };
-            case 'sunset':
-            case 'cherry':
-                return {
-                    cursor: 'border-2 border-amber-500 bg-amber-500/20 rounded-full w-6 h-6',
-                    trail: 'bg-rose-500 rounded-full w-1.5 h-1.5',
-                    trailGlow: '0 0 10px #f43f5e',
-                    cursorGlow: '0 0 15px #f59e0b'
-                };
-            case 'ocean':
-                return {
-                    cursor: 'border-2 border-sky-400 bg-sky-400/20 rounded-full w-5 h-5',
-                    trail: 'bg-blue-500 rounded-full w-2 h-2',
-                    trailGlow: '0 0 8px #3b82f6',
-                    cursorGlow: '0 0 12px #38bdf8'
-                };
-            case 'midnight':
-                return {
-                    cursor: 'border-2 border-violet-500 bg-violet-500/20 rounded-full w-4 h-4 rotate-45',
-                    trail: 'bg-indigo-400 rounded-full w-1 h-1',
-                    trailGlow: '0 0 8px #818cf8',
-                    cursorGlow: '0 0 12px #8b5cf6'
-                };
-            default: // aurora and others
-                return {
-                    cursor: 'border-2 border-white bg-white/20 rounded-full w-5 h-5',
-                    trail: 'bg-white rounded-full w-1.5 h-1.5',
-                    trailGlow: '0 0 8px rgba(255,255,255,0.5)',
-                    cursorGlow: '0 0 12px rgba(255,255,255,0.3)'
-                };
-        }
-    };
-
-    const styles = useMemo(() => getThemeStyles(), [theme]);
+    // Get cursor style class
+    const getCursorClass = useMemo(() => {
+        const classMap: Record<string, string> = {
+            cyberpunk: 'border-2 border-cyan-400 bg-transparent rounded-none rotate-45 w-6 h-6',
+            neon: 'border-2 border-fuchsia-500 bg-transparent rounded-full w-6 h-6',
+            nature: 'border-2 border-emerald-400 bg-emerald-400/20 rounded-full w-5 h-5 rounded-tl-none',
+            forest: 'border-2 border-emerald-400 bg-emerald-400/20 rounded-full w-5 h-5 rounded-tl-none',
+            mint: 'border-2 border-emerald-400 bg-emerald-400/20 rounded-full w-5 h-5 rounded-tl-none',
+            sunset: 'border-2 border-amber-500 bg-amber-500/20 rounded-full w-6 h-6',
+            cherry: 'border-2 border-amber-500 bg-amber-500/20 rounded-full w-6 h-6',
+            ocean: 'border-2 border-sky-400 bg-sky-400/20 rounded-full w-5 h-5',
+            midnight: 'border-2 border-violet-500 bg-violet-500/20 rounded-full w-4 h-4 rotate-45',
+            aurora: 'border-2 border-white bg-white/20 rounded-full w-5 h-5',
+        };
+        return classMap[theme] || classMap.aurora;
+    }, [theme]);
 
     return (
         <div className="pointer-events-none fixed inset-0 z-[9999] overflow-hidden">
-            {/* Trail */}
-            {trail.map((point) => (
-                <motion.div
-                    key={point.id}
-                    initial={{ opacity: 0.6, scale: 1 }}
-                    animate={{ opacity: 0, scale: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className={`absolute ${styles.trail}`}
-                    style={{
-                        left: point.x,
-                        top: point.y,
-                        transform: 'translate(-50%, -50%)',
-                        boxShadow: styles.trailGlow
-                    }}
-                />
-            ))}
+            {/* Canvas-based trail for better performance */}
+            <canvas
+                ref={canvasRef}
+                className="absolute inset-0"
+                style={{ opacity: 0.8 }}
+            />
 
             {/* Main Cursor */}
             <motion.div
-                className={`absolute flex items-center justify-center ${styles.cursor}`}
+                ref={cursorRef}
+                className={`absolute flex items-center justify-center ${getCursorClass}`}
                 style={{
                     x: cursorXSpring,
                     y: cursorYSpring,
                     translateX: '-50%',
                     translateY: '-50%',
-                    boxShadow: styles.cursorGlow
+                    boxShadow: `0 0 12px ${themeColors.cursor}`
                 }}
             >
                 {/* Center Dot */}
