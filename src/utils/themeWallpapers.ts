@@ -100,11 +100,35 @@ export const themeWallpapers: Record<string, string[]> = {
   ],
 
   cyberpunk: [
-    '/assets/cyberpunk-theme.png',
-    '/assets/cyberpunk-grid.svg',
-    '/assets/cyberpunk-circuit.svg',
-    '/assets/cyberpunk-glitch.svg',
-  ],
+'https://4kwallpapers.com/images/wallpapers/cyberpunk-2077-1920x1080-18559.jpg',
+'https://www.hdwallpapers.in/download/cyberpunk_2077_keanu_reeves_4k_hd_cyberpunk_2077-2560x1440.jpg',
+'https://images.steamusercontent.com/ugc/2058741574591788654/F120CE151537EBA81555142DA32A499D907A9F48/',
+'https://images.alphacoders.com/133/thumb-1920-1337440.jpeg',
+'https://www.hdwallpapers.in/download/cyberpunk_2077_cool_art_4k_hd_cyberpunk_2077-3840x2160.jpg',
+'https://img.goodfon.com/original/7680x4320/2/65/anime-serial-glavnyi-geroi-devid-martines-cyberpunk-edgerunn.jpg',
+'https://www.hdwallpapers.in/download/cyberpunk_2077_johnny_silverhand_4k_hd_cyberpunk_2077-HD.jpg',
+'https://wallpapercg.com/media/ts_orig/10686.webp',
+'https://i.redd.it/cyberpunk-2077-phantom-liberty-3840x2160-and-1920x1080-v0-0zvvcbw43yqb1.jpg?width=1920&format=pjpg&auto=webp&s=0ad0660424bbc8c570b0338d3557fa1f81a5978e',
+'https://www.hdwallpapers.in/download/cyberpunk_2077_johnny_silverhand_4k_hd_cyberpunk_2077-HD.jpg',
+'https://wallpapercg.com/media/ts_orig/10686.webp',
+'https://i.redd.it/cyberpunk-2077-phantom-liberty-3840x2160-and-1920x1080-v0-0zvvcbw43yqb1.jpg?width=1920&format=pjpg&auto=webp&s=0ad0660424bbc8c570b0338d3557fa1f81a5978e',
+'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/d96bb958-4e6c-4ce0-9447-fbe226fbbecf/dg7vy51-4ded8255-5131-41f3-b717-f2a88a25fcfd.jpg',
+'https://w0.peakpx.com/wallpaper/226/980/HD-wallpaper-samurai-cyberpunk-2077.jpg',
+'https://cdn.wallpapersafari.com/92/59/CoamDQ.png',
+'https://images.steamusercontent.com/ugc/2058741574591784573/3F6DC13DDD4EB200A0C9B0F35B9CA7D25D59892D/',
+'https://wallpaper.dog/large/20466523.jpg',
+'https://backiee.com/static/wallpapers/3840x2160/430462.jpg',
+'https://images.steamusercontent.com/ugc/2058741574591784143/310818E5D3AE1CF90927AB9555326A88AECAA889/',
+'https://vsthemes.org/uploads/posts/workshop/287088811664007f80c3519197550791.webp',
+'https://images.hdqwalls.com/wallpapers/longing-cyberpunk-neon-lights-4k-ho.jpg',
+'https://www.baltana.com/files/wallpapers-25/Red-Cyberpunk-Wallpaper-2828x1590-65100.jpg',
+'https://images.alphacoders.com/135/thumb-1920-1355218.jpg',
+'https://cdn.wallpapersafari.com/92/59/CoamDQ.png'
+
+]
+
+
+
 };
 
 /**
