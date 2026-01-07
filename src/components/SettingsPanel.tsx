@@ -68,6 +68,7 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
         const trimmedSettings = {
             ...localSettings,
             apiKeys: {
+                ...localSettings.apiKeys,
                 weather: localSettings.apiKeys.weather?.trim() || '',
                 groq: localSettings.apiKeys.groq?.trim() || '',
             }
@@ -516,6 +517,26 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                                         'countdown', 'passwordGenerator', 'productivity', 'habits'
                                                     ];
 
+                                                    // Display names for better readability
+                                                    const widgetNames: Record<string, string> = {
+                                                        clock: 'Clock',
+                                                        weather: 'Weather',
+                                                        calendar: 'Calendar',
+                                                        todoList: 'Todo List',
+                                                        aiChat: 'AI Chat',
+                                                        notes: 'Notes',
+                                                        musicPlayer: 'Music Player',
+                                                        newsFeed: 'News Feed',
+                                                        systemStats: 'System Stats',
+                                                        github: 'GitHub',
+                                                        crypto: 'Crypto',
+                                                        achievements: 'Achievements',
+                                                        countdown: 'Countdown',
+                                                        passwordGenerator: 'Password Generator',
+                                                        productivity: 'Productivity',
+                                                        habits: 'Habits'
+                                                    };
+
                                                     return (
                                                         <motion.div
                                                             className="grid gap-4"
@@ -542,7 +563,7 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                                                                 <div className={`p-2 rounded ${enabled ? '' : 'bg-slate-800 text-slate-500'}`} style={enabled ? { backgroundColor: `${themeColor}33`, color: themeColor } : undefined}>
                                                                                     <LayoutGrid className="w-4 h-4" />
                                                                                 </div>
-                                                                                <span className="font-bold text-slate-200 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                                                                                <span className="font-bold text-slate-200">{widgetNames[key] || key}</span>
                                                                             </div>
                                                                             <Toggle
                                                                                 checked={enabled}
@@ -556,12 +577,13 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                                                                         h: 2,
                                                                                         visible: false
                                                                                     };
+                                                                                    const newWidgets = {
+                                                                                        ...localSettings.widgets,
+                                                                                        [key]: { ...currentWidget, visible: c }
+                                                                                    };
                                                                                     setLocalSettings({
                                                                                         ...localSettings,
-                                                                                        widgets: {
-                                                                                            ...localSettings.widgets,
-                                                                                            [key]: { ...currentWidget, visible: c }
-                                                                                        }
+                                                                                        widgets: newWidgets
                                                                                     });
                                                                                 }}
                                                                                 themeColor={themeColor}
