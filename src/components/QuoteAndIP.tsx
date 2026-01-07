@@ -258,9 +258,7 @@ export const QuoteAndIP: React.FC<QuoteAndIPProps> = ({ showQuotes = true, showI
     };
   }, [applyOfflineState, fetchIP, showIP]);
 
-  // Don't render if both are hidden
-  if (!showQuotes && !showIP) return null;
-
+  // Parse quote text and author - must be before early return to maintain hooks order
   const { quoteText, quoteAuthor } = useMemo(() => {
     if (!quote) return { quoteText: '', quoteAuthor: '' };
 
@@ -275,6 +273,9 @@ export const QuoteAndIP: React.FC<QuoteAndIPProps> = ({ showQuotes = true, showI
     const author = quote.slice(lastSepIndex + separator.length).trim();
     return { quoteText: text, quoteAuthor: author };
   }, [quote]);
+
+  // Don't render if both are hidden
+  if (!showQuotes && !showIP) return null;
 
   return (
     <motion.div
