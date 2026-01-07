@@ -52,13 +52,13 @@ const FullscreenAnimation: React.FC<FullscreenAnimationProps> = ({
 
   const config = getThemeConfig();
 
-  // Generate random data streams
-  const dataStreams = React.useMemo(() => Array.from({ length: 20 }).map((_, i) => ({
+  // Generate random data streams - reduced from 20 to 10 for performance
+  const dataStreams = React.useMemo(() => Array.from({ length: 10 }).map((_, i) => ({
     id: i,
     x: Math.random() * 100,
     delay: Math.random() * 2,
     duration: Math.random() * 2 + 1,
-    chars: Array.from({ length: 10 }).map(() => Math.random() > 0.5 ? '1' : '0').join(' ')
+    chars: Array.from({ length: 8 }).map(() => Math.random() > 0.5 ? '1' : '0').join(' ')
   })), []);
 
   return (
@@ -70,12 +70,12 @@ const FullscreenAnimation: React.FC<FullscreenAnimationProps> = ({
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[9999] overflow-hidden flex items-center justify-center bg-black perspective-1000"
         >
-          {/* Background Grid */}
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:40px_40px] [transform:perspective(500px)_rotateX(60deg)_translateY(-100px)_translateZ(-200px)] animate-[grid-flow_20s_linear_infinite]" />
+          {/* Background Grid - simplified */}
+          <div className="absolute inset-0 opacity-15">
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:50px_50px]" />
           </div>
 
-          {/* Data Streams */}
+          {/* Data Streams - reduced count */}
           {dataStreams.map((stream) => (
             <motion.div
               key={stream.id}
@@ -97,14 +97,14 @@ const FullscreenAnimation: React.FC<FullscreenAnimationProps> = ({
           {/* Central Portal System */}
           <div className="relative w-full h-full flex items-center justify-center" style={{ transformStyle: 'preserve-3d' }}>
 
-            {/* Rotating Rings */}
-            {[...Array(5)].map((_, i) => (
+            {/* Rotating Rings - reduced from 5 to 3 */}
+            {[...Array(3)].map((_, i) => (
               <motion.div
                 key={`ring-${i}`}
                 className="absolute rounded-full border border-white/30"
                 style={{
-                  width: 300 + i * 100,
-                  height: 300 + i * 100,
+                  width: 300 + i * 150,
+                  height: 300 + i * 150,
                   borderWidth: 1,
                   borderColor: config.colors[i % 3],
                   boxShadow: `0 0 20px ${config.colors[i % 3]}`,
@@ -116,7 +116,7 @@ const FullscreenAnimation: React.FC<FullscreenAnimationProps> = ({
                   opacity: stage === 2 ? [1, 0] : 1,
                 }}
                 transition={{
-                  duration: 10 - i,
+                  duration: 10 - i * 2,
                   repeat: Infinity,
                   ease: "linear",
                 }}
@@ -155,20 +155,20 @@ const FullscreenAnimation: React.FC<FullscreenAnimationProps> = ({
             </motion.div>
           </div>
 
-          {/* Hyper-Speed Lines (Stage 2) */}
+          {/* Hyper-Speed Lines (Stage 2) - reduced from 20 to 12 */}
           {stage === 2 && (
             <div className="absolute inset-0 flex items-center justify-center">
-              {[...Array(20)].map((_, i) => (
+              {[...Array(12)].map((_, i) => (
                 <motion.div
                   key={`line-${i}`}
                   className="absolute w-[200vw] h-1 bg-white"
                   style={{
-                    rotate: i * 18,
+                    rotate: i * 30,
                     transformOrigin: 'center',
                   }}
                   initial={{ scaleX: 0, opacity: 0 }}
                   animate={{ scaleX: 1, opacity: [0, 1, 0] }}
-                  transition={{ duration: 0.5, delay: i * 0.01 }}
+                  transition={{ duration: 0.5, delay: i * 0.02 }}
                 />
               ))}
             </div>
