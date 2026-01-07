@@ -511,8 +511,9 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                                                     // List of all available widgets
                                                     const widgetKeys = [
                                                         'clock', 'weather', 'calendar', 'todo', 'aiChat', 'notes',
-                                                        'quickLinks', 'musicPlayer', 'newsFeed', 'systemStats',
-                                                        'github', 'crypto', 'achievements', 'quote', 'search', 'focusMode'
+                                                        'musicPlayer', 'newsFeed', 'systemStats',
+                                                        'github', 'crypto', 'achievements',
+                                                        'countdown', 'passwordGenerator', 'productivity', 'habits'
                                                     ];
 
                                                     return (
