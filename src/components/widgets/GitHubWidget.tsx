@@ -71,44 +71,48 @@ const GitHubWidget: React.FC<GitHubWidgetProps> = ({ username, theme: _theme, si
                 if (!contribResponse.ok) throw new Error('Failed to fetch contributions');
                 const contribData = await contribResponse.json();
 
-                const contributions = contribData.contributions;
+                const contributions: { date: string; count: number }[] = contribData.contributions || [];
                 const today = new Date().toISOString().split('T')[0];
 
                 // Find today's index
-                let todayIndex = contributions.findIndex((c: any) => c.date === today);
+                let todayIndex = contributions.findIndex((c) => c.date === today);
                 if (todayIndex === -1) {
-                    // Fallback to last available day if today is not found (e.g. timezone diffs)
+                    // Fallback: find the last date that is <= today
                     todayIndex = contributions.length - 1;
-                }
-
-                // Calculate Streak
-                let streak = 0;
-                let currentStreakActive = true;
-
-                if (contributions[todayIndex].count > 0) {
-                    streak++;
-                } else {
-                    const yesterdayIndex = todayIndex - 1;
-                    if (yesterdayIndex >= 0 && contributions[yesterdayIndex].count === 0) {
-                        currentStreakActive = false;
-                    }
-                }
-
-                if (currentStreakActive) {
-                    let i = todayIndex - 1;
-                    while (i >= 0) {
-                        if (contributions[i].count > 0) {
-                            streak++;
-                        } else {
+                    for (let i = contributions.length - 1; i >= 0; i--) {
+                        if (contributions[i].date <= today) {
+                            todayIndex = i;
                             break;
                         }
-                        i--;
                     }
                 }
 
-                // Calculate Last Year (Rolling 365 Days)
-                const last365 = contributions.slice(-365);
-                const lastYearContribs = last365.reduce((acc: number, curr: any) => acc + curr.count, 0);
+                // Calculate Streak - count consecutive days with contributions ending at today or yesterday
+                let streak = 0;
+                
+                // Start from today and work backwards
+                let startIdx = todayIndex;
+                
+                // If today has no contributions, check if we should start from yesterday
+                if (contributions[todayIndex]?.count === 0 && todayIndex > 0) {
+                    // Start from yesterday instead
+                    startIdx = todayIndex - 1;
+                }
+                
+                // Count consecutive days with contributions going backwards
+                for (let i = startIdx; i >= 0; i--) {
+                    if (contributions[i].count > 0) {
+                        streak++;
+                    } else {
+                        // Found a day with no contributions, streak ends
+                        break;
+                    }
+                }
+
+                // Calculate Last Year (Rolling 365 Days) - only count days up to and including today
+                const pastContributions = contributions.filter((c) => c.date <= today);
+                const last365 = pastContributions.slice(-365);
+                const lastYearContribs = last365.reduce((acc: number, curr) => acc + curr.count, 0);
 
                 const computed: GitHubStats = {
                     publicRepos: profileData.public_repos,
