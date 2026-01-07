@@ -111,14 +111,14 @@ const VirtualPet: React.FC<VirtualPetProps> = ({ theme, enabled }) => {
     const currentPet = themePets[theme] || themePets['ocean'];
     const sprite = currentPet.sprite;
 
-    // Needs Decay
+    // Needs Decay - increased interval from 10s to 20s
     useEffect(() => {
         if (!enabled || state === 'sleeping') return;
 
         const decayInterval = setInterval(() => {
             setEnergy(prev => Math.max(0, prev - 1));
             setHappiness(prev => Math.max(0, prev - 0.5));
-        }, 10000); // Decay every 10s
+        }, 20000); // Increased from 10s to 20s for lower CPU usage
 
         return () => clearInterval(decayInterval);
     }, [enabled, state]);
@@ -156,12 +156,13 @@ const VirtualPet: React.FC<VirtualPetProps> = ({ theme, enabled }) => {
             ? [...robotPhrases, ...(themePhrases[theme] || [])]
             : [...commonPhrases, ...(themePhrases[theme] || [])];
 
+        // Increased interval from 8s to 15s for lower CPU usage
         const interval = setInterval(() => {
-            if (Math.random() < 0.15 && !isBusy.current && !showHUD) {
+            if (Math.random() < 0.12 && !isBusy.current && !showHUD) {
                 setSpeech(phrases[Math.floor(Math.random() * phrases.length)]);
                 setTimeout(() => setSpeech(null), 3000);
             }
-        }, 8000);
+        }, 15000);
         return () => clearInterval(interval);
     }, [enabled, state, theme, sprite.isRobot, energy, showHUD]);
 
@@ -171,8 +172,8 @@ const VirtualPet: React.FC<VirtualPetProps> = ({ theme, enabled }) => {
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
             const now = Date.now();
-            // Throttle to ~10fps (100ms) to reduce CPU usage
-            if (now - lastMouseMoveTime.current < 100) {
+            // Increased throttle from 100ms to 150ms (~6.6fps) to reduce CPU usage
+            if (now - lastMouseMoveTime.current < 150) {
                 // Still update position for smooth chasing, but skip heavy logic
                 mousePos.current = { x: e.clientX, y: e.clientY };
                 return;
