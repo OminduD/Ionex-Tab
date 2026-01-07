@@ -12,6 +12,7 @@
     ],
     "host_permissions": [
         "https://api.open-meteo.com/*",
+        "https://geocoding-api.open-meteo.com/*",
         "https://api.groq.com/*",
         "https://nominatim.openstreetmap.org/*",
         "https://api.quotable.io/*",
@@ -19,10 +20,13 @@
         "https://ipapi.co/*",
         "https://checkip.amazonaws.com/*",
         "https://api.github.com/*",
-        "https://github-contributions-api.jogruber.de/*"
+        "https://github-contributions-api.jogruber.de/*",
+        "https://api.coingecko.com/*",
+        "https://api.rss2json.com/*",
+        "https://api.openweathermap.org/*"
     ],
     "content_security_policy": {
-        "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; connect-src 'self' https://api.open-meteo.com https://api.groq.com https://nominatim.openstreetmap.org https://api.quotable.io https://api.ipify.org https://ipapi.co https://checkip.amazonaws.com https://images.unsplash.com https://api.github.com https://github-contributions-api.jogruber.de; frame-src 'self' https://w.soundcloud.com https://open.spotify.com;"
+        "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; connect-src 'self' https://api.open-meteo.com https://geocoding-api.open-meteo.com https://api.groq.com https://nominatim.openstreetmap.org https://api.quotable.io https://api.ipify.org https://ipapi.co https://checkip.amazonaws.com https://images.unsplash.com https://api.github.com https://github-contributions-api.jogruber.de https://api.coingecko.com https://api.rss2json.com https://api.openweathermap.org; frame-src 'self' https://w.soundcloud.com https://open.spotify.com;"
     },
     "icons": {
         "16": "icons/icon16.png",
