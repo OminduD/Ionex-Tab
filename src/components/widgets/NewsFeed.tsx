@@ -157,7 +157,8 @@ const NewsFeed: React.FC<NewsFeedProps> = React.memo(({ apiKey, size = 'medium',
 
   useEffect(() => {
     fetchNews();
-    const interval = setInterval(fetchNews, 15 * 60 * 1000);
+    // Increased from 15 min to 30 min for lower resource usage
+    const interval = setInterval(fetchNews, 30 * 60 * 1000);
     return () => clearInterval(interval);
   }, [apiKey]);
 
