@@ -81,7 +81,7 @@ const SystemStatsWidget: React.FC<SystemStatsWidgetProps> = ({ theme = 'aurora' 
                     <Activity className="w-4 h-4 animate-pulse" style={{ color: primaryColor }} />
                     <span className="text-xs font-bold uppercase tracking-widest text-white/80">SYS_DIAGNOSTICS</span>
                 </div>
-                <div className="text-[10px] font-mono text-white/40">V3.1.1</div>
+                <div className="text-[10px] font-mono text-white/40">V3.1.3</div>
             </div>
 
             {/* Stats Grid */}

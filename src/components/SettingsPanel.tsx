@@ -257,7 +257,7 @@ export const SettingsPanel: React.FC<Props> = ({ settings, setSettings, isVisibl
                             </div>
 
                             <div className="p-4 border-t text-center" style={{ borderColor: `${themeColor}1A` }}>
-                                <div className="text-[10px] text-slate-500 uppercase tracking-widest">Ionex Tab v3.1.1 by OminduD</div>
+                                <div className="text-[10px] text-slate-500 uppercase tracking-widest">Ionex Tab v3.1.3 by OminduD</div>
                             </div>
                         </div>
 

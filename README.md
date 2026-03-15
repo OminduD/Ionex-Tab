@@ -905,36 +905,9 @@ Uses free [Open-Meteo API](https://open-meteo.com/) with auto-location detection
 </tr>
 </table>
 
-### Development Workflow
+### 📖 Full Contribution Guidelines
 
-```bash
-# Fork the repository
-# Clone your fork
-git clone https://github.com/YOUR_USERNAME/Ionex-Tab.git
-cd Ionex-Tab
-
-# Install dependencies
-npm install
-
-# Create a feature branch
-git checkout -b feature/your-feature-name
-
-# Make changes and test
-npm run dev
-
-# Type check
-npm run type-check
-
-# Build for testing
-npm run build:chrome
-
-# Commit and push
-git add .
-git commit -m "Add your feature"
-git push origin feature/your-feature-name
-
-# Open a Pull Request
-```
+For detailed instructions on how to set up your development environment, formatting rules, and the pull request process, please read our complete **[CONTRIBUTING.md](CONTRIBUTING.md)** guide.
 
 <br/>
 
